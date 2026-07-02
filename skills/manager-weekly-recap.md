@@ -201,7 +201,7 @@ If no pattern is visible, omit this section rather than force one.
 
 **Report Format:**
 
-```text
+```
 Week [ISO_WEEK_NUMBER] | [DAY_OF_WEEK], [FULL_DATE] | [Month Day] – [Month Day], [Year]
 
 Portfolio Pulse
