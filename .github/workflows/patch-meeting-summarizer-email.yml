@@ -1,0 +1,76 @@
+name: Patch meeting summarizer email output
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/patch-meeting-summarizer-email.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Patch meeting summarizer skill
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          p = Path('skills/meeting-summarizer.md')
+          text = p.read_text()
+          original = text
+
+          replacements = [
+              (
+                  '3. A warm customer-facing follow-up email based on the meeting.',
+                  '3. A warm customer-facing follow-up email based on the meeting, delivered as an editable writing block.'
+              ),
+              (
+                  '''### Customer Follow-Up Email\nSubject: [subject]\n\n[email body]\n```\n\nIf Airtable is updated successfully,''',
+                  '''### Customer Follow-Up Email\n:::writing{variant="email" id="[unique 5-digit id]" subject="[subject]"}\n[email body]\n:::\n```\n\nEmail output rule:\n- The customer follow-up email must always be rendered in an editable writing block, not a plain markdown code block.\n- Use `variant="email"`, include the subject in writing-block metadata, and use a unique random 5-digit `id`.\n- Do not put `Subject:` inside the email body because the subject belongs in writing-block metadata.\n\nIf Airtable is updated successfully,'''
+              ),
+              (
+                  '''# Customer Follow-Up Email\n\nAlways draft a customer-facing follow-up email from the meeting context unless the user says not to.\n\nThe email should feel warm, human, and professional. It should make the customer feel heard and clearly reinforce the next steps without sounding robotic.\n''',
+                  '''# Customer Follow-Up Email\n\nAlways draft a customer-facing follow-up email from the meeting context unless the user says not to.\n\nThe email must be output as an editable writing block. Do not put the customer follow-up email in a plain markdown code block. Use `variant="email"`, put the subject in writing-block metadata, and use a unique random 5-digit writing-block `id`.\n\nThe email should feel warm, human, and professional. It should make the customer feel heard and clearly reinforce the next steps without sounding robotic.\n'''
+              ),
+              (
+                  '''### Customer Follow-Up Email\n```text\nSubject: [Subject]\n\nHi [Customer Name],\n\n[email body]\n\nBest,\nRanjodh\n```\n\n[One-line Airtable update confirmation or failure note, including Engagement Status / Outreach Step / Meeting Sync established / Cadence Frequency changes if applied.]\n````''',
+                  '''### Customer Follow-Up Email\n\n:::writing{variant="email" id="[unique 5-digit id]" subject="[Subject]"}\nHi [Customer Name],\n\n[email body]\n\nBest,\nRanjodh\n:::\n\n[One-line Airtable update confirmation or failure note, including Engagement Status / Outreach Step / Meeting Sync established / Cadence Frequency changes if applied.]\n````'''
+              ),
+              (
+                  '- “Only email” → output only the Customer Follow-Up Email.',
+                  '- “Only email” → output only the Customer Follow-Up Email as an editable writing block.'
+              ),
+              (
+                  '- The follow-up email is customer-safe, warm, and concise.',
+                  '- The follow-up email is customer-safe, warm, concise, and rendered as an editable writing block.'
+              ),
+          ]
+
+          for old, new in replacements:
+              text = text.replace(old, new)
+
+          if text == original:
+              print('No changes needed; skill already appears patched.')
+          else:
+              p.write_text(text)
+              print('Patched skills/meeting-summarizer.md')
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/meeting-summarizer.md
+          if git diff --cached --quiet; then
+            echo "No skill changes to commit."
+            exit 0
+          fi
+          git commit -m "Update meeting summarizer email editable block rule"
+          git push
