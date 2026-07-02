@@ -18,7 +18,7 @@ Turn meeting notes, transcripts, or rough customer-call context into only the ou
 
 1. A concise CRM-style activity note appended to the **Accounts** table → **Activity notes** field.
 2. A structured **Meeting Notes** record created in the **Activity/Notes** table.
-3. A warm customer-facing follow-up email based on the meeting.
+3. A warm customer-facing follow-up email based on the meeting, delivered as an editable writing block.
 4. Updated **Engagement Status**, **Outreach Step**, **Meeting Sync established**, and **Cadence Frequency** on the Accounts table when the meeting clearly changes account progression or confirms a recurring cadence.
 
 This skill replaces the longer meeting-summary workflow. Do **not** generate the old 11-section meeting summary in the chat. Do **not** generate Slack updates, task records, raw risk tables, internal strategy sections, or a long debrief unless the user explicitly asks for those separately.
@@ -42,10 +42,15 @@ By default, show only these sections in the chat:
 - Notes: [structured meeting notes for the Activity/Notes table]
 
 ### Customer Follow-Up Email
-Subject: [subject]
-
+:::writing{variant="email" id="[unique 5-digit id]" subject="[subject]"}
 [email body]
+:::
 ```
+
+Email output rule:
+- The customer follow-up email must always be rendered in an editable writing block, not a plain markdown code block.
+- Use `variant="email"`, include the subject in writing-block metadata, and use a unique random 5-digit `id`.
+- Do not put `Subject:` inside the email body because the subject belongs in writing-block metadata.
 
 If Airtable is updated successfully, add one short confirmation after the output:
 
@@ -439,6 +444,8 @@ Optional fields:
 
 Always draft a customer-facing follow-up email from the meeting context unless the user says not to.
 
+The email must be output as an editable writing block. Do not put the customer follow-up email in a plain markdown code block. Use `variant="email"`, put the subject in writing-block metadata, and use a unique random 5-digit writing-block `id`.
+
 The email should feel warm, human, and professional. It should make the customer feel heard and clearly reinforce the next steps without sounding robotic.
 
 ## Required Email Elements
@@ -527,16 +534,15 @@ Open Questions / Needs Confirmation
 ```
 
 ### Customer Follow-Up Email
-```text
-Subject: [Subject]
 
+:::writing{variant="email" id="[unique 5-digit id]" subject="[Subject]"}
 Hi [Customer Name],
 
 [email body]
 
 Best,
 Ranjodh
-```
+:::
 
 [One-line Airtable update confirmation or failure note, including Engagement Status / Outreach Step / Meeting Sync established / Cadence Frequency changes if applied.]
 ````
@@ -573,7 +579,7 @@ Respect narrower requests:
 
 - “Only CRM note” → output only the CRM Activity Note. If Airtable update is implied, still update status fields where applicable and add one short confirmation.
 - “Only Airtable note” → output only the Airtable Meeting Notes Record.
-- “Only email” → output only the Customer Follow-Up Email.
+- “Only email” → output only the Customer Follow-Up Email as an editable writing block.
 - “Update Airtable only” → update Airtable and provide one short confirmation, including status changes if applied.
 - “No email” → skip the follow-up email.
 - “Do not update statuses” / “notes only” → do not update Engagement Status or Outreach Step.
@@ -590,7 +596,7 @@ Before finalizing, verify:
 - The Activity/Notes record uses the meeting date, not an unrelated date.
 - The Notes field contains only the approved important sections from the old meeting summary workflow.
 - The Notes field does not contain the CRM note, Slack update, customer email, very short version, or transcript noise.
-- The follow-up email is customer-safe, warm, and concise.
+- The follow-up email is customer-safe, warm, concise, and rendered as an editable writing block.
 - Engagement Status and Outreach Step were updated only when clearly supported.
 - Meeting Sync established and Cadence Frequency were updated only when a recurring cadence/sync was clearly confirmed.
 - The legacy Stage field was not updated unless the user explicitly asked.
