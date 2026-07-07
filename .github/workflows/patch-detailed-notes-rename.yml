@@ -1,0 +1,68 @@
+name: Patch Detailed Notes table rename
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/patch-detailed-notes-rename.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Replace old Airtable table name in skill docs
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          replacements = [
+              ('Activity/Notes', 'Detailed Notes'),
+              ('Activity / Notes', 'Detailed Notes'),
+              ('activity/notes', 'Detailed Notes'),
+              ('activity / notes', 'Detailed Notes'),
+              ('activity/nodes', 'Detailed Notes'),
+              ('Activity/nodes', 'Detailed Notes'),
+          ]
+
+          changed = []
+          for p in Path('.').rglob('*'):
+              if p.is_dir():
+                  continue
+              if '.git' in p.parts:
+                  continue
+              if p.suffix.lower() not in {'.md', '.txt', '.skill'}:
+                  continue
+              text = p.read_text(errors='ignore')
+              new = text
+              for old, repl in replacements:
+                  new = new.replace(old, repl)
+              if new != text:
+                  p.write_text(new)
+                  changed.append(str(p))
+
+          if changed:
+              print('Changed files:')
+              for f in changed:
+                  print(f)
+          else:
+              print('No old Activity/Notes references found.')
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "No skill/schema changes to commit."
+            exit 0
+          fi
+          git commit -m "Rename Airtable notes table references to Detailed Notes"
+          git push
