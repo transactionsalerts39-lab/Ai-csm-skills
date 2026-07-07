@@ -65,7 +65,7 @@ Use this skill when the user says:
 
 Base ID: `app6O8peF5ywLe1GM` (Book of Business Management)
 Accounts table ID: `tblr6UnvfaqfNvwyU`
-Activity/Notes table ID: `tblI5cCnIY63S6pZq`
+Detailed Notes table ID: `tblI5cCnIY63S6pZq`
 Timezone: Asia/Kolkata
 
 ### Accounts Table - Key Fields
@@ -80,7 +80,7 @@ Timezone: Asia/Kolkata
 | Stage | `fldTYypHjPaFcatCi` | multipleSelects | Current account stage / motion signal |
 | Churn Risk | `fldy4GIC8xDuPjS8y` | singleSelect | Risk status |
 
-### Activity/Notes Table - Key Fields
+### Detailed Notes Table - Key Fields
 
 | Field | ID | Type | Purpose |
 |---|---|---|---|
@@ -123,7 +123,7 @@ Week [ISO_WEEK_NUMBER] | [DAY_OF_WEEK], [FULL_DATE] | Monday [START_DATE] - Frid
 
 ---
 
-### Step 2 - Pull Data from Activity/Notes Table
+### Step 2 - Pull Data from Detailed Notes Table
 
 This is the clean structured source. Each row is already a discrete activity entry with its own Date field.
 
@@ -138,7 +138,7 @@ Fields to pull:
 - Date
 - Next Steps
 
-Use the Activity/Notes Date field as the primary date source. Do not use Last Modified Date for this table.
+Use the Detailed Notes Date field as the primary date source. Do not use Last Modified Date for this table.
 
 ---
 
@@ -157,7 +157,7 @@ Fields to pull:
 - Stage
 - Churn Risk
 
-If the Activity/Notes table identifies an account whose Accounts record was not fetched by Last Activity Date, fetch that Accounts record too so ACV, Renewal Date, Stage, and Churn Risk can be used.
+If the Detailed Notes table identifies an account whose Accounts record was not fetched by Last Activity Date, fetch that Accounts record too so ACV, Renewal Date, Stage, and Churn Risk can be used.
 
 ---
 
@@ -192,7 +192,7 @@ An account may appear in both tables. Merge all relevant weekly evidence before 
 
 For each account, combine:
 
-- Activity/Notes Title, Notes, Date, Activity Type, and Next Steps
+- Detailed Notes Title, Notes, Date, Activity Type, and Next Steps
 - Accounts Activity notes entries for the target week
 - Account metadata: ACV, Renewal Date, Stage, Churn Risk
 

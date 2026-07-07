@@ -65,7 +65,7 @@ Primary table:
 - Table ID: `tblr6UnvfaqfNvwyU`
 
 Secondary table:
-- **Activity/Notes**
+- **Detailed Notes**
 - Table ID: `tblI5cCnIY63S6pZq`
 
 ### Accounts Table - Key Fields
@@ -81,7 +81,7 @@ Secondary table:
 | Churn Risk | `fldy4GIC8xDuPjS8y` | singleSelect | Risk signal; field may appear as Chrun riks |
 | Task status | `fldaYegYsT0eA3NAK` | singleSelect | Open / closed task signal |
 
-### Activity/Notes Table - Supporting Fields
+### Detailed Notes Table - Supporting Fields
 
 | Field | Field ID | Type | How to Use |
 |---|---|---|---|

@@ -4,7 +4,7 @@ Base: Book of Business Management
 Base ID: `app6O8peF5ywLe1GM`
 
 Accounts table: `tblr6UnvfaqfNvwyU`  
-Activity/Notes table: `tblI5cCnIY63S6pZq`
+Detailed Notes table: `tblI5cCnIY63S6pZq`
 
 ## Key Account Fields
 

@@ -17,13 +17,13 @@ description: >
 Turn meeting notes, transcripts, or rough customer-call context into only the outputs Ranjodh needs for account follow-up:
 
 1. A concise CRM-style activity note appended to the **Accounts** table → **Activity notes** field.
-2. A structured **Meeting Notes** record created in the **Activity/Notes** table.
+2. A structured **Meeting Notes** record created in the **Detailed Notes** table.
 3. A warm customer-facing follow-up email based on the meeting, delivered as an editable writing block.
 4. Updated **Engagement Status**, **Outreach Step**, **Meeting Sync established**, and **Cadence Frequency** on the Accounts table when the meeting clearly changes account progression or confirms a recurring cadence.
 
 This skill replaces the longer meeting-summary workflow. Do **not** generate the old 11-section meeting summary in the chat. Do **not** generate Slack updates, task records, raw risk tables, internal strategy sections, or a long debrief unless the user explicitly asks for those separately.
 
-The only place where selected meeting-summary sections should appear is inside the **Activity/Notes** table → **Notes** field, because that field needs the important meeting context stored cleanly.
+The only place where selected meeting-summary sections should appear is inside the **Detailed Notes** table → **Notes** field, because that field needs the important meeting context stored cleanly.
 
 ---
 
@@ -39,7 +39,7 @@ By default, show only these sections in the chat:
 - Account: [Account Name]
 - Activity Type: Meeting Notes
 - Date: [Meeting Date]
-- Notes: [structured meeting notes for the Activity/Notes table]
+- Notes: [structured meeting notes for the Detailed Notes table]
 
 ### Customer Follow-Up Email
 :::writing{variant="email" id="[unique 5-digit id]" subject="[subject]"}
@@ -62,9 +62,9 @@ If Airtable cannot be updated, say why in one sentence and still provide the cop
 
 ---
 
-## Sections to Store Inside the Activity/Notes → Notes Field
+## Sections to Store Inside the Detailed Notes → Notes Field
 
-Use only the important sections from the prior 11-section meeting-summary workflow. These sections should be stored inside the **Notes** field of the Activity/Notes record.
+Use only the important sections from the prior 11-section meeting-summary workflow. These sections should be stored inside the **Notes** field of the Detailed Notes record.
 
 Include these sections:
 
@@ -93,7 +93,7 @@ Include these sections:
 7. **Open Questions / Needs Confirmation**
    - Include only if there are unresolved items, assumptions, or details that need to be confirmed.
 
-Do **not** include these old sections inside the Activity/Notes → Notes field:
+Do **not** include these old sections inside the Detailed Notes → Notes field:
 
 - Salesforce / CRM Note
 - Slack update to internal team
@@ -155,9 +155,9 @@ Use this table to append the CRM activity note and update account progression fi
 | Cadence Frequency | `flddcR78KacwfLyk5` | Confirmed frequency of an established customer cadence. |
 | Stage | `fldTYypHjPaFcatCi` | Legacy fallback only; do not update unless explicitly asked |
 
-## Activity/Notes Table
+## Detailed Notes Table
 
-- **Table:** Activity/Notes
+- **Table:** Detailed Notes
 - **Table ID:** `tblI5cCnIY63S6pZq`
 
 Use this table to create one structured Meeting Notes record.
@@ -172,7 +172,7 @@ Use this table to create one structured Meeting Notes record.
 | Next Steps | `flduD4nsj6ZkEXmLZ` | Optional; only populate when next steps are clearly stated and useful |
 
 Important:
-- The user specifically wants the important meeting sections stored in the Activity/Notes table.
+- The user specifically wants the important meeting sections stored in the Detailed Notes table.
 - Do not create separate task rows by default.
 - Engagement Status and Outreach Step are the primary account progression fields.
 - Meeting Sync established and Cadence Frequency are cadence-detail fields. Update them only when a recurring cadence/sync is clearly confirmed or needs hygiene review.
@@ -378,9 +378,9 @@ Do not create separate task records.
 
 ---
 
-## Step 4 — Create the Activity/Notes Meeting Notes Record
+## Step 4 — Create the Detailed Notes Meeting Notes Record
 
-Create one new record in the Activity/Notes table.
+Create one new record in the Detailed Notes table.
 
 Required values:
 
@@ -592,8 +592,8 @@ Before finalizing, verify:
 
 - The account name is identified or the user has been asked for it.
 - The CRM note is short, factual, and suitable for the Accounts table Activity notes field.
-- The Activity/Notes record uses Activity Type = `Meeting Notes`.
-- The Activity/Notes record uses the meeting date, not an unrelated date.
+- The Detailed Notes record uses Activity Type = `Meeting Notes`.
+- The Detailed Notes record uses the meeting date, not an unrelated date.
 - The Notes field contains only the approved important sections from the old meeting summary workflow.
 - The Notes field does not contain the CRM note, Slack update, customer email, very short version, or transcript noise.
 - The follow-up email is customer-safe, warm, concise, and rendered as an editable writing block.
@@ -635,7 +635,7 @@ If the support issue is active or unresolved, update Engagement Status to `Suppo
 
 ## Tasks Detected
 
-Do not create task records by default. Include next steps inside the CRM note, Activity/Notes Notes field, and customer follow-up email only.
+Do not create task records by default. Include next steps inside the CRM note, Detailed Notes Notes field, and customer follow-up email only.
 
 ## Meeting Did Not Happen
 

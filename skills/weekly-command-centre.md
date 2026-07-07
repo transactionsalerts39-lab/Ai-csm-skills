@@ -58,14 +58,14 @@ Primary table:
 - Table ID: `tblr6UnvfaqfNvwyU`
 
 Secondary table:
-- **Activity/Notes**
+- **Detailed Notes**
 - Table ID: `tblI5cCnIY63S6pZq`
 
 Important:
 - The **Accounts** table is the main working table.
 - The user primarily updates this table, especially the **Activity notes** field.
 - Treat **Activity notes**, **Engagement Status**, and **Outreach Step** as the richest sources for current account context.
-- The **Activity/Notes** table is useful supporting context, especially for discrete notes and linked activities, but do not rely on it alone.
+- The **Detailed Notes** table is useful supporting context, especially for discrete notes and linked activities, but do not rely on it alone.
 
 ---
 
@@ -150,9 +150,9 @@ Use only these exact values:
 
 ---
 
-# Activity/Notes Table — Supporting Fields
+# Detailed Notes Table — Supporting Fields
 
-Use these fields from the Activity/Notes table when available:
+Use these fields from the Detailed Notes table when available:
 
 | Field | Field ID | Type | How to Use |
 |---|---|---|---|
@@ -418,7 +418,7 @@ Pull relevant account activity from Airtable for the target week or requested pe
 
 Use:
 1. Accounts table first
-2. Activity/Notes table second
+2. Detailed Notes table second
 
 From the Accounts table, retrieve:
 - Account Name
@@ -437,7 +437,7 @@ From the Accounts table, retrieve:
 - Instance Link if useful
 - Current Active CSM if filtering to Ranjodh
 
-From the Activity/Notes table, retrieve:
+From the Detailed Notes table, retrieve:
 - Notes
 - Title
 - Account

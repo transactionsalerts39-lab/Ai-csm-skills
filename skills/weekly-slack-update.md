@@ -74,9 +74,9 @@ Use these fields:
 | Last Activity Date | `fld2jD1HJm9RRwNBW` | Supporting freshness signal, not the same as customer activity |
 | Churn Risk | `fldy4GIC8xDuPjS8y` | Risk status; field may appear as “Chrun riks” in Airtable |
 
-### Activity/Notes Table
+### Detailed Notes Table
 
-- **Table:** Activity/Notes
+- **Table:** Detailed Notes
 - **Table ID:** `tblI5cCnIY63S6pZq`
 
 Use these fields as supporting context:
@@ -133,7 +133,7 @@ Fields to retrieve:
 
 ### Step 2 — Pull Supporting Activity
 
-For each account, search the Activity/Notes table for matching linked or mentioned activity.
+For each account, search the Detailed Notes table for matching linked or mentioned activity.
 
 Retrieve:
 - Notes

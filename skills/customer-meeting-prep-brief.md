@@ -62,7 +62,7 @@ Use these fields:
 - Task status: `fldaYegYsT0eA3NAK`
 
 Secondary table:
-- Activity/Notes
+- Detailed Notes
 - Table ID: `tblI5cCnIY63S6pZq`
 
 Use these fields:
@@ -105,13 +105,13 @@ Pull from the Accounts table first:
 - Last Activity Date
 - Task status
 
-Then pull from Activity/Notes:
+Then pull from Detailed Notes:
 - The 3–5 most recent meeting notes or activity records
 - Any records with Activity Type = Meeting Notes
 - Any records with clear Next Steps
 - Any records that mention blockers, renewal, risk, support, follow-up, or customer asks
 
-The Accounts table Activity notes field is the primary source. Activity/Notes is supporting context.
+The Accounts table Activity notes field is the primary source. Detailed Notes is supporting context.
 
 ---
 
@@ -207,7 +207,7 @@ If there is a lot of history, summarize instead of listing everything.
 
 The Airtable Last Activity Date is a record update signal, not always a true customer touch.
 
-Use the Activity notes and Activity/Notes dates to determine the last meaningful customer activity when possible.
+Use the Activity notes and Detailed Notes dates to determine the last meaningful customer activity when possible.
 
 ### Meeting Notes
 

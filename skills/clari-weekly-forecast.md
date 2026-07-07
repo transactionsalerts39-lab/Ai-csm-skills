@@ -284,7 +284,7 @@ Pull:
 - Churn Risk (`fldy4GIC8xDuPjS8y`)
 - Last Activity Date (`fld2jD1HJm9RRwNBW`)
 
-### Activity/Notes Table
+### Detailed Notes Table
 
 - Table ID: `tblI5cCnIY63S6pZq`
 

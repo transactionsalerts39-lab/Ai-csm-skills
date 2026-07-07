@@ -22,7 +22,7 @@ The output is always delivered via `message_compose_v1` as inline copyable text.
 
 - **Base ID:** `app6O8peF5ywLe1GM` (Book of Business Management)
 - **Accounts Table ID:** `tblr6UnvfaqfNvwyU`
-- **Activity/Notes Table ID:** `tblI5cCnIY63S6pZq`
+- **Detailed Notes Table ID:** `tblI5cCnIY63S6pZq`
 - **Timezone:** Asia/Kolkata (IST, UTC+5:30)
 
 ---
@@ -41,7 +41,7 @@ The output is always delivered via `message_compose_v1` as inline copyable text.
 
 ---
 
-## Activity/Notes Table — Fields to Pull
+## Detailed Notes Table — Fields to Pull
 
 | Field | ID | Purpose |
 |---|---|---|
@@ -64,7 +64,7 @@ The output is always delivered via `message_compose_v1` as inline copyable text.
 
 ---
 
-### Step 2 — Pull from Activity/Notes Table
+### Step 2 — Pull from Detailed Notes Table
 
 Use `list_records_for_table` on `tblI5cCnIY63S6pZq`.
 
@@ -114,7 +114,7 @@ The `Activity notes` field is a free-text running log with multiple weeks of his
 An account may appear in both tables. Merge all evidence before evaluating.
 
 For each account:
-- Combine Activity/Notes rows + parsed Accounts Activity notes entries
+- Combine Detailed Notes rows + parsed Accounts Activity notes entries
 - Deduplicate overlapping content
 - Keep Next Steps when present — they signal forward momentum
 - Prioritize substantive updates over administrative noise
@@ -254,7 +254,7 @@ Omit the Renewal Radar section entirely.
 **Next Steps field is empty:**
 Do not treat absence of Next Steps as a negative signal. Many activities are valid without it. Use the Notes and Title to assess momentum instead.
 
-**Account appears only in Accounts table, not Activity/Notes:**
+**Account appears only in Accounts table, not Detailed Notes:**
 Still include it if the parsed inline entry from Activity notes is substantive enough to qualify.
 
 **Ambiguous inline date in Activity notes:**

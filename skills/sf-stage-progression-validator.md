@@ -166,7 +166,7 @@ If the displayed row or returned content does not match the requested account:
 
 ### 4c. Pull recent activity and notes
 
-Search the Activity/Notes table (`tblI5cCnIY63S6pZq`) for records linked to or mentioning the account.
+Search the Detailed Notes table (`tblI5cCnIY63S6pZq`) for records linked to or mentioning the account.
 
 Retrieve:
 - Title (`fldbf738tn5U18z7D`)
@@ -177,7 +177,7 @@ Retrieve:
 
 Focus on the 5 most recent relevant entries when possible.
 
-If no Activity/Notes records are found, proceed with the Accounts table Activity Notes and say that no separate Activity/Notes records were found.
+If no Detailed Notes records are found, proceed with the Accounts table Activity Notes and say that no separate Detailed Notes records were found.
 
 ### 4d. Synthesize Airtable context
 
