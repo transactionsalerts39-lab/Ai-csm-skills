@@ -8,9 +8,9 @@ description: >
   or a weekly command centre based on Airtable. This version uses Engagement Status and
   Outreach Step as the primary account progression fields, enforces the Assigned / Current Active CSM
   filter so only accounts assigned to Ranjodh are included by default, includes a rolling renewal
-  focus window covering the current quarter, next quarter, and first half of the following
-  quarter, and surfaces cadence hygiene issues where a cadence is active but Cadence Frequency
-  is missing or inconsistent.
+  focus window covering today through the current quarter, next quarter, and first half of the following
+  quarter, and excludes past renewal dates by default. It also surfaces cadence hygiene issues where
+  a cadence is active but Cadence Frequency is missing or inconsistent.
 ---
 
 # Weekly Account Task Catch-Up / Weekly Command Centre — Engagement Status Enabled
@@ -24,7 +24,7 @@ This is not a manager recap and not a highlights/lowlights report. The goal is t
 - What needs attention this week
 - Which accounts are at risk of being missed
 - Which renewal/deal items need action
-- Which renewals fall inside the focus window: current quarter, next quarter, and first half of the following quarter
+- Which future renewals fall inside the focus window: today through the current quarter, next quarter, and first half of the following quarter
 - Which customers are waiting on the CSM
 - Which accounts have gone stale or have not been meaningfully touched
 - Which accounts need Engagement Status or Outreach Step cleanup
@@ -208,11 +208,13 @@ The renewal focus window is not the same as the weekly activity date range.
 
 Unless the user specifies otherwise, include renewing accounts from:
 
-1. The current fiscal quarter
+1. Today through the end of the current fiscal quarter
 2. The next fiscal quarter
 3. The first half of the following fiscal quarter
 
-Use the current date in Asia/Kolkata to determine the current quarter.
+Use the current date in Asia/Kolkata to determine the current quarter and the forward-looking start date.
+
+Past renewal dates are excluded by default. If Renewal Date is earlier than today in Asia/Kolkata, do not include the account in the Renewal Focus Window, even if the date is inside the current fiscal quarter.
 
 ## Fiscal quarter mapping
 
@@ -232,10 +234,13 @@ Unless the user specifies otherwise, filter renewal focus accounts to:
 
 - Assigned / Current Active CSM = `Ranjodh`
 - Renewal Date is within the renewal focus window
-- Account has not already renewed, churned, or been fully offboarded unless action is still required
+- Renewal Date is today or in the future; exclude Renewal Date earlier than today
+- Account has not already renewed, churned, or been fully offboarded unless the user explicitly asks to include past/closed renewals
 
 Sort by Renewal Date ascending.
-Do not use top 10 for the full year by default. The renewal section should be based on the rolling quarter window.
+Do not use top 10 for the full year by default. The renewal section should be based on the forward-looking rolling quarter window.
+
+Example: if today is July 9, 2026, a Renewal Date of July 8, 2026 is excluded by default, even though July 8 is inside fiscal Q2. A Renewal Date of July 9, 2026 or later can be included if it otherwise matches the focus window and assignment filters.
 
 ---
 
@@ -407,7 +412,7 @@ Use Priority 1 when any of the following are true:
 - Engagement Status = `Support / blocker active`
 - Engagement Status = `Churn / offboarding` and action remains
 - Churn Risk is `Confirmed churn` or `Yellow`
-- Renewal is upcoming or within 120 days and engagement is weak, blocked, or stale
+- Renewal is upcoming from today forward or within the next 120 days and engagement is weak, blocked, or stale
 - Customer is waiting on the CSM
 - Support blocker exists
 - Executive / CMO / decision-maker involvement exists
@@ -450,15 +455,15 @@ Do not force every account into a priority. Omit accounts with no meaningful tas
 
 ## Renewal priority overlay
 
-Renewal proximity should boost priority when there is an open task, weak engagement, risk, or no clear next step.
+Renewal proximity should boost priority only for future or same-day renewals. Past renewal dates must not create renewal priority by default, even if they are inside the current fiscal quarter. Renewal proximity should boost priority when there is an open task, weak engagement, risk, or no clear next step.
 
 Move a renewal-focus account to Priority 1 if any of these are true:
-- Renewal is inside the current fiscal quarter and any task is open.
-- Renewal is within 60 days and any task is open.
-- Renewal is within 120 days and Churn Risk is `Yellow` or `Confirmed churn`.
-- Renewal is within 120 days and Engagement Status is `Support / blocker active`, `Customer replied - scheduling`, `No response - follow-up needed`, `Multithread required`, or `Connected - no cadence`.
-- Renewal is within 120 days and no clear next step is captured.
-- Renewal is inside the current or next fiscal quarter and there is no meaningful recent activity.
+- Renewal is today or later in the current fiscal quarter and any task is open.
+- Renewal is today or later and within 60 days, and any task is open.
+- Renewal is today or later and within 120 days, and Churn Risk is `Yellow` or `Confirmed churn`.
+- Renewal is today or later and within 120 days, and Engagement Status is `Support / blocker active`, `Customer replied - scheduling`, `No response - follow-up needed`, `Multithread required`, or `Connected - no cadence`.
+- Renewal is today or later and within 120 days, and no clear next step is captured.
+- Renewal is today or later inside the current or next fiscal quarter and there is no meaningful recent activity.
 
 Move a renewal-focus account to Priority 2 if it is inside the renewal focus window and has a pending follow-up, missing cadence, stale note, unclear next step, or weak engagement signal, but does not meet Priority 1.
 
@@ -477,7 +482,8 @@ Only evaluate accounts assigned to Ranjodh by default.
 Check Engagement Status, Outreach Step, Last Activity Date, latest parsed date inside Activity notes, Renewal Date, Churn Risk, legacy Stage, Activity notes, and whether there has been no meaningful update in 14, 21, or 30 days.
 
 Use this logic:
-- If renewal is within 120 days and there is no recent meaningful activity → urgent.
+- If renewal is today or later and within 120 days, and there is no recent meaningful activity → urgent.
+- If Renewal Date is earlier than today, do not treat it as a stale-renewal urgency driver by default.
 - If churn risk is `Confirmed churn` or `Yellow` and there is no recent meaningful activity → urgent.
 - If Engagement Status is `Intro sent - waiting` and no customer response is found → follow-up needed.
 - If Engagement Status is `No response - follow-up needed` and Outreach Step is `FU 3` or `FU 4` → consider multithread or park.
@@ -499,10 +505,13 @@ This section must appear before **Do First This Week** in the final output.
 
 Unless the user specifies otherwise, include accounts where:
 - Assigned / Current Active CSM = `Ranjodh`
-- Renewal Date falls inside current fiscal quarter, next fiscal quarter, and first half of the following fiscal quarter
+- Renewal Date is today or in the future
+- Renewal Date falls between today and the end of the current fiscal quarter, inside the next fiscal quarter, or inside the first half of the following fiscal quarter
+
+Do not include accounts with Renewal Date earlier than today in the Renewal Focus Window. A past renewal date from earlier in the current fiscal quarter should be excluded by default.
 
 Sort all renewal-focus accounts by Renewal Date ascending.
-Group or label each account by `Current Quarter`, `Next Quarter`, or `First Half Following Quarter`.
+Group or label each account by `Current Quarter`, `Next Quarter`, or `First Half Following Quarter`. For current-quarter accounts, include only dates from today through quarter-end.
 
 For each renewal-focus account, identify the most important pending task or next move using this order:
 1. Customer is waiting on Ranjodh
@@ -518,7 +527,7 @@ If no task is found, write:
 `No clear pending task captured — confirm renewal plan / next step.`
 
 Use these urgency labels:
-- `Immediate` = renewal within 30 days
+- `Immediate` = renewal today through the next 30 days
 - `Near-term` = renewal within 31–60 days
 - `Upcoming` = renewal within 61–120 days
 - `Later in window` = renewal more than 120 days away but still inside the renewal focus window
