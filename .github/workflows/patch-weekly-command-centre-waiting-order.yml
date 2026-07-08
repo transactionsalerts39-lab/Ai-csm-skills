@@ -1,5 +1,7 @@
 name: Patch weekly command centre waiting order
 
+# Trigger rerun after workflow exists on main.
+
 on:
   push:
     branches:
@@ -60,6 +62,8 @@ Customers Waiting on You
 '''
           if anchor in text:
               text = text.replace(anchor, insert, 1)
+          elif 'Customers Waiting on You\n| Account | Status | Waiting for | Timing |' in text.split('Status Updates Applied')[0]:
+              print('Customers Waiting on You already appears near the top.')
           else:
               raise SystemExit('Could not find Interesting Observations anchor')
 
@@ -74,10 +78,10 @@ Customers Waiting on You
           )
 
           if text == original:
-              raise SystemExit('No changes made; patch anchors may have changed.')
-
-          p.write_text(text)
-          print('Patched weekly-command-centre.md output order')
+              print('No changes needed; output order already patched.')
+          else:
+              p.write_text(text)
+              print('Patched weekly-command-centre.md output order')
           PY
 
       - name: Commit patch
