@@ -1,66 +1,53 @@
 ---
 name: weekly-account-task-catch-up
 description: >
-  Pull Airtable account activity, account metadata, Engagement Status, and Outreach Step
-  to create a focused weekly command center for accounts that need attention. Use this
-  skill when the user asks for tasks to focus on this week, account catch-up, stale
-  accounts, renewal/deal focus, customer follow-ups, accounts not touched in a while,
-  or a weekly command centre based on Airtable. This version uses Engagement Status and
-  Outreach Step as the primary account progression fields, enforces the Assigned / Current Active CSM
-  filter so only accounts assigned to Ranjodh are included by default, includes a rolling renewal
-  focus window covering today through the current quarter, next quarter, and first half of the following
-  quarter, and excludes past renewal dates by default. It also surfaces cadence hygiene issues where
-  a cadence is active but Cadence Frequency is missing or inconsistent.
+  Pull Airtable account activity, account metadata, Engagement Status, Outreach Step,
+  cadence fields, renewal dates, risk signals, and open follow-ups to create a focused
+  weekly command centre for accounts that need attention. Use this skill when the user
+  asks for weekly tasks, accounts to focus on, stale accounts, renewal focus, customer
+  follow-ups, customers waiting on Ranjodh, or a weekly command centre based on Airtable.
+  By default, only include accounts assigned to Ranjodh. The renewal focus window is
+  forward-looking from today and excludes past renewal dates by default. Customers Waiting
+  on You must appear near the top because these are important follow-ups that should not
+  be missed.
 ---
 
-# Weekly Account Task Catch-Up / Weekly Command Centre — Engagement Status Enabled
+# Weekly Account Task Catch-Up / Weekly Command Centre
 
 ## Purpose
 
-Create a simple, action-focused weekly command center from Airtable.
+Create a compact, action-focused weekly command centre from Airtable.
 
-This is not a manager recap and not a highlights/lowlights report. The goal is to help the CSM quickly understand:
+This is not a manager recap, highlights/lowlights report, raw Airtable dump, or full account dossier. The goal is to help Ranjodh quickly see:
 
-- What needs attention this week
-- Which accounts are at risk of being missed
-- Which renewal/deal items need action
-- Which future renewals fall inside the focus window: today through the current quarter, next quarter, and first half of the following quarter
-- Which customers are waiting on the CSM
-- Which accounts have gone stale or have not been meaningfully touched
-- Which accounts need Engagement Status or Outreach Step cleanup
-- Which cadence-active accounts are missing cadence frequency or have inconsistent cadence data
+- customers waiting on him
+- accounts needing action this week
+- future renewals inside the rolling focus window
+- stale or risky accounts
+- support blockers
+- cadence hygiene issues
+- status hygiene issues
+- open follow-ups and next moves
 
-Use this skill when the user asks for:
-- tasks for the week
-- weekly command centre / weekly command center
-- accounts to focus on
-- deal focus areas
-- stale accounts
-- customer follow-ups
-- accounts they have not touched in a while
-- a weekly account catch-up from Airtable
-- what needs attention from last week
-- what to work on this week
-- status hygiene for account outreach
+The output should be easy to scan in about 60 seconds.
 
 ---
 
 # Mandatory Assignment Filter
 
-By default, this skill must only include Airtable Accounts records assigned to Ranjodh.
+By default, include only Airtable Accounts records assigned to Ranjodh.
 
-Apply this filter before any other ranking, renewal, stale-account, cadence-hygiene, or customer-waiting logic:
+Apply this filter before any ranking, renewal, stale-account, cadence-hygiene, customer-waiting, or status-hygiene logic:
 
 - Assigned / Current Active CSM field: `fldTQWeUcqj5HQoAH`
-- Required value: `Ranjodh`
+- Required default value: `Ranjodh`
 
 Rules:
 
-- Pull and include only Accounts records where Assigned / Current Active CSM = `Ranjodh`.
+- Pull and include only Accounts where Assigned / Current Active CSM = `Ranjodh`.
 - Do not include accounts assigned to another CSM.
-- Do not include accounts where Assigned / Current Active CSM is blank.
-- Do not include unassigned accounts.
-- Do not include non-Ranjodh accounts in Renewal Focus Window, Do First This Week, Priority sections, Stale / Risk Accounts, Customers Waiting on You, Status Hygiene, or Cadence Hygiene.
+- Do not include blank or unassigned accounts.
+- Do not include non-Ranjodh accounts in Renewal Focus Window, Customers Waiting on You, Do First This Week, Priority sections, Stale / Risk Accounts, Status Hygiene, or Cadence Hygiene.
 - When using Detailed Notes, use notes only for accounts that passed the Accounts-table assignment filter.
 - If the user explicitly asks for another assignee, use that assignee instead.
 - If the user explicitly asks for all accounts, state that the default Ranjodh assignment filter is being overridden for that run.
@@ -72,58 +59,60 @@ Rules:
 Use Airtable as the primary source.
 
 Base:
-- **Book of Business Management**
+- Book of Business Management
 - Base ID: `app6O8peF5ywLe1GM`
 
 Primary table:
-- **Accounts**
+- Accounts
 - Table ID: `tblr6UnvfaqfNvwyU`
 
 Secondary table:
-- **Detailed Notes**
+- Detailed Notes
 - Table ID: `tblI5cCnIY63S6pZq`
 
 Important:
-- The **Accounts** table is the main working table.
-- The user primarily updates this table, especially the **Activity notes** field.
-- Treat **Activity notes**, **Engagement Status**, and **Outreach Step** as the richest sources for current account context.
-- The **Detailed Notes** table is useful supporting context, especially for discrete notes and linked activities, but do not rely on it alone.
-- The mandatory Assigned / Current Active CSM filter must be applied from the Accounts table before Detailed Notes are merged.
 
----
+- Accounts is the main working table.
+- The user primarily updates the Accounts table, especially `Activity notes`.
+- Treat `Activity notes`, `Engagement Status`, and `Outreach Step` as the richest account-context sources.
+- Detailed Notes is supporting context for discrete activities, meeting notes, and linked notes.
+- Detailed Notes must not broaden scope beyond accounts assigned to Ranjodh unless the user explicitly overrides the assignment filter.
 
-# Accounts Table — Key Fields
+## Accounts Table — Key Fields
 
-Use these fields from the Accounts table:
-
-| Field | Field ID | Type | How to Use |
+| Field | Field ID | Type | Use |
 |---|---|---|---|
 | Account Name | `fldOSLvopNOX6ae3Z` | singleLineText | Account name |
 | Engagement Status | `fldyrxDGOzWF3c7wm` | singleSelect | Primary account relationship / engagement state |
-| Outreach Step | `fldhX3nTqX4a2eKt8` | singleSelect | Primary outreach/follow-up sequence state |
-| Meeting Sync established | `fld8kFpch7M4wGfpQ` | singleSelect | Indicates that a recurring customer sync/cadence has been confirmed. Use `yes` only when confirmed. |
-| Cadence Frequency | `flddcR78KacwfLyk5` | singleSelect | Confirmed frequency of an established customer cadence. |
-| Activity Log | `fldzKlsKjWYFGX4Q8` | linked records | Linked activity records; use as supporting detail |
-| Activity notes | `flddz3lqUmEhLhmN5` | multilineText | Primary running notes field; parse dated notes and embedded task lists |
-| Stage | `fldTYypHjPaFcatCi` | multipleSelects | Legacy fallback only; do not treat as primary |
-| ACV | `fldjieKzPumeF6afD` | currency | Use to understand account value and priority |
-| Renewal Date | `fldPmw5pHDNDgZYgA` | date | Use for renewal urgency |
-| Last Activity Date | `fld2jD1HJm9RRwNBW` | lastModifiedTime | Use as an Airtable touch signal, but not proof of customer activity |
-| Churn Risk | `fldy4GIC8xDuPjS8y` | singleSelect | Field is named “Chrun riks” in Airtable; output it as Churn Risk |
-| Task status | `fldaYegYsT0eA3NAK` | singleSelect | Values include Open, yet to start, closed |
-| Instance Link | `fldhc7LZLPB3b14fU` | url | Optional useful reference for account work |
-| Assigned / Current Active CSM | `fldTQWeUcqj5HQoAH` | singleSelect | Mandatory assignment filter. Default required value is `Ranjodh`. |
+| Outreach Step | `fldhX3nTqX4a2eKt8` | singleSelect | Primary outreach/follow-up step |
+| Meeting Sync established | `fld8kFpch7M4wGfpQ` | singleSelect | Use `yes` only when recurring customer cadence is confirmed |
+| Cadence Frequency | `flddcR78KacwfLyk5` | singleSelect | Confirmed cadence frequency |
+| Activity Log | `fldzKlsKjWYFGX4Q8` | linked records | Supporting linked activity records |
+| Activity notes | `flddz3lqUmEhLhmN5` | multilineText | Primary running account notes field |
+| Stage | `fldTYypHjPaFcatCi` | multipleSelects | Legacy fallback only |
+| ACV | `fldjieKzPumeF6afD` | currency | Prioritization and renewal context |
+| Renewal Date | `fldPmw5pHDNDgZYgA` | date | Renewal urgency and focus window |
+| Last Activity Date | `fld2jD1HJm9RRwNBW` | lastModifiedTime | Airtable record-touch signal, not proof of customer activity |
+| Churn Risk | `fldy4GIC8xDuPjS8y` | singleSelect | Field appears as “Chrun riks” in Airtable; output as Churn Risk |
+| Task status | `fldaYegYsT0eA3NAK` | singleSelect | Open / yet to start / closed support signal |
+| Instance Link | `fldhc7LZLPB3b14fU` | url | Optional useful link |
+| Assigned / Current Active CSM | `fldTQWeUcqj5HQoAH` | singleSelect | Mandatory assignment filter |
 
-## Primary status fields
+## Detailed Notes Table — Supporting Fields
 
-Use **Engagement Status** and **Outreach Step** as the primary fields for weekly prioritization and progression.
-Use **Meeting Sync established** and **Cadence Frequency** as cadence-detail fields.
-Use **Stage** only as fallback context or for legacy migration signals.
-Do not update the old Stage field unless the user explicitly asks.
+| Field | Field ID | Type | Use |
+|---|---|---|---|
+| Notes | `fldcfsEsMgFHoB8VH` | multilineText | Detailed activity note |
+| Title | `fldbf738tn5U18z7D` | singleLineText | Activity title / task heading |
+| Account | `fldkJTerhbTfcObzR` | linked account | Linked account |
+| Activity Type | `fldfi0aH7CncdNtb9` | singleSelect | Meeting Notes, Account Update, Support ticket, etc. |
+| Date | `fld5Dd0gO8vHadVjl` | date | Primary date field for structured activity records |
+| Next Steps | `flduD4nsj6ZkEXmLZ` | multilineText | Strong source for open next actions |
+| Last activity date | `fldYG5croDSgYQmNN` | lastModifiedTime | Supporting update signal |
 
 ---
 
-# Engagement Status and Outreach Step Options
+# Allowed Workflow Values
 
 ## Engagement Status values
 
@@ -171,50 +160,39 @@ Use only these exact values:
 
 ---
 
-# Detailed Notes Table — Supporting Fields
-
-Use these fields from the Detailed Notes table when available:
-
-| Field | Field ID | Type | How to Use |
-|---|---|---|---|
-| Notes | `fldcfsEsMgFHoB8VH` | multilineText | Detailed activity note |
-| Title | `fldbf738tn5U18z7D` | singleLineText | Activity title / task heading |
-| Account | `fldkJTerhbTfcObzR` | linked account | Linked account |
-| Activity Type | `fldfi0aH7CncdNtb9` | singleSelect | Activity type |
-| Date | `fld5Dd0gO8vHadVjl` | date | Primary date field for structured activity records |
-| Next Steps | `flduD4nsj6ZkEXmLZ` | multilineText | Strong source for tasks |
-| Last activity date | `fldYG5croDSgYQmNN` | lastModifiedTime | Supporting update signal |
-
-Detailed Notes must not broaden scope. Only merge notes linked to Accounts records assigned to Ranjodh unless the user explicitly overrides the assignment filter.
-
----
-
 # Date Range Rules
 
 If the user specifies a date range, use that range.
+
 If the user says “last week,” use the previous Monday–Friday work week.
+
 If the user does not specify a date range, default to the most recent Monday–Friday work week.
-When pulling stale accounts, also use account metadata beyond the target week because stale-account detection depends on older activity.
-Use Asia/Kolkata as the default timezone for interpreting “today,” “this week,” and similar relative dates.
+
+Use Asia/Kolkata for interpreting “today,” “this week,” “last week,” and other relative dates.
+
+When checking stale accounts or renewal focus, also use account metadata beyond the target week because stale-account detection and renewal focus depend on older account state.
 
 ---
 
 # Renewal Focus Window Rules
 
-Every weekly command centre must include a renewal focus window.
+Every weekly command centre must include a Renewal Focus Window unless the user explicitly asks to skip renewals.
+
 The renewal focus window is not the same as the weekly activity date range.
 
 ## Default renewal focus window
 
-Unless the user specifies otherwise, include renewing accounts from:
+Unless the user specifies otherwise, include future/same-day renewals from:
 
 1. Today through the end of the current fiscal quarter
 2. The next fiscal quarter
 3. The first half of the following fiscal quarter
 
-Use the current date in Asia/Kolkata to determine the current quarter and the forward-looking start date.
+Use the current date in Asia/Kolkata to determine the current quarter and forward-looking start date.
 
 Past renewal dates are excluded by default. If Renewal Date is earlier than today in Asia/Kolkata, do not include the account in the Renewal Focus Window, even if the date is inside the current fiscal quarter.
+
+Example: if today is July 9, 2026, a Renewal Date of July 8, 2026 is excluded by default, even though July 8 is inside fiscal Q2. A Renewal Date of July 9, 2026 or later can be included if it otherwise matches the focus window and assignment filters.
 
 ## Fiscal quarter mapping
 
@@ -226,325 +204,89 @@ Use Ranjodh’s fiscal quarter definition:
 - Q4 = November 1 – January 31
 
 If the renewal window crosses a calendar year, include those dates.
+
 For the third quarter in the rolling window, include only the first half of that quarter. Use the first 45 days as the practical default.
 
 ## Renewal focus filters
 
-Unless the user specifies otherwise, filter renewal focus accounts to:
+Unless the user specifies otherwise, include accounts where:
 
 - Assigned / Current Active CSM = `Ranjodh`
-- Renewal Date is within the renewal focus window
-- Renewal Date is today or in the future; exclude Renewal Date earlier than today
+- Renewal Date is today or in the future
+- Renewal Date falls between today and current-quarter end, inside the next fiscal quarter, or inside the first half of the following fiscal quarter
 - Account has not already renewed, churned, or been fully offboarded unless the user explicitly asks to include past/closed renewals
 
 Sort by Renewal Date ascending.
-Do not use top 10 for the full year by default. The renewal section should be based on the forward-looking rolling quarter window.
 
-Example: if today is July 9, 2026, a Renewal Date of July 8, 2026 is excluded by default, even though July 8 is inside fiscal Q2. A Renewal Date of July 9, 2026 or later can be included if it otherwise matches the focus window and assignment filters.
+Group or label each account by:
 
----
+- `Current Quarter`
+- `Next Quarter`
+- `First Half Following Quarter`
 
-# Important Interpretation Rules
-
-## 1. Last Activity Date is not the same as last customer activity
-
-The Accounts table **Last Activity Date** is a last-modified timestamp. It tells when the Airtable account record was last touched, but not always when the customer was actually contacted.
-Use it as a useful signal, but also parse **Activity notes** for actual dated customer activity.
-
-## 2. Activity notes are the richest source
-
-The **Activity notes** field often contains dated running notes, meeting summaries, action items, task lists, support blockers, customer asks, renewal context, stakeholder updates, outreach notes, customer replies, and scheduling notes. Always parse this field carefully.
-
-## 3. Engagement Status and Outreach Step are primary
-
-Prioritize these fields over Stage when classifying accounts. Use Stage only to backfill or sanity-check when Engagement Status / Outreach Step are blank, stale, or contradictory.
-
-## 4. Parse inline dates inside Activity notes
-
-Look for date formats such as `9 march`, `10 march 26`, `22 April`, `27 april 26`, `Apr 2, 2026`, `23 : april`, and `8 april :`.
-If no year is given, assume the current year. If a line has no date but follows a dated line, treat it as part of the previous dated note.
-
-## 5. Extract embedded tasks
-
-Look for task patterns such as `My action items:`, `Tasks identified`, `Next step:`, `Task:`, `[ ]`, `I need to`, `I will`, `I’ll`, `Ranjodh to`, `need to`, `send`, `follow up`, `schedule`, `prepare`, `confirm`, `loop in`, `raise a support ticket`, and `track the support ticket`.
-Treat these as actionable unless a later note clearly says they are done.
-
-## 6. Detect completed vs open items
-
-If a later note says the item was completed, do not keep it as open. Completion signals include “this was done,” “sent the email,” “meeting done,” “support ticket resolved,” “I reverted,” “created a support case,” and “looped in the sales POC.”
-If status is unclear, include it as “confirm whether this is complete.”
-
----
-
-# Engagement Status / Outreach Step Interpretation
-
-| Engagement Status | Outreach Step | Default Interpretation |
-|---|---|---|
-| `Transitioned - not contacted` | `Not started` | Needs initial outreach, especially if newly transitioned |
-| `Intro sent - waiting` | `Intro sent` | Needs follow-up if no customer response after reasonable time |
-| `No response - follow-up needed` | `FU 1` / `FU 2` | Should follow up this week if still relevant |
-| `No response - follow-up needed` | `FU 3` / `FU 4` | Stronger non-response signal; consider multithread or pause |
-| `Customer replied - scheduling` | `Customer replied` | Customer is waiting or scheduling needs to move |
-| `Meeting scheduled` | `Meeting scheduled` | Prep, attend, or confirm meeting details |
-| `Connected - no cadence` | `Customer replied` | Relationship exists but cadence/plan may need definition |
-| `Cadence established` | `Cadence active` | Monitor and keep next sync/action moving |
-| `Multithread required` | `Multithread` | Needs stakeholder expansion or higher contact path |
-| `Support / blocker active` | Any | Priority 1 if unresolved |
-| `Parked / no active outreach` | `Parked` | Monitor unless renewal/risk makes action needed |
-| `Churn / offboarding` | `Parked` | Priority 1 if any action remains; otherwise track offboarding |
-
-## Legacy Stage fallback mapping
-
-Use this only when Engagement Status or Outreach Step are blank, stale, or clearly inconsistent.
-
-| Legacy Stage signal | Recommended Engagement Status | Recommended Outreach Step |
-|---|---|---|
-| `to reach out` | `Transitioned - not contacted` | `Not started` |
-| `Email response pending` | `Intro sent - waiting` or `No response - follow-up needed` | Infer from latest note |
-| `FU 1` | `No response - follow-up needed` | `FU 1` |
-| `fu 2` | `No response - follow-up needed` | `FU 2` |
-| `fu 3` | `No response - follow-up needed` | `FU 3` |
-| `fu 4` | `No response - follow-up needed` | `FU 4` |
-| `Meeting scheduled` | `Meeting scheduled` | `Meeting scheduled` |
-| `connected` | `Connected - no cadence` | `Customer replied` unless cadence is confirmed |
-| `Support needed` | `Support / blocker active` | Keep current Outreach Step unless outreach changed |
-| `Task pending` | Depends on note content | Depends on note content |
-
----
-
-# Status Hygiene Update Rules
-
-This skill may update Engagement Status and Outreach Step during the weekly command centre run when the update is high-confidence.
-
-Apply the update when all are true:
-- The account match is exact or strongly matched.
-- The account passed the mandatory Assigned / Current Active CSM filter.
-- The new status is clearly supported by current Engagement Status, Outreach Step, legacy Stage, and/or recent Activity notes.
-- The update does not require guessing.
-- The update does not downgrade a support/blocker or churn/offboarding state.
-
-Do not auto-update when evidence is old or contradictory, the account may be parked but no explicit pause is captured, the update would downgrade `Support / blocker active` or `Churn / offboarding`, or the account has multiple possible meanings.
-Show these in **Status Updates to Review**.
-
-Never auto-increment outreach by time alone. Do not move `Intro sent` → `FU 1`, `FU 1` → `FU 2`, `FU 2` → `FU 3`, or `FU 3` → `FU 4` unless Airtable notes clearly say the follow-up was actually sent.
-
----
-
-# Workflow
-
-## Step 1 — Pull Recent Airtable Data
-
-Pull relevant account activity from Airtable for the target week or requested period.
-
-Use:
-1. Accounts table first
-2. Detailed Notes table second
-
-From the Accounts table, retrieve:
-- Account Name
-- Assigned / Current Active CSM
-- Engagement Status
-- Outreach Step
-- Meeting Sync established
-- Cadence Frequency
-- Activity notes
-- Activity Log
-- Last Activity Date
-- Renewal Date
-- Stage as legacy fallback
-- Churn Risk
-- Task status
-- ACV
-- Instance Link if useful
-
-Required account filter before analysis:
-
-```text
-Assigned / Current Active CSM = Ranjodh
-```
-
-Only after this filter is applied should the workflow retrieve or merge Detailed Notes.
-
-From the Detailed Notes table, retrieve:
-- Notes
-- Title
-- Account
-- Activity Type
-- Date
-- Next Steps
-
-Merge Detailed Notes by account only for accounts that passed the assignment filter.
-
-## Step 2 — Apply Status Hygiene
-
-Before ranking priorities, check whether Engagement Status and Outreach Step appear missing, stale, or inconsistent.
-Create:
-1. **Status Updates Applied** — high-confidence changes updated in Airtable.
-2. **Status Updates to Review** — recommended changes that should not be automatically written.
-
-If the user asks for review only, do not update fields.
-
-## Step 2A — Apply Cadence Hygiene
-
-Create **Cadence Hygiene** when cadence data is incomplete or inconsistent.
-Only evaluate accounts that passed the mandatory assignment filter.
-
-Include an account when any of the following are true:
-- Engagement Status = `Cadence established` and Cadence Frequency is blank.
-- Outreach Step = `Cadence active` and Cadence Frequency is blank.
-- Meeting Sync established = `yes` and Cadence Frequency is blank.
-- Engagement Status = `Cadence established` and Cadence Frequency = `TBD / not confirmed`.
-- Outreach Step = `Cadence active` and Cadence Frequency = `TBD / not confirmed`.
-- Meeting Sync established = `yes` and Engagement Status is not `Cadence established` or another active customer state.
-- Cadence Frequency is populated but Engagement Status / Outreach Step do not show cadence or active relationship.
-- Cadence Frequency = `Paused` but Outreach Step = `Cadence active`.
-
-For each account, show Account, Current cadence state, Cadence Frequency, Issue, and Suggested Action.
-Do not auto-update Cadence Frequency unless evidence is explicit and high-confidence.
-
-## Step 3 — Apply Priority Ranking
-
-Rank accounts into three priority levels.
-
-### Priority 1 — Must Do This Week
-
-Use Priority 1 when any of the following are true:
-- Engagement Status = `Support / blocker active`
-- Engagement Status = `Churn / offboarding` and action remains
-- Churn Risk is `Confirmed churn` or `Yellow`
-- Renewal is upcoming from today forward or within the next 120 days and engagement is weak, blocked, or stale
-- Customer is waiting on the CSM
-- Support blocker exists
-- Executive / CMO / decision-maker involvement exists
-- Salesforce stage progression is needed
-- Renewal or commercial process is close and not fully progressed
-- Engagement Status = `Customer replied - scheduling` and the customer is waiting for scheduling action
-- Engagement Status = `Multithread required` and renewal/risk is relevant
-- Outreach Step = `FU 3` or `FU 4` and renewal/risk is relevant
-- Legacy Stage includes `Support needed` and no newer status contradicts it
-- Legacy Stage includes `Task pending` and the note indicates urgency
-
-### Priority 2 — Should Do This Week
-
-Use Priority 2 when any of the following are true:
-- Follow-up was promised last week
-- QBR / EBR prep is needed
-- Maturity model follow-up is needed
-- Open customer ask exists
-- Account has active momentum and should be moved forward
-- Meeting needs to be scheduled, prepped, or recapped
-- Engagement Status = `Intro sent - waiting` and no response has been logged
-- Engagement Status = `No response - follow-up needed` with Outreach Step = `FU 1` or `FU 2`
-- Engagement Status = `Connected - no cadence` and a next cadence/action needs to be defined
-- Outreach Step = `Customer replied`
-- Outreach Step = `Meeting scheduled`
-- Task status is `Open` or `yet to start`
-
-### Priority 3 — Monitor
-
-Use Priority 3 when any of the following are true:
-- Waiting on customer response, but not urgent
-- Light-touch follow-up is needed
-- No urgent risk, but account still needs tracking
-- Renewal is not immediate but there is some open thread to watch
-- Account is quiet but not near renewal and no risk is confirmed
-- Engagement Status = `Cadence established` and next action is routine
-- Engagement Status = `Parked / no active outreach` and no renewal/risk action is present
-
-Do not force every account into a priority. Omit accounts with no meaningful task.
-
-## Renewal priority overlay
-
-Renewal proximity should boost priority only for future or same-day renewals. Past renewal dates must not create renewal priority by default, even if they are inside the current fiscal quarter. Renewal proximity should boost priority when there is an open task, weak engagement, risk, or no clear next step.
-
-Move a renewal-focus account to Priority 1 if any of these are true:
-- Renewal is today or later in the current fiscal quarter and any task is open.
-- Renewal is today or later and within 60 days, and any task is open.
-- Renewal is today or later and within 120 days, and Churn Risk is `Yellow` or `Confirmed churn`.
-- Renewal is today or later and within 120 days, and Engagement Status is `Support / blocker active`, `Customer replied - scheduling`, `No response - follow-up needed`, `Multithread required`, or `Connected - no cadence`.
-- Renewal is today or later and within 120 days, and no clear next step is captured.
-- Renewal is today or later inside the current or next fiscal quarter and there is no meaningful recent activity.
-
-Move a renewal-focus account to Priority 2 if it is inside the renewal focus window and has a pending follow-up, missing cadence, stale note, unclear next step, or weak engagement signal, but does not meet Priority 1.
-
-Keep a renewal-focus account in Monitor only if it is later in the window, cadence is established, outreach is cadence active, and no blocker, churn risk, customer wait, stale activity, or pending task exists.
-
----
-
-# Step 4 — Identify Accounts Not Touched Recently
-
-Create a compact section called:
-
-## Stale / Risk Accounts to Watch
-
-Only evaluate accounts assigned to Ranjodh by default.
-
-Check Engagement Status, Outreach Step, Last Activity Date, latest parsed date inside Activity notes, Renewal Date, Churn Risk, legacy Stage, Activity notes, and whether there has been no meaningful update in 14, 21, or 30 days.
-
-Use this logic:
-- If renewal is today or later and within 120 days, and there is no recent meaningful activity → urgent.
-- If Renewal Date is earlier than today, do not treat it as a stale-renewal urgency driver by default.
-- If churn risk is `Confirmed churn` or `Yellow` and there is no recent meaningful activity → urgent.
-- If Engagement Status is `Intro sent - waiting` and no customer response is found → follow-up needed.
-- If Engagement Status is `No response - follow-up needed` and Outreach Step is `FU 3` or `FU 4` → consider multithread or park.
-- If Engagement Status is `Customer replied - scheduling` and there is no meeting scheduled → scheduling follow-up needed.
-- If no activity in 30+ days but renewal is far away → medium priority.
-- If stable and renewal is far away → monitor only.
-
-For each stale account, include Account name, Signal, and Suggested move.
-
----
-
-# Step 5 — Add Renewal Focus Window
-
-Create a mandatory section called:
-
-## Renewal Focus Window
-
-This section must appear before **Do First This Week** in the final output.
-
-Unless the user specifies otherwise, include accounts where:
-- Assigned / Current Active CSM = `Ranjodh`
-- Renewal Date is today or in the future
-- Renewal Date falls between today and the end of the current fiscal quarter, inside the next fiscal quarter, or inside the first half of the following fiscal quarter
-
-Do not include accounts with Renewal Date earlier than today in the Renewal Focus Window. A past renewal date from earlier in the current fiscal quarter should be excluded by default.
-
-Sort all renewal-focus accounts by Renewal Date ascending.
-Group or label each account by `Current Quarter`, `Next Quarter`, or `First Half Following Quarter`. For current-quarter accounts, include only dates from today through quarter-end.
-
-For each renewal-focus account, identify the most important pending task or next move using this order:
-1. Customer is waiting on Ranjodh
-2. Open support blocker
-3. Renewal / commercial next step
-4. Meeting to schedule, prep, or recap
-5. Follow-up promised but not completed
-6. No cadence or weak engagement before renewal
-7. No clear next step captured
-
-If no task is found, write:
-
-`No clear pending task captured — confirm renewal plan / next step.`
+For current-quarter accounts, include only dates from today through quarter-end.
 
 Use these urgency labels:
+
 - `Immediate` = renewal today through the next 30 days
 - `Near-term` = renewal within 31–60 days
 - `Upcoming` = renewal within 61–120 days
 - `Later in window` = renewal more than 120 days away but still inside the renewal focus window
 
-If there are more than 20 accounts in the renewal focus window, show all Immediate and Near-term accounts, then earliest remaining accounts until 20 rows. Add: `Additional renewal-focus accounts omitted for readability. Ask for full renewal window to see all.`
+Do not use top 10 for the full year by default. The renewal section is based on the forward-looking rolling quarter window.
 
 ---
 
-# Step 6 — Identify Customers Waiting on Me
+# Interpretation Rules
 
-Create a section called:
+## Last Activity Date
 
-## Customers Waiting on You
+Last Activity Date is a last-modified timestamp. It tells when the Airtable record was last touched, but not always when the customer was contacted.
+
+Use it as a useful signal, but parse `Activity notes` and Detailed Notes dates for actual customer activity.
+
+## Activity notes
+
+Activity notes often contains dated running notes, meeting summaries, action items, support blockers, customer asks, renewal context, stakeholder updates, outreach notes, customer replies, and scheduling notes.
+
+Always parse it carefully.
+
+## Inline dates
+
+Look for inline dates such as `9 March`, `10 March 26`, `22 April`, `27 April 26`, `Apr 2, 2026`, `23 : April`, and `8 April :`.
+
+If no year is given, assume the current year.
+
+If a line has no date but follows a dated line, treat it as part of the previous dated note.
+
+## Completed vs open items
+
+If a later note says the item was completed, do not keep it as open.
+
+Completion signals include:
+
+- “this was done”
+- “sent the email”
+- “meeting done”
+- “support ticket resolved”
+- “I reverted”
+- “created a support case”
+- “looped in the sales POC”
+
+If status is unclear, include it as “confirm whether this is complete.”
+
+---
+
+# Customers Waiting on You
+
+This is a high-importance section and must appear near the top of the output, right after Interesting Observations when any items exist.
+
+This section is the action-safety net for important follow-ups Ranjodh should not miss.
 
 Only include accounts assigned to Ranjodh by default.
 
-Look for notes that imply the CSM owes something:
+Look for notes that imply Ranjodh owes something or the customer is waiting on him, including:
+
 - “I will send”
 - “Ranjodh to follow up”
 - “Need to share”
@@ -565,18 +307,188 @@ Look for notes that imply the CSM owes something:
 - “Track the support ticket”
 
 Also include accounts where:
+
 - Engagement Status = `Customer replied - scheduling`
 - Outreach Step = `Customer replied`
 - Engagement Status = `Support / blocker active`
 - Engagement Status = `Intro sent - waiting` or `No response - follow-up needed` and the next action is owned by Ranjodh
 
-For each item, include Account, Status, Waiting for, and Timing.
+For each item, include:
+
+- Account
+- Status
+- Waiting for
+- Timing
+
+If no customers are waiting on Ranjodh, omit the section unless the user explicitly asks to show empty sections.
 
 ---
 
-# Required Output Format — Compact Command Center
+# Status Hygiene
 
-Always use this compact format by default. The output should be easy to scan in 60 seconds.
+Before ranking priorities, check whether Engagement Status and Outreach Step appear missing, stale, or inconsistent.
+
+Create:
+
+1. **Status Updates Applied** — high-confidence changes updated in Airtable.
+2. **Status Updates to Review** — recommended changes that should not be automatically written.
+
+Apply an update only when all are true:
+
+- Account match is exact or strongly matched.
+- Account passed the mandatory Assigned / Current Active CSM filter.
+- New status is clearly supported by current Engagement Status, Outreach Step, legacy Stage, and/or recent Activity notes.
+- Update does not require guessing.
+- Update does not downgrade a support/blocker or churn/offboarding state.
+
+Do not auto-update when evidence is old or contradictory, the account may be parked but no explicit pause is captured, the update would downgrade `Support / blocker active` or `Churn / offboarding`, or the account has multiple possible meanings.
+
+Never auto-increment outreach by time alone. Do not move `Intro sent` → `FU 1`, `FU 1` → `FU 2`, `FU 2` → `FU 3`, or `FU 3` → `FU 4` unless Airtable notes clearly say the follow-up was actually sent.
+
+If the user asks for review only, do not update fields.
+
+---
+
+# Cadence Hygiene
+
+Create **Cadence Hygiene** when cadence data is incomplete or inconsistent.
+
+Only evaluate accounts assigned to Ranjodh by default.
+
+Include an account when any of these are true:
+
+- Engagement Status = `Cadence established` and Cadence Frequency is blank.
+- Outreach Step = `Cadence active` and Cadence Frequency is blank.
+- Meeting Sync established = `yes` and Cadence Frequency is blank.
+- Engagement Status = `Cadence established` and Cadence Frequency = `TBD / not confirmed`.
+- Outreach Step = `Cadence active` and Cadence Frequency = `TBD / not confirmed`.
+- Meeting Sync established = `yes` and Engagement Status is not `Cadence established` or another active customer state.
+- Cadence Frequency is populated but Engagement Status / Outreach Step do not show cadence or active relationship.
+- Cadence Frequency = `Paused` but Outreach Step = `Cadence active`.
+
+For each account, show:
+
+- Account
+- Current cadence state
+- Cadence Frequency
+- Issue
+- Suggested action
+
+Do not auto-update Cadence Frequency unless evidence is explicit and high-confidence.
+
+---
+
+# Priority Ranking
+
+Rank accounts into three priority levels.
+
+Do not force every account into a priority. Omit accounts with no meaningful task.
+
+## Priority 1 — Must Do This Week
+
+Use Priority 1 when any of these are true:
+
+- Engagement Status = `Support / blocker active`
+- Engagement Status = `Churn / offboarding` and action remains
+- Churn Risk is `Confirmed churn` or `Yellow`
+- Customer is waiting on the CSM
+- Support blocker exists
+- Executive / CMO / decision-maker involvement exists
+- Salesforce stage progression is needed
+- Renewal or commercial process is close and not fully progressed
+- Renewal is today or later and within 120 days, and engagement is weak, blocked, or stale
+- Engagement Status = `Customer replied - scheduling` and customer is waiting for scheduling action
+- Engagement Status = `Multithread required` and renewal/risk is relevant
+- Outreach Step = `FU 3` or `FU 4` and renewal/risk is relevant
+- Legacy Stage includes `Support needed` and no newer status contradicts it
+- Legacy Stage includes `Task pending` and the note indicates urgency
+
+## Priority 2 — Should Do This Week
+
+Use Priority 2 when any of these are true:
+
+- Follow-up was promised last week
+- QBR / EBR prep is needed
+- Maturity model follow-up is needed
+- Open customer ask exists
+- Account has active momentum and should be moved forward
+- Meeting needs to be scheduled, prepped, or recapped
+- Engagement Status = `Intro sent - waiting` and no response has been logged
+- Engagement Status = `No response - follow-up needed` with Outreach Step = `FU 1` or `FU 2`
+- Engagement Status = `Connected - no cadence` and a next cadence/action needs to be defined
+- Outreach Step = `Customer replied`
+- Outreach Step = `Meeting scheduled`
+- Task status is `Open` or `yet to start`
+
+## Priority 3 — Monitor
+
+Use Priority 3 when any of these are true:
+
+- Waiting on customer response, but not urgent
+- Light-touch follow-up is needed
+- No urgent risk, but account still needs tracking
+- Renewal is not immediate but there is some open thread to watch
+- Account is quiet but not near renewal and no risk is confirmed
+- Engagement Status = `Cadence established` and next action is routine
+- Engagement Status = `Parked / no active outreach` and no renewal/risk action is present
+
+---
+
+# Renewal Priority Overlay
+
+Renewal proximity should boost priority only for future or same-day renewals.
+
+Past renewal dates must not create renewal priority by default, even if they are inside the current fiscal quarter.
+
+Move a renewal-focus account to Priority 1 if any of these are true:
+
+- Renewal is today or later in the current fiscal quarter and any task is open.
+- Renewal is today or later and within 60 days, and any task is open.
+- Renewal is today or later and within 120 days, and Churn Risk is `Yellow` or `Confirmed churn`.
+- Renewal is today or later and within 120 days, and Engagement Status is `Support / blocker active`, `Customer replied - scheduling`, `No response - follow-up needed`, `Multithread required`, or `Connected - no cadence`.
+- Renewal is today or later and within 120 days, and no clear next step is captured.
+- Renewal is today or later inside the current or next fiscal quarter and there is no meaningful recent activity.
+
+Move a renewal-focus account to Priority 2 if it is inside the renewal focus window and has a pending follow-up, missing cadence, stale note, unclear next step, or weak engagement signal, but does not meet Priority 1.
+
+Keep a renewal-focus account in Monitor only if it is later in the window, cadence is established, outreach is cadence active, and no blocker, churn risk, customer wait, stale activity, or pending task exists.
+
+---
+
+# Stale / Risk Accounts to Watch
+
+Only evaluate accounts assigned to Ranjodh by default.
+
+Check:
+
+- Engagement Status
+- Outreach Step
+- Last Activity Date
+- latest parsed date inside Activity notes
+- Renewal Date
+- Churn Risk
+- legacy Stage
+- Activity notes
+- whether there has been no meaningful update in 14, 21, or 30 days
+
+Use this logic:
+
+- If renewal is today or later and within 120 days, and there is no recent meaningful activity → urgent.
+- If Renewal Date is earlier than today, do not treat it as a stale-renewal urgency driver by default.
+- If churn risk is `Confirmed churn` or `Yellow` and there is no recent meaningful activity → urgent.
+- If Engagement Status is `Intro sent - waiting` and no customer response is found → follow-up needed.
+- If Engagement Status is `No response - follow-up needed` and Outreach Step is `FU 3` or `FU 4` → consider multithread or park.
+- If Engagement Status is `Customer replied - scheduling` and there is no meeting scheduled → scheduling follow-up needed.
+- If no activity in 30+ days but renewal is far away → medium priority.
+- If stable and renewal is far away → monitor only.
+
+For each stale account, include Account, Status, Signal, and Suggested move.
+
+---
+
+# Required Output Format — Compact Command Centre
+
+Always use this compact format by default.
 
 ```text
 Weekly Account Task Catch-Up
@@ -584,6 +496,11 @@ Date Range: [date range]
 
 Interesting Observations
 - [Only include 1–3 short observations if useful. Omit if not useful.]
+
+Customers Waiting on You
+| Account | Status | Waiting for | Timing |
+|---|---|---|---|
+| [Account] | [Engagement Status / Outreach Step] | [item owed] | [today/this week/late this week] |
 
 Status Updates Applied
 | Account | Engagement Status | Outreach Step | Reason |
@@ -601,7 +518,7 @@ Cadence Hygiene
 | [Account] | [Engagement Status / Outreach Step / Meeting Sync established] | [Cadence Frequency or Blank] | [missing or inconsistent cadence detail] | [specific action] |
 
 Renewal Focus Window
-Scope: Current Quarter + Next Quarter + First Half Following Quarter
+Scope: Today through Current Quarter + Next Quarter + First Half Following Quarter
 | Rank | Window | Account | Renewal Date | Urgency | ACV | Status | Pending Task / Next Move |
 |---|---|---|---:|---|---:|---|---|
 | 1 | [Current Quarter / Next Quarter / First Half Following Quarter] | [Account] | [Renewal Date] | [Immediate/Near-term/Upcoming/Later in window] | [ACV] | [Engagement Status / Outreach Step] | [specific pending task or “No clear pending task captured — confirm renewal plan / next step.”] |
@@ -633,40 +550,40 @@ Stale / Risk Accounts to Watch
 | Account | Status | Signal | Suggested move |
 |---|---|---|---|
 | [Account] | [Engagement Status / Outreach Step] | [stale/risk signal] | [action] |
-
-Customers Waiting on You
-| Account | Status | Waiting for | Timing |
-|---|---|---|---|
-| [Account] | [Engagement Status / Outreach Step] | [item owed] | [today/this week/late this week] |
 ```
 
-If no status updates were applied, say:
+If no customers are waiting on Ranjodh, omit **Customers Waiting on You** unless the user explicitly asks for empty sections.
 
-```text
-No high-confidence Engagement Status or Outreach Step updates were applied.
-```
+If no status updates were applied, say: `No high-confidence Engagement Status or Outreach Step updates were applied.`
 
 If no status review items exist, omit **Status Updates to Review**.
+
 If no cadence hygiene issues exist, omit **Cadence Hygiene**.
-If no accounts fall inside the renewal focus window, say: `No renewing accounts found inside the renewal focus window.`
+
+If no accounts fall inside the renewal focus window after applying filters, say: `No renewing accounts found inside the renewal focus window.`
 
 ---
 
 # Presentation Rules
 
 - Compact format is mandatory unless the user explicitly asks for detailed mode.
-- Start with **Cadence Hygiene** after status-hygiene notes when cadence issues exist.
+- Start with **Interesting Observations** when useful.
+- Then show **Customers Waiting on You** as the first action-oriented section when any items exist.
+- **Customers Waiting on You must not appear at the end by default.** It belongs near the top because these are owed follow-ups Ranjodh should not miss.
+- Then show Status Updates Applied / Status Updates to Review when applicable.
+- Then show **Cadence Hygiene** when applicable.
 - Then show **Renewal Focus Window**.
 - Then show **Do First This Week**.
 - Keep **Do First This Week** to the top 5–7 accounts.
 - Show Engagement Status / Outreach Step in renewal and priority tables.
-- Use tables for Status Updates Applied, Status Updates to Review, Cadence Hygiene, Renewal Focus Window, Do First This Week, Priority 2, Priority 3, Stale / Risk Accounts, and Customers Waiting on You.
+- Use tables for Customers Waiting on You, Status Updates Applied, Status Updates to Review, Cadence Hygiene, Renewal Focus Window, Do First This Week, Priority 2, Priority 3, and Stale / Risk Accounts.
 - Use short account blocks only for Priority 1.
 - Do not include every possible task if it makes the output hard to read.
 - Prioritize what the user should actually act on.
 
 ## Maximum length guidance
 
+- Customers Waiting on You: max 8 rows
 - Status Updates Applied: max 8 rows
 - Status Updates to Review: max 8 rows
 - Cadence Hygiene: max 8 rows
@@ -676,26 +593,12 @@ If no accounts fall inside the renewal focus window, say: `No renewing accounts 
 - Priority 2: max 8 rows
 - Priority 3: max 5 rows
 - Stale / Risk Accounts: max 6 rows
-- Customers Waiting on You: max 8 rows
 
-If more items exist, add: “Additional lower-priority items omitted for readability.”
+If more items exist, add: `Additional lower-priority items omitted for readability.`
 
 ## Detailed mode
 
-Only use detailed mode if the user explicitly says: detailed, full details, expanded, show all accounts, include all fields, raw task list, full status hygiene, or full renewal window.
-
----
-
-# Output Style
-
-- Keep it concise and practical.
-- Use plain language.
-- Use `-` bullets only inside short account blocks.
-- Prioritize action over explanation.
-- Do not include unnecessary background.
-- Do not create a raw activity dump.
-- Do not include stable accounts unless action is needed.
-- If a field name in Airtable is misspelled, output it with the clean business name. Example: `Chrun riks` → `Churn Risk`.
+Use detailed mode only if the user explicitly says: detailed, full details, expanded, show all accounts, include all fields, raw task list, full status hygiene, or full renewal window.
 
 ---
 
@@ -703,7 +606,8 @@ Only use detailed mode if the user explicitly says: detailed, full details, expa
 
 If useful, include 1–3 observations such as:
 
-- Engagement Status or Outreach Step missing on high-priority accounts.
+- Customers are waiting on Ranjodh across multiple accounts.
+- Engagement Status or Outreach Step is missing on high-priority accounts.
 - Account has cadence active but Cadence Frequency is missing or `TBD / not confirmed`.
 - Account is inside renewal focus window but has no clear pending task.
 - Account has support blocker but no clear next update.
@@ -742,7 +646,7 @@ If the customer is waiting on an internal update, still list it under Customers 
 
 ## Churn Risk is unclear or stale
 
-If Churn Risk is `Confirmed churn` but notes suggest the account is active, include the account and add: “Confirm whether Airtable Churn Risk is still accurate.” Do not automatically change Churn Risk.
+If Churn Risk is `Confirmed churn` but notes suggest the account is active, include the account and add: `Confirm whether Airtable Churn Risk is still accurate.` Do not automatically change Churn Risk.
 
 ## Engagement Status is support or churn
 
@@ -754,29 +658,35 @@ If the user asks for review only, do not update Airtable. Provide recommendation
 
 ## No renewal-focus accounts found
 
-If no accounts fall inside the renewal focus window after applying the mandatory assignment filter, say:
+If no accounts fall inside the renewal focus window after applying the mandatory assignment filter and future-date filter, say:
 
 ```text
 No renewing accounts found inside the renewal focus window.
 ```
 
-Then continue with Do First This Week, Priority 1, and the remaining command centre sections.
+Then continue with Customers Waiting on You, Do First This Week, Priority 1, and remaining command centre sections if relevant.
 
 ## No cadence hygiene issues found
 
-If all cadence-active accounts have a clear Cadence Frequency and there are no cadence inconsistencies, omit the Cadence Hygiene section.
-
-## Cadence active but frequency missing
-
-If an account has Engagement Status = `Cadence established`, Outreach Step = `Cadence active`, or Meeting Sync established = `yes`, but Cadence Frequency is blank or `TBD / not confirmed`, include it in Cadence Hygiene. Do not treat it as fully clean until Cadence Frequency is confirmed.
+If all cadence-active accounts have clear Cadence Frequency and there are no cadence inconsistencies, omit Cadence Hygiene.
 
 ## One-off meeting vs recurring cadence
 
-Do not infer cadence from a single meeting being scheduled. A one-off meeting should remain `Meeting scheduled` unless notes explicitly confirm a recurring cadence.
+Do not infer cadence from a single meeting being scheduled. A one-off meeting should remain `Meeting scheduled` unless notes explicitly confirm recurring cadence.
 
 ## Too many renewal-focus accounts
 
-If more than 20 accounts fall inside the renewal focus window, show all Immediate and Near-term accounts first, then earliest remaining renewals by Renewal Date, prioritizing accounts with risk or missing next steps before healthy/stable accounts.
+If more than 20 accounts fall inside the renewal focus window, show the most urgent accounts first:
+
+1. All Immediate and Near-term renewals
+2. Earliest remaining renewals by Renewal Date ascending
+3. Accounts with risk or missing next steps before healthy/stable accounts
+
+Add:
+
+```text
+Additional renewal-focus accounts omitted for readability. Ask for full renewal window to see all.
+```
 
 ---
 
@@ -786,20 +696,19 @@ This skill is for running the week.
 
 It should help Ranjodh quickly decide:
 
+- which customers are waiting on him
 - what to do first
-- which renewals are in the current quarter, next quarter, and first half of the following quarter
+- which future renewals are in the current quarter, next quarter, and first half of the following quarter
 - which renewal-focus accounts have pending tasks or missing next steps
-- which customers are waiting
 - which accounts are stale or risky
 - which accounts need outreach progression
 - which cadence-active accounts are missing frequency or need cadence cleanup
-- which Engagement Status / Outreach Step / Meeting Sync established / Cadence Frequency fields were updated or need review
+- which status fields were updated or need review
 
-The output should feel like a weekly command centre, not a long report.
+Customers Waiting on You must be surfaced near the top, not buried at the end.
 
-Always enforce the default Assigned / Current Active CSM = `Ranjodh` filter unless the user explicitly asks for another assignee or all accounts.
-Use Engagement Status and Outreach Step as the primary account progression fields.
-Use Meeting Sync established and Cadence Frequency as cadence-detail fields.
-Use Stage only as fallback context.
-Do not update Stage unless explicitly asked.
-Always include the renewal focus window before the general priority sections unless the user explicitly says to skip renewal focus.
+Use Engagement Status and Outreach Step as the primary progression fields. Use Meeting Sync established and Cadence Frequency as cadence-detail fields. Use Stage only as fallback context. Do not update Stage unless explicitly asked.
+
+Always apply the mandatory Ranjodh assignment filter unless the user explicitly overrides it.
+
+Always exclude past renewal dates from the Renewal Focus Window by default.
