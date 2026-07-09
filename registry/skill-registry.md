@@ -6,6 +6,7 @@
 | Update Activity Notes | `/update notes`, `update notes`, `log this` | `skills/update-activity-notes.md` |
 | Meeting Summarizer | `/meeting summarizer`, `/meeting notes`, `/call summary` | `skills/meeting-summarizer.md` |
 | Weekly Command Centre | `/weekly command centre`, `/weekly`, `stale accounts`, `renewal focus` | `skills/weekly-command-centre.md` |
+| Customer Task Centre | `/task centre`, `/task center`, `/tasks`, `/open tasks`, `/customer tasks`, `/tasks waiting on me`, `/check off task`, `/close task`, `/mark task done` | `skills/customer-task-centre.md` |
 | Support Ticket Creator | `/support ticket`, `/ticket`, `/case creator` | `skills/support-ticket-creator.md` |
 | Meeting Follow-Up Email | `/meeting follow-up`, `/follow-up email`, `only email` | `skills/meeting-follow-up-email.md` |
 | SF Stage Progression Validator | `/sf stage progression`, `/stage check`, `/move opportunity` | `skills/sf-stage-progression-validator.md` |
