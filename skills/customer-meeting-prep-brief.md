@@ -1,18 +1,33 @@
 ---
 name: customer-meeting-prep-brief
 description: >
-  Pull Airtable account notes, prior meeting notes, recent activity, open asks, risks,
-  and next steps into a short pre-meeting brief for Ranjodh. Use this before customer
+  Pull Airtable account notes, prior meeting notes, Customer Tasks, recent activity, open asks,
+  risks, and next steps into a short pre-meeting brief for Ranjodh. Use this before customer
   meetings when the goal is to quickly understand what matters without reading long notes.
   Also supports optional deep prep mode when the user asks for deeper context, full prep,
   strategy, dossier-style prep, or all relevant account history.
 ---
 
-# Customer Meeting Prep Brief
+# Customer Meeting Prep Brief — Customer Tasks V3
 
 ## Purpose
 
 Create a simple, fast pre-meeting brief from Airtable so Ranjodh can prepare for a customer meeting in under 3 minutes.
+
+The output should answer:
+
+- What is going on with this account?
+- What are the active Customer Tasks?
+- What might the customer be waiting on from Ranjodh or 6sense?
+- What was discussed in prior meetings?
+- What should Ranjodh remember, ask, and drive?
+- Are there risks, blockers, renewal concerns, or open asks?
+
+Customer Tasks is the primary source for open work. Activity notes and Detailed Notes are supporting context.
+
+---
+
+## Triggers
 
 Use this skill when the user says things like:
 
@@ -32,27 +47,11 @@ Use this skill when the user says things like:
 
 ---
 
-## Core Goal
-
-The output should answer:
-
-- What is going on with this account?
-- What was discussed in prior meetings?
-- What is the customer likely expecting from me?
-- What should I ask or drive in the meeting?
-- Are there any risks, blockers, renewal concerns, or open asks?
-
-Keep the output short by default. This is not a full account dossier unless the user explicitly asks for deep prep, full prep, dossier-style prep, strategy, or all relevant context.
-
----
-
 ## Prep Depth Modes
 
 ### Default Quick Prep Mode
 
-Use this mode by default. It should help Ranjodh prepare in under 3 minutes. Pull the most relevant account context, compress aggressively, and focus on what to remember, ask, and drive in the meeting.
-
-Default quick prep should not become a full account history or dossier.
+Use this by default. It should help Ranjodh prepare in under 3 minutes. Pull the most relevant account context, compress aggressively, and focus on what to remember, ask, and drive in the meeting.
 
 ### Deep Prep Mode
 
@@ -71,12 +70,11 @@ Use Deep Prep Mode when the user says or implies any of the following:
 - `exec prep`
 - `renewal prep`
 
-Deep Prep Mode should still be practical, but it should pull and synthesize more context than the default brief. Use it when Ranjodh needs a stronger point of view before a high-stakes customer meeting, renewal conversation, executive discussion, escalation, or strategic planning call.
-
 Deep Prep Mode should include:
 
 - a longer account timeline
 - recent and historically important Detailed Notes
+- active and recently closed Customer Tasks
 - recurring themes across prior meetings
 - stakeholder and relationship map where available
 - highest known contact and path to higher contact if captured
@@ -90,43 +88,68 @@ Deep Prep Mode should include:
 - smart questions to ask
 - gaps or missing context that Ranjodh should confirm
 
-Do not invent missing stakeholders, risks, renewal details, or customer sentiment. If the notes do not support something, say it is not captured.
+Do not invent missing stakeholders, risks, renewal details, task status, or customer sentiment. If the notes do not support something, say it is not captured.
 
 ---
 
 ## Airtable Source of Truth
 
-Use Airtable as the source.
-
 Base:
+
 - Book of Business Management
 - Base ID: `app6O8peF5ywLe1GM`
 
-Primary table:
-- Accounts
-- Table ID: `tblr6UnvfaqfNvwyU`
+Tables:
 
-Use these fields:
+- Accounts: `tblr6UnvfaqfNvwyU`
+- Customer Tasks: `tblWUzwjGM4pwhAqR`
+- Detailed Notes: `tblI5cCnIY63S6pZq`
+
+Always use `schema/airtable-schema-map.md` for current field IDs and allowed values.
+
+### Accounts fields
+
 - Account Name: `fldOSLvopNOX6ae3Z`
 - Activity notes: `flddz3lqUmEhLhmN5`
+- Engagement Status: `fldyrxDGOzWF3c7wm`
+- Outreach Step: `fldhX3nTqX4a2eKt8`
+- Meeting Sync established: `fld8kFpch7M4wGfpQ`
+- Cadence Frequency: `flddcR78KacwfLyk5`
 - Stage: `fldTYypHjPaFcatCi`
 - ACV: `fldjieKzPumeF6afD`
 - Renewal Date: `fldPmw5pHDNDgZYgA`
 - Churn Risk: `fldy4GIC8xDuPjS8y`
 - Last Activity Date: `fld2jD1HJm9RRwNBW`
 - Task status: `fldaYegYsT0eA3NAK`
+- Current Active CSM: `fldTQWeUcqj5HQoAH`
 
-Secondary table:
-- Detailed Notes
-- Table ID: `tblI5cCnIY63S6pZq`
+### Customer Tasks fields
 
-Use these fields:
+- Task Title: `fldbPKh3KNG9vbeXS`
+- Account: `fldMIaXj2PtqHkmNk`
+- Owner: `fldVF6TQNNaPmv8qf`
+- Status: `fldFbZYJvZUZmrGf2`
+- Priority: `fldGixN6MmFNAbTdG`
+- Due Date: `fldm4uWSm23HVxZPC`
+- Customer Waiting?: `fldDXgxychawzNCZn`
+- Source Type: `fldRaStx1IoK4ooqv`
+- Source Date: `fldp9gpKEdSIywADe`
+- Source Summary: `fldKEtfu2JfA5VTKK`
+- Source Detail Note: `fldo4zvmVhOXqed2p`
+- Completion Evidence: `fldsWVTfAAagVBTPT`
+- Completed Date: `fldcOYlYd9dfmyl5K`
+- Needs Review: `fld5SXTsSrQNl96t2`
+- Last Updated From: `fldg0rM7UT6Jt148a`
+
+### Detailed Notes fields
+
 - Account: `fldkJTerhbTfcObzR`
 - Title: `fldbf738tn5U18z7D`
 - Notes: `fldcfsEsMgFHoB8VH`
 - Activity Type: `fldfi0aH7CncdNtb9`
 - Date: `fld5Dd0gO8vHadVjl`
 - Next Steps: `flduD4nsj6ZkEXmLZ`
+- Customer Tasks: `fld5rGBShRUYrYIiR`
 
 ---
 
@@ -146,43 +169,69 @@ Which customer account should I prep for?
 
 If multiple Airtable accounts match, ask the user to choose the correct one.
 
----
-
 ### Step 2 — Pull Airtable Context
 
-Pull from the Accounts table first:
+Pull from Accounts first:
+
 - Account Name
 - Activity notes
+- Engagement Status
+- Outreach Step
+- Meeting Sync established
+- Cadence Frequency
 - Stage
 - ACV
 - Renewal Date
 - Churn Risk
 - Last Activity Date
 - Task status
+- Current Active CSM
+
+Then pull Customer Tasks linked to the account.
+
+For Quick Prep Mode, prioritize active Customer Tasks:
+
+- `Open`
+- `In Progress`
+- `Waiting on Internal Team`
+- `Waiting on Customer`
+- `Blocked`
+- `Needs Review`
+
+Also include recently completed tasks only if they explain what the customer may expect next.
+
+For Deep Prep Mode, pull:
+
+- all active Customer Tasks
+- recently completed Customer Tasks from the last 30–60 days when relevant
+- any tasks with Customer Waiting? checked
+- any P1/P2 tasks
+- any support/blocker/renewal tasks
 
 Then pull from Detailed Notes.
 
-For Default Quick Prep Mode, pull:
+For Quick Prep Mode, pull:
+
 - The 3–5 most recent meeting notes or activity records
 - Any records with Activity Type = Meeting Notes
 - Any records with clear Next Steps
 - Any records that mention blockers, renewal, risk, support, follow-up, or customer asks
 
 For Deep Prep Mode, pull broader context:
+
 - The 10–15 most recent relevant Detailed Notes records when available
 - Older Detailed Notes records that mention renewals, churn risk, executive stakeholders, procurement, pricing, support blockers, product gaps, escalations, implementation issues, QBR/EBR, or strategic priorities
 - All clearly open Next Steps or unresolved customer asks
-- Any notes that explain how the relationship, risk, or account direction changed over time
-
-The Accounts table Activity notes field is the primary source. Detailed Notes is supporting context. In Deep Prep Mode, use both sources to build a practical account narrative, not a raw chronological dump.
-
----
+- Any notes that explain how the relationship, risk, task status, or account direction changed over time
 
 ### Step 3 — Extract Only What Matters
 
 From Airtable, identify:
 
 - Last meaningful customer interaction
+- Active Customer Tasks
+- Customer-waiting tasks
+- Tasks that may need to be checked off before the meeting
 - Prior meeting themes
 - Customer priorities
 - Open asks
@@ -194,30 +243,39 @@ From Airtable, identify:
 - Promised next steps
 - Anything the customer may expect Ranjodh to remember
 
-Do not create a long history in Default Quick Prep Mode. Compress aggressively.
+Do not create a long history in Quick Prep Mode. Compress aggressively.
 
-In Deep Prep Mode, create a richer synthesis, but still avoid dumping every historical note. Prioritize patterns, decisions, risks, stakeholders, open loops, and what Ranjodh should do in the meeting.
+In Deep Prep Mode, create a richer synthesis, but still avoid dumping every historical note. Prioritize patterns, decisions, risks, stakeholders, open loops, Customer Tasks, and what Ranjodh should do in the meeting.
 
 ---
 
-## Required Output Format
+## Required Output Format — Quick Prep Mode
 
-Always use this format by default for Quick Prep Mode:
+Always use this format by default:
 
 ```md
 # Meeting Prep Brief — [Account Name]
 
 ## Read This First
-[3–5 bullets only. The most important context before the meeting.]
+[3–5 bullets only. Include the most important Customer Task/customer-waiting item if one exists.]
 
 ## Account Snapshot
 | Field | Detail |
 |---|---|
+| Engagement Status | [Engagement Status] |
+| Outreach Step | [Outreach Step] |
+| Cadence | [Meeting Sync established + Cadence Frequency] |
 | Stage | [Stage] |
 | ACV | [ACV] |
 | Renewal Date | [Renewal Date] |
 | Churn Risk | [Churn Risk] |
+| Task Status | [Task status + active Customer Task count] |
 | Last Meaningful Activity | [date + short context] |
+
+## Active Customer Tasks
+| Priority | Task | Owner | Status | Due / Timing | Customer Waiting? |
+|---|---|---|---|---|---|
+| [P1/P2/P3] | [Task Title] | [Owner] | [Status] | [Due Date / No due date] | [Yes/No] |
 
 ## Recent Context
 | Date | What happened | Why it matters |
@@ -225,8 +283,8 @@ Always use this format by default for Quick Prep Mode:
 | [Date] | [short summary] | [impact / relevance] |
 
 ## Open Threads
-- [Open ask, blocker, or follow-up]
-- [Open ask, blocker, or follow-up]
+- [Open ask, blocker, task, or follow-up]
+- [Open ask, blocker, task, or follow-up]
 
 ## Risks / Watchouts
 - [Only include real risks or concerns from Airtable]
@@ -238,235 +296,105 @@ Always use this format by default for Quick Prep Mode:
 - [Agenda item 3]
 
 ## Questions to Ask
-- [Smart customer-facing question]
-- [Smart customer-facing question]
-- [Smart customer-facing question]
+- [Question 1]
+- [Question 2]
+- [Question 3]
 
-## My Recommended Move
-[1 short paragraph telling Ranjodh what to drive in the meeting.]
+## What to Drive Before Ending the Call
+- [Specific outcome / next step]
 ```
 
-## Deep Prep Output Format
+If no active Customer Tasks exist, write:
 
-Use this format when Deep Prep Mode is triggered:
+```text
+No active Customer Tasks captured for this account.
+```
 
-```md
-# Deep Meeting Prep — [Account Name]
+If a task appears completed but still active, include it under Active Customer Tasks and flag it as:
 
-## Read This First
-[5–7 bullets with the most important account context, risks, and recommended stance.]
-
-## Account Snapshot
-| Field | Detail |
-|---|---|
-| Stage | [Stage] |
-| ACV | [ACV] |
-| Renewal Date | [Renewal Date] |
-| Churn Risk | [Churn Risk] |
-| Last Meaningful Activity | [date + short context] |
-| Current Relationship / Cadence | [what is captured or not captured] |
-
-## Account Timeline
-| Date | What happened | Why it matters now |
-|---|---|---|
-| [Date] | [short summary] | [current relevance] |
-
-## Stakeholders / Relationship Map
-| Person / Role | What we know | Why it matters |
-|---|---|---|
-| [Name or role] | [context from notes] | [influence / action needed] |
-
-## Open Threads & Ownership
-| Thread | Owner | Status / Next Move |
-|---|---|---|
-| [open item] | [Ranjodh / customer / internal] | [next action] |
-
-## Risks / Watchouts
-- [risk with evidence from Airtable]
-- [risk with evidence from Airtable]
-
-## Customer Priorities / Expected Outcomes
-- [priority or outcome]
-- [priority or outcome]
-
-## Likely Customer Expectations for This Meeting
-- [what they likely expect based on notes]
-- [what they may ask about]
-
-## Suggested Meeting Strategy
-- [how Ranjodh should frame the meeting]
-- [what to drive]
-- [what to avoid or be careful about]
-
-## Questions to Ask
-- [smart question]
-- [smart question]
-- [smart question]
-
-## Recommended Talk Track
-[Short internal-facing talk track Ranjodh can use to open or steer the meeting.]
-
-## My Recommended Move
-[Clear recommendation on what Ranjodh should try to achieve in the meeting.]
-
-## Gaps / Needs Confirmation
-- [missing context or uncertain assumption]
+```text
+Possible check-off needed — confirm via /update notes or /task centre.
 ```
 
 ---
 
-## Length Rules
+## Deep Prep Output Additions
 
-Keep this brief enough to read quickly.
+When using Deep Prep Mode, keep the Quick Prep sections and add:
 
-Default Quick Prep limits:
-- Read This First: max 5 bullets
-- Account Snapshot: max 5 rows
-- Recent Context: max 5 rows
-- Open Threads: max 5 bullets
-- Risks / Watchouts: max 4 bullets
-- Suggested Meeting Focus: max 4 bullets
-- Questions to Ask: max 5 bullets
-- My Recommended Move: max 4 sentences
+```md
+## Account Timeline
+| Date | Event | Impact |
+|---|---|---|
 
-Deep Prep limits:
-- Read This First: max 7 bullets
-- Account Timeline: max 10 rows unless the user asks for all history
-- Stakeholders / Relationship Map: max 8 rows
-- Open Threads & Ownership: max 8 rows
-- Risks / Watchouts: max 6 bullets
-- Customer Priorities / Expected Outcomes: max 6 bullets
-- Suggested Meeting Strategy: max 5 bullets
-- Questions to Ask: max 8 bullets
-- Recommended Talk Track: max 2 short paragraphs
-- My Recommended Move: max 5 sentences
+## Task History / Open Loops
+| Task | Owner | Status | Evidence / Notes |
+|---|---|---|---|
 
-If there is a lot of history, summarize instead of listing everything. Deep Prep should be more complete than Quick Prep, but it should still be a synthesis, not a raw notes export.
+## Stakeholder / Relationship Map
+| Person / Role | Signal | What to do with it |
+|---|---|---|
+
+## Strategy / Talk Track
+[Practical point of view for the meeting]
+```
+
+Do not turn Deep Prep into a raw Airtable dump.
 
 ---
 
 ## Interpretation Rules
 
-### Last Activity Date
+### Customer Tasks
 
-The Airtable Last Activity Date is a record update signal, not always a true customer touch.
+- Active tasks are stronger evidence than old notes.
+- Customer Waiting? checked means this should be surfaced high in the brief.
+- P1/P2 tasks should appear before P3 tasks.
+- A task owned by Customer should still appear if it affects what Ranjodh should ask or confirm.
+- A task owned by Support/Internal Team should appear if Ranjodh needs to provide an update or manage customer expectations.
+- Do not mark tasks complete in Meeting Prep. If completion evidence appears, recommend checking it off through `/update notes` or `/task centre`.
 
-Use the Activity notes and Detailed Notes dates to determine the last meaningful customer activity when possible.
+### Activity Notes and Detailed Notes
 
-### Meeting Notes
+- Use Activity notes for the account narrative and fallback tasks not yet captured in Customer Tasks.
+- Use Detailed Notes for meeting history and supporting context.
+- Do not treat Last Activity Date alone as proof of customer activity because it is a last-modified timestamp.
 
-Prioritize records where:
-- Activity Type = Meeting Notes
-- Notes include customer priorities, next steps, blockers, or decisions
-- Date is recent
-- The content changes what Ranjodh should do in the meeting
+### Renewal / risk
 
-### Open Threads
-
-Treat these as open threads:
-- “I’ll send”
-- “Need to follow up”
-- “Ranjodh to”
-- “Customer asked”
-- “Support ticket”
-- “Waiting on update”
-- “Need to confirm”
-- “Schedule”
-- “Share resource”
-- “Check internally”
-- “Loop in”
-
-Do not include items that later notes clearly show were completed.
-
-### Risks / Watchouts
-
-Include only real signals such as:
-- Churn Risk = Yellow or Confirmed churn
-- Renewal date is close
-- Customer frustration
-- No response / FU 2 / FU 3
-- Unresolved support blocker
-- Product gap
-- Stakeholder transition
-- Low engagement
-- Commercial concern
-- Misaligned expectations
-
-Do not invent risk.
-
----
-
-## Output Style
-
-The tone should be:
-- Direct
-- Practical
-- Easy to scan
-- Internal-facing
-- CSM-friendly
-
-Do not write a polished essay. Do not create a full account dossier in Default Quick Prep Mode. Do not include every historical note.
-
-In Deep Prep Mode, a dossier-style output is allowed, but it must remain practical and meeting-focused. The user should still be able to quickly understand what to say, what to ask, what to avoid, and what outcome to drive.
-
-The user should be able to read the output immediately before a meeting and know what to say.
+- If the account is near renewal, emphasize task/risk/commercial next steps.
+- If Churn Risk conflicts with notes, say it needs confirmation; do not silently resolve the conflict.
 
 ---
 
 ## Edge Cases
 
-### No Airtable notes found
+### No active tasks
 
-Say:
+Still provide the prep brief. Do not invent tasks.
 
-```text
-I found the account, but there are no useful Airtable notes to prep from.
-```
+### Customer waiting task exists
 
-Then provide whatever account metadata is available.
+Put it in Read This First and Active Customer Tasks.
 
-### Account not found
+### Task seems done but still open
 
-Say:
+Do not close it. Flag it for review:
 
 ```text
-I could not find a matching Airtable account for [Account Name].
+Possible check-off needed — confirm via /update notes or /task centre.
 ```
 
-Ask the user for the exact Airtable account name.
+### Account has no recent notes
 
-### No clear meeting purpose
+Say that recent context is limited and focus on current tasks, renewal/risk metadata, and what to confirm.
 
-Infer from recent activity and say:
+### Multiple account matches
 
-```text
-Meeting purpose is inferred from recent Airtable notes.
-```
-
-### User asks for “super short”
-
-Use only:
-
-```md
-# Quick Meeting Prep — [Account Name]
-
-## Read This First
-- [bullet]
-- [bullet]
-- [bullet]
-
-## Open Threads
-- [bullet]
-- [bullet]
-
-## Recommended Move
-[1–2 sentences]
-```
+Ask one short clarification question and do not continue until the user confirms.
 
 ---
 
 ## Final Rule
 
-This skill is for meeting readiness, not documentation.
-
-Prioritize the few things Ranjodh needs to remember, ask, and drive in the customer meeting.
+This skill is for fast meeting readiness. Customer Tasks tells Ranjodh what may be owed; Activity notes and Detailed Notes explain why. Keep the brief practical, short by default, and focused on what to remember, ask, and drive.
