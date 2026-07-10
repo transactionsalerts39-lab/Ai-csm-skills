@@ -133,7 +133,7 @@ Important:
    - create new tasks when a clear owed action exists
    - dedupe similar open tasks
    - flag ambiguous items for review
-9. Append the note to Activity notes with two line breaks.
+9. Apply source idempotency from `contracts/write-safety.md`. Append the note with two line breaks only when the same source is not already logged; otherwise skip the duplicate append and continue only with genuinely new reconciliation.
 10. Update the Accounts record and Customer Tasks records.
 11. Recalculate Accounts → Task status as a summary signal.
 12. Confirm exactly what changed, including task changes and current workflow/cadence state.
@@ -458,8 +458,8 @@ After updating Airtable, always show this structure:
 ```text
 Updated [Account Name] in Airtable with the new activity note and Customer Tasks updates.
 
-Activity Note Added:
-[exact note added]
+Activity Note:
+[exact note added, or Already logged — no duplicate appended]
 
 Tasks Updated:
 - Created: [task title] — [owner] — [status] — [priority] — [due date or No due date]
