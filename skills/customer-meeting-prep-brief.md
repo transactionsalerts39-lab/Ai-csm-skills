@@ -395,7 +395,7 @@ Put it in Read This First and Active Customer Tasks.
 Do not close it. Flag it for review:
 
 ```text
-Possible check-off needed — confirm via /update notes or /task centre.
+Possible check-off needed — say naturally which task is complete; the task workflow resolves it internally.
 ```
 
 ### Account has no recent notes
