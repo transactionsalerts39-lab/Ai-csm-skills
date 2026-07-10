@@ -527,7 +527,7 @@ Customers Waiting on You
 Task Check-Off Review
 | Account | Task | Current Status | Possible Completion Evidence | Suggested Action |
 |---|---|---|---|---|
-| [Account] | [Task] | [Status] | [Evidence] | [Close via /task centre or /update notes if confirmed] |
+| [Account] | [Task] | [Status] | [Evidence] | [Say naturally which task is complete; the task workflow resolves it internally] |
 
 Recommended Status Updates
 | Account | Engagement Status | Outreach Step | Reason |
