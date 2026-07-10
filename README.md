@@ -2,7 +2,11 @@
 
 This repository is the live source of truth for Ranjodh's CSM AI workflow skills.
 
-- `skills/` contains canonical skill files.
+- `skills/` contains canonical workflow files.
+- `contracts/` contains shared lifecycle, fiscal-calendar, write-safety, portfolio-scope, and external-input rules.
 - `schema/airtable-schema-map.md` contains shared Airtable schema references.
-- `registry/skill-registry.md` maps triggers to skills.
-- `routing/skill-router.md` gives the routing fallback model.
+- `registry/skill-registry.md` maps triggers, paths, and default operating modes.
+- `routing/skill-router.md` defines routing precedence and write boundaries.
+- `tests/` contains dry-run regression cases for high-risk workflows.
+
+When a skill conflicts with a shared contract, the shared contract wins.
