@@ -4,8 +4,13 @@ description: >
   Create a manager-facing weekly operating recap that summarizes portfolio movement,
   account risks, renewal focus, competitor/vendor signals, hygiene updates, and next-week
   priorities. Use this when the user asks for /lattice round up, /lattice roundup,
-  /manager weekly recap, /weekly manager update, /manager update, /weekly portfolio recap,
-  /what should I send my manager, or Emily update.
+  /performance round-up, /weekly operating review, or a request explicitly naming Lattice.
+---
+
+## Shared Contracts
+
+Apply `contracts/fiscal-calendar.md`, `contracts/portfolio-scope.md`, `contracts/write-safety.md`, and `contracts/untrusted-input.md`. Use `schema/airtable-schema-map.md` for Airtable IDs. If this skill conflicts with a shared contract, the contract wins.
+
 ---
 
 # Lattice Round-Up
@@ -34,21 +39,17 @@ This should not become a raw activity dump.
 
 ## Trigger Examples
 
-Use this skill when the user says:
+Use this skill only when the request explicitly names Lattice or says:
 
+- `/lattice`
 - `/lattice round up`
 - `/lattice roundup`
 - `/lattice weekly recap`
-- `/manager weekly recap`
-- `/manager recap`
-- `/weekly recap for manager`
-- `/manager update`
-- `/weekly manager update`
-- `/weekly portfolio recap`
-- `/what should I send my manager`
-- `Emily update`
+- `/performance round-up`
+- `/weekly operating review`
+- `prepare my Lattice update`
 
-If the user says `/manager weekly recap`, use this workflow unless they specifically ask for another format.
+Manager recap and Emily update requests route to Manager Weekly Recap, not this skill.
 
 ---
 
@@ -99,6 +100,8 @@ Secondary table:
 If the user does not specify a date range:
 
 - Use the current Monday-Friday work week in Asia/Kolkata.
+- Include only Accounts where Current Active CSM = `Ranjodh` unless explicitly overridden.
+- Use `contracts/fiscal-calendar.md` for current-quarter and next-quarter renewal labels.
 - Prioritize accounts renewing in the current quarter first.
 - Then include next-quarter renewals.
 - Then include later-quarter accounts only if there was meaningful manager-worthy movement.
@@ -159,6 +162,7 @@ If pulling from Airtable, gather:
 - Stalled or risky accounts
 - Competitor/vendor signals if present in notes
 - Next steps and blockers
+- Active Customer Tasks and tasks completed during the reporting period
 
 ---
 
