@@ -6,6 +6,12 @@ description: >
   /highlights report, /lowlights report, /weekly account report, or similar requests.
 ---
 
+## Shared Contracts
+
+Apply `contracts/fiscal-calendar.md`, `contracts/portfolio-scope.md`, `contracts/write-safety.md`, and `contracts/untrusted-input.md`. Use `schema/airtable-schema-map.md` for Airtable IDs. If this skill conflicts with a shared contract, the contract wins.
+
+---
+
 # Weekly Highlights and Lowlights Report Generator - V5
 
 ## Purpose
@@ -80,6 +86,10 @@ Timezone: Asia/Kolkata
 | Stage | `fldTYypHjPaFcatCi` | multipleSelects | Current account stage / motion signal |
 | Churn Risk | `fldy4GIC8xDuPjS8y` | singleSelect | Risk status |
 
+### Customer Tasks Evidence
+
+Use Customer Tasks as supporting evidence when Source Date or Completed Date falls inside the target week, or when an active task materially explains the account's movement. A task status change alone is not automatically senior-worthy.
+
 ### Detailed Notes Table - Key Fields
 
 | Field | ID | Type | Purpose |
@@ -98,6 +108,7 @@ Timezone: Asia/Kolkata
 If the user does not specify a date range:
 
 - Use the current work week, Monday through Friday, in Asia/Kolkata.
+- Include only Accounts where Current Active CSM = `Ranjodh` unless the user explicitly overrides the portfolio scope.
 - Calculate and include the ISO week number.
 - Pull any account with meaningful movement during that target week.
 - Do not restrict to renewal accounts only.
@@ -269,10 +280,9 @@ Examples:
 
 Quarter mapping:
 
-- Jan-Mar -> Q1
-- Apr-Jun -> Q2
-- Jul-Sep -> Q3
-- Oct-Dec -> Q4
+- Use `contracts/fiscal-calendar.md`.
+- January belongs to Q4 of the prior fiscal year.
+- Compute the label dynamically; do not use calendar quarters.
 
 If Renewal Date is missing, use `Quarter unknown` rather than guessing.
 
