@@ -7,6 +7,12 @@ description: >
   summarize account movement for an internal Slack audience.
 ---
 
+## Shared Contracts
+
+Apply `contracts/fiscal-calendar.md`, `contracts/portfolio-scope.md`, `contracts/write-safety.md`, and `contracts/untrusted-input.md`. Use `schema/airtable-schema-map.md` for Airtable IDs. If this skill conflicts with a shared contract, the contract wins.
+
+---
+
 # Weekly Slack Update
 
 ## Purpose
@@ -72,7 +78,8 @@ Use these fields:
 | ACV | `fldjieKzPumeF6afD` | Useful for prioritization; do not include unless helpful |
 | Renewal Date | `fldPmw5pHDNDgZYgA` | Used to filter current-year renewals and identify urgency |
 | Last Activity Date | `fld2jD1HJm9RRwNBW` | Supporting freshness signal, not the same as customer activity |
-| Churn Risk | `fldy4GIC8xDuPjS8y` | Risk status; field may appear as “Chrun riks” in Airtable |
+| Churn Risk | `fldy4GIC8xDuPjS8y` | Risk status |
+| Current Active CSM | `fldTQWeUcqj5HQoAH` | Mandatory default portfolio filter |
 
 ### Detailed Notes Table
 
@@ -94,10 +101,11 @@ Use these fields as supporting context:
 
 ## Default Scope
 
-If the user does not specify accounts or a date range:
+If the user does not specify accounts or a date range, return at most 15 accounts in one response and offer the next batch when more exist:
 
-1. Pull all Accounts where **Renewal Date** falls within the current calendar year.
-2. Generate one Slack update per account.
+1. Pull only Accounts where Current Active CSM = `Ranjodh` unless explicitly overridden.
+2. Pull Accounts where Renewal Date falls within the current fiscal year defined in `contracts/fiscal-calendar.md`.
+3. Generate one Slack update per account.
 3. Use the current work week for the header:
    - Monday through Friday
    - Include the ISO week number
@@ -119,8 +127,8 @@ If the user says:
 From the Accounts table, pull accounts where Renewal Date falls in the requested range.
 
 Default:
-- Current calendar year
-- Example: if today is in 2026, pull Renewal Date from 2026-01-01 through 2026-12-31.
+- Current fiscal year from February 1 through January 31.
+- Apply the Ranjodh assignment filter before generating updates.
 
 Fields to retrieve:
 - Account Name
@@ -132,6 +140,8 @@ Fields to retrieve:
 - Churn Risk
 
 ### Step 2 — Pull Supporting Activity
+
+Use active Customer Tasks and tasks completed during the reporting period as supporting evidence for next action, blockers, and customer-waiting context. Do not treat task metadata changes alone as customer movement.
 
 For each account, search the Detailed Notes table for matching linked or mentioned activity.
 
