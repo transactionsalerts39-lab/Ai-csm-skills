@@ -184,10 +184,11 @@ Rules:
 - Include product names, blockers, dates, numbers, owners, and technical terms exactly when provided.
 - Mention sentiment/risk only when clearly discussed or strongly evident.
 - Do not include internal-only strategy or speculation.
+- Before appending the CRM note, apply source idempotency from `contracts/write-safety.md`. If the same meeting source is already logged, do not append it again.
 
 ### Step 4 — Create Detailed Notes record
 
-Create one Detailed Notes record with Activity Type = `Meeting Notes`.
+Create one Detailed Notes record with Activity Type = `Meeting Notes` only when the same meeting source is not already represented. On a rerun, reuse the existing record context and reconcile only genuinely new information.
 
 The Notes field should include only sections with real content:
 
@@ -435,6 +436,8 @@ Updated [Account] in Airtable with the CRM activity note, Meeting Notes record, 
 
 ```text
 Updated [Account] in Airtable with the CRM activity note and Meeting Notes record. No Customer Tasks or status/cadence changes were needed.
+
+For an already logged source, say: `This meeting source was already logged for [Account]; no duplicate CRM note or Meeting Notes record was created.`
 ```
 
 If the user asks for task detail, include:
