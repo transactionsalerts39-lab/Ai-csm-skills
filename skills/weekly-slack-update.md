@@ -112,7 +112,7 @@ If the user does not specify accounts or a date range, return at most 15 account
 4. Sort accounts by renewal date ascending, then by risk level.
 
 If the user says:
-- “this year” → use current calendar year unless they specify fiscal year.
+- “this year” → use the current fiscal year unless they explicitly request calendar year.
 - “Q2” / “Q3” / “Q4” → use the requested quarter if dates are clear.
 - “this week” → use current Monday–Friday.
 - “last week” → use previous Monday–Friday.
@@ -419,7 +419,7 @@ Output only one copyable Slack block.
 Output only the table summary.
 
 ### User asks for current-year renewals
-Pull all renewal accounts in the current calendar year and output one block per account.
+Pull all Ranjodh-assigned renewal accounts in the current fiscal year and output up to 15 blocks per response.
 
 ### User asks for “all risky accounts”
 Filter by Churn Risk, renewal timing, weak engagement, or stage values like `fu 3`, `fu 4`, `Support needed`, or `Task pending`.
