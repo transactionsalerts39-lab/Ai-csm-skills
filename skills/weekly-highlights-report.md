@@ -276,7 +276,7 @@ Convert Renewal Date to quarter format.
 Examples:
 
 - `2026-05-31` -> `Q2 26`
-- `2027-01-27` -> `Q1 27`
+- `2027-01-27` -> `Q4 26`
 
 Quarter mapping:
 
