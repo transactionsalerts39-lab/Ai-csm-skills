@@ -136,7 +136,7 @@ The Accounts table `Task status` field is a summary signal only. Customer Tasks 
 
 Use this account-level mapping when task rows change:
 
-- Set `Open` when one or more linked Customer Tasks are actionable: `Open`, `In Progress`, `Waiting on Internal Team`, `Blocked`, or `Needs Review`.
+- Set `Open` when one or more linked Customer Tasks are actionable: `Open`, `In Progress`, `Waiting on Internal Team`, `Waiting on Customer`, `Blocked`, or `Needs Review`.
 - Set `yet to start` when one or more linked Customer Tasks exist but all actionable work has not started and the exact field value is available.
 - Set `closed` when no linked Customer Tasks remain actionable and the exact field value is available.
 - If a value is unavailable in Airtable, do not force-create a new select option unless the user explicitly asks.
@@ -151,6 +151,17 @@ Use this account-level mapping when task rows change:
 - Paused
 - TBD / not confirmed
 
+## Record Identity
+
+Use Airtable record IDs internally for exact task updates. Do not expose or require Ranjodh to remember record IDs. Natural-language task actions must resolve to the internal record ID before writing.
+
+## Shared Contracts
+
+- Task state and matching: `contracts/task-lifecycle.md`
+- Write boundaries: `contracts/write-safety.md`
+- Fiscal dates: `contracts/fiscal-calendar.md`
+- Portfolio assignment scope: `contracts/portfolio-scope.md`
+
 ## Implementation Rule
 
-When Airtable structure changes, update this schema map first, then affected skill files, then the registry only if routing changed.
+When Airtable structure changes, update this schema map first, then affected shared contracts, then affected skill files, and finally the registry only if routing changed.
