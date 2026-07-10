@@ -3,6 +3,12 @@ name: manager-weekly-recap
 description: Generate a curated, manager-facing weekly account recap from Airtable data. Use this skill whenever Ranjodh asks for a weekly recap, manager update, weekly summary for their manager, or any variation of "send my manager a weekly update." Also trigger when the user says things like "prepare my manager recap," "write up my week for my manager," or "what should I send my manager this week." This is distinct from the weekly highlights/lowlights skill — this skill produces a narrative, judgment-based summary optimized for a manager audience, not a team update grid. Always use this skill when the target audience is the manager.
 ---
 
+## Shared Contracts
+
+Apply `contracts/fiscal-calendar.md`, `contracts/portfolio-scope.md`, `contracts/write-safety.md`, and `contracts/untrusted-input.md`. Use `schema/airtable-schema-map.md` for Airtable IDs. If this skill conflicts with a shared contract, the contract wins.
+
+---
+
 # Manager Weekly Recap Skill
 
 ## Purpose
@@ -36,6 +42,7 @@ The output is always delivered via `message_compose_v1` as inline copyable text.
 | ACV | `fldjieKzPumeF6afD` | Annual contract value — round to nearest k |
 | Renewal Date | `fldPmw5pHDNDgZYgA` | Used for Renewal Radar section |
 | Last Activity Date | `fld2jD1HJm9RRwNBW` | Filter for recently touched accounts |
+| Current Active CSM | `fldTQWeUcqj5HQoAH` | Mandatory default portfolio filter |
 
 > Do NOT pull Stage or Churn Risk — not used in this skill.
 
@@ -82,7 +89,7 @@ Each row is a discrete activity entry. Use directly — no date parsing needed h
 
 Use `list_records_for_table` on `tblr6UnvfaqfNvwyU`.
 
-Filter by `Last Activity Date` (`fld2jD1HJm9RRwNBW`) falling within the target week to identify recently touched accounts.
+First filter Current Active CSM = `Ranjodh` unless the user explicitly overrides the portfolio scope. Then filter by `Last Activity Date` (`fld2jD1HJm9RRwNBW`) falling within the target week to identify recently touched accounts.
 
 Pull: Account Name, Activity notes, ACV, Renewal Date, Last Activity Date.
 
@@ -127,8 +134,8 @@ For each account:
 - Example: $87,490 → `87k`
 
 **Renewal Date:** Convert to quarter format `QX YY`.
-- Jan–Mar → Q1 | Apr–Jun → Q2 | Jul–Sep → Q3 | Oct–Dec → Q4
-- Example: 2026-05-31 → `Q2 26`
+- Use `contracts/fiscal-calendar.md`; do not use calendar quarters.
+- Example: 2027-01-27 → `Q4 26`.
 
 **Renewal Radar filter:** Flag accounts whose Renewal Date falls within 90 days of today.
 
@@ -229,14 +236,14 @@ Portfolio Trend
 
 ---
 
-### Step 11 — Deliver via message_compose_v1
+### Step 11 — Deliver as editable inline text
 
-Always use `message_compose_v1` with:
+Use an editable writing block or `message_compose_v1` when available, with:
 - `kind`: `"other"`
 - `summary_title`: `"Manager Weekly Recap — Week [#], [Month Day–Day], [Year]"`
 - Single variant labeled: `"Manager Weekly Recap"`
 
-Do not output as HTML, artifact, file, or visualizer widget. The copyable text box is the only valid output format.
+If an editable writing surface is unavailable, output directly in the conversation as copyable text. Do not fail solely because `message_compose_v1` is unavailable. Do not output as HTML, artifact, file, or visualizer widget.
 
 ---
 
