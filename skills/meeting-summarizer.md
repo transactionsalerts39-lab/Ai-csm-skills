@@ -23,6 +23,19 @@ The chat output should stay clean. Do not output raw task rows by default unless
 
 ---
 
+## Shared Contracts
+
+Before running this workflow, apply:
+
+- `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
+- `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
+- `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
+- `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+
+If this skill conflicts with a shared contract, the shared contract wins.
+
+---
+
 ## Airtable Source of Truth
 
 Base:
@@ -295,6 +308,9 @@ Mark a task `Done` only when all are true:
 2. Existing task is active.
 3. Meeting clearly proves the specific task was completed.
 4. Completion evidence can be quoted or summarized.
+5. Actor, tense, action/object, negation, quotation context, and completion scope pass `contracts/task-lifecycle.md`.
+
+Do not close a task from quoted transcript history, a future promise, a draft, partial work, or another actor's unrelated action.
 
 Completion signals include:
 
