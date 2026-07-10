@@ -688,7 +688,7 @@ If the user asks for review only, do not update Airtable. Provide recommendation
 
 ### User asks to check off / close tasks
 
-If the user explicitly asks Weekly Command Centre to check off tasks, only close tasks when completion evidence is explicit. Otherwise mark `Needs Review` and explain what evidence is missing. Prefer using `/task centre` or `/update notes` for focused task check-off.
+If the user explicitly asks Weekly Command Centre to check off tasks, only close tasks when completion evidence is explicit. Otherwise mark `Needs Review` and explain what evidence is missing. Ranjodh can state naturally which task is complete; resolve it through Customer Task Centre without requiring a command or ID.
 
 ### No renewal-focus accounts found
 
