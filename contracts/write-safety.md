@@ -35,6 +35,26 @@ Reporting and preparation workflows must not silently modify Airtable, Salesforc
 
 Show recommended changes separately. Apply them only when the user explicitly asks to apply, update, close, reopen, send, post, or submit them.
 
+## Idempotent Ingestion
+
+Before appending an Activity note or creating a Detailed Notes record, check whether the same source was already logged for the same account.
+
+Use a source identity in this order:
+
+1. External message, meeting, transcript, or source record ID when available
+2. Same account + source type + source date + normalized source content
+3. Strong semantic match against the most recent relevant note/record
+
+On a repeated source:
+
+- Do not append a duplicate Activity note.
+- Do not create a duplicate Detailed Notes record.
+- Do not create a duplicate Customer Task.
+- Reconcile genuinely new status, due-date, owner, or completion evidence only.
+- Confirm that the source was already logged and no duplicate was added.
+
+If the source is similar but not clearly identical, do not suppress it silently; mark the ambiguity or ask one concise question.
+
 ## Confirmation
 
 After any write, report:
