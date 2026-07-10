@@ -27,6 +27,19 @@ Customer Tasks is the primary source for open work. Activity notes and Detailed 
 
 ---
 
+## Shared Contracts
+
+Before running this workflow, apply:
+
+- `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
+- `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
+- `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
+- `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+
+If this skill conflicts with a shared contract, the shared contract wins.
+
+---
+
 ## Triggers
 
 Use this skill when the user says things like:
@@ -273,9 +286,9 @@ Always use this format by default:
 | Last Meaningful Activity | [date + short context] |
 
 ## Active Customer Tasks
-| Priority | Task | Owner | Status | Due / Timing | Customer Waiting? |
-|---|---|---|---|---|---|
-| [P1/P2/P3] | [Task Title] | [Owner] | [Status] | [Due Date / No due date] | [Yes/No] |
+| # | Priority | Task | Owner | Status | Due / Timing | Customer Waiting? |
+|---:|---|---|---|---|---|---|
+| 1 | [P1/P2/P3] | [Task Title] | [Owner] | [Status] | [Due Date / No due date] | [Yes/No] |
 
 ## Recent Context
 | Date | What happened | Why it matters |
@@ -313,7 +326,7 @@ No active Customer Tasks captured for this account.
 If a task appears completed but still active, include it under Active Customer Tasks and flag it as:
 
 ```text
-Possible check-off needed — confirm via /update notes or /task centre.
+Possible check-off needed — say which task is done naturally; the task workflow will resolve the record internally.
 ```
 
 ---
