@@ -28,10 +28,24 @@ This is the focused task-management workflow. Weekly Command Centre summarizes a
 
 ---
 
+## Shared Contracts
+
+Before running this workflow, apply:
+
+- `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
+- `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
+- `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
+- `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+
+If this skill conflicts with a shared contract, the shared contract wins.
+
+---
+
 ## Triggers
 
 Use this skill for:
 
+- `/task manager`
 - `/task centre`
 - `/task center`
 - `/tasks`
@@ -120,6 +134,9 @@ Closed statuses:
 Default view:
 
 - active tasks only
+- number displayed rows for easy conversational reference
+- resolve every displayed row to its Airtable record ID internally
+- never require Ranjodh to remember or type a task ID
 - Customer Waiting? checked first
 - P1 before P2 before P3
 - due soon before no due date
@@ -140,14 +157,14 @@ Customer Task Centre
 Scope: [Ranjodh / specific account / requested filter]
 
 Customers Waiting on You
-| Account | Task | Owner | Status | Priority | Due Date | Notes |
-|---|---|---|---|---|---:|---|
-| [Account] | [Task Title] | [Owner] | [Status] | [Priority] | [Due Date / Blank] | [short source summary] |
+| # | Account | Task | Owner | Status | Priority | Due Date | Notes |
+|---:|---|---|---|---|---|---:|---|
+| 1 | [Account] | [Task Title] | [Owner] | [Status] | [Priority] | [Due Date / Blank] | [short source summary] |
 
 Open Tasks
-| Account | Task | Owner | Status | Priority | Due Date | Customer Waiting? |
-|---|---|---|---|---|---:|---|
-| [Account] | [Task Title] | [Owner] | [Status] | [Priority] | [Due Date / Blank] | [Yes/No] |
+| # | Account | Task | Owner | Status | Priority | Due Date | Customer Waiting? |
+|---:|---|---|---|---|---|---:|---|
+| 2 | [Account] | [Task Title] | [Owner] | [Status] | [Priority] | [Due Date / Blank] | [Yes/No] |
 
 Needs Review
 | Account | Task | Issue | Suggested Action |
@@ -184,15 +201,17 @@ If a similar task exists, update it instead of creating a duplicate unless the u
 
 ## Updating Tasks
 
-When the user asks to change a task, identify the matching task by:
+When the user asks to change a task, resolve it to the underlying Airtable record ID internally using:
 
 1. Account
-2. Task Title / fuzzy task description
+2. Task Title / natural-language action
 3. Owner/status/due date if needed
+4. Current conversation context
+5. Displayed row number when the user says `number 2` or similar
 
-If one strong match exists, update it.
+If one strong match exists, update it without asking for an ID.
 
-If multiple matches exist, ask one short clarification question unless the user gave enough context to proceed safely.
+If multiple matches exist, ask one short clarification question. Never require Ranjodh to remember a record ID or special command.
 
 Allow updates to:
 
@@ -213,7 +232,7 @@ After task updates, recalculate Accounts → Task status for the linked account.
 
 ## Checking Off / Closing Tasks
 
-When user asks to close, check off, or mark a task done:
+When the user naturally says a task is done, completed, sent, raised, resolved, closed, or should be checked off:
 
 1. Find the matching active task.
 2. Confirm there is explicit completion evidence from the user or source content.
@@ -225,7 +244,7 @@ When user asks to close, check off, or mark a task done:
    - Last Updated From = `Task Centre`
 4. Recalculate Accounts → Task status.
 
-If the user says “mark it done” and the task match is unambiguous, this is enough evidence to close the task. Use Completion Evidence = `Marked done by Ranjodh via Task Centre.`
+If the user says a task is done and the task match is unambiguous, this is enough evidence to close it. Use Completion Evidence = `Marked done by Ranjodh via Task Centre.` Support multiple tasks in one request when every match is unambiguous.
 
 If the task match is ambiguous, ask which task to close.
 
@@ -240,6 +259,21 @@ Use Status = `Cancelled` when the user says the task is no longer needed, irrele
 Set Completion Evidence / Source Summary to explain why it was cancelled.
 
 Do not delete task records unless the user explicitly asks to delete records.
+
+---
+
+## Reopening Tasks
+
+Reopen a `Done` or `Cancelled` task only when Ranjodh explicitly asks or new evidence clearly proves more work remains.
+
+When reopening:
+
+- Resolve the existing closed record rather than creating a duplicate.
+- Set the appropriate active status.
+- Clear Completed Date when supported.
+- Record why it was reopened.
+- Set Last Updated From = `Task Centre`.
+- Recalculate Accounts → Task status.
 
 ---
 
@@ -281,7 +315,8 @@ Account Task Status:
 
 ## What Not To Do
 
-- Do not create duplicate tasks when an equivalent active task exists.
+- Do not create duplicate tasks when an equivalent active or explicitly reopened task exists.
+- Do not expose Airtable record IDs or require special task commands.
 - Do not delete records unless explicitly asked.
 - Do not close tasks unless completion is explicit or the user directly says to mark the task done.
 - Do not update Engagement Status or Outreach Step from Task Centre unless the user explicitly asks; use Weekly Command Centre or Update Notes for broader account workflow changes.
