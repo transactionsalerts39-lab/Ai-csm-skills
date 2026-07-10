@@ -365,7 +365,7 @@ Do not turn Deep Prep into a raw Airtable dump.
 - P1/P2 tasks should appear before P3 tasks.
 - A task owned by Customer should still appear if it affects what Ranjodh should ask or confirm.
 - A task owned by Support/Internal Team should appear if Ranjodh needs to provide an update or manage customer expectations.
-- Do not mark tasks complete in Meeting Prep. If completion evidence appears, recommend checking it off through `/update notes` or `/task centre`.
+- Do not mark tasks complete in Meeting Prep. If completion evidence appears, say that it may need check-off and let Ranjodh describe the completed task naturally; resolve it internally without requiring a command or ID.
 
 ### Activity Notes and Detailed Notes
 
