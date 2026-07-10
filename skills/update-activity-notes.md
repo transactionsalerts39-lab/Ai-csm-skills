@@ -31,6 +31,19 @@ The skill must prioritize speed, accuracy, and workflow hygiene. Do not over-doc
 
 ---
 
+## Shared Contracts
+
+Before running this workflow, apply:
+
+- `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
+- `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
+- `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
+- `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+
+If this skill conflicts with a shared contract, the shared contract wins.
+
+---
+
 # Airtable Source of Truth
 
 Use Airtable as the system to update.
@@ -271,9 +284,12 @@ Every `/update notes` run must compare the new activity against existing open Cu
 Mark an existing task `Done` only when all are true:
 
 1. Same account.
-2. Existing task is actionable: `Open`, `In Progress`, `Waiting on Internal Team`, `Blocked`, or `Needs Review`.
+2. Existing task is actionable: `Open`, `In Progress`, `Waiting on Internal Team`, `Waiting on Customer`, `Blocked`, or `Needs Review`.
 3. The new activity clearly proves that the specific task was completed.
 4. The completion evidence is explicit enough to quote or summarize.
+5. Actor, tense, action/object, negation, quotation context, and completion scope pass `contracts/task-lifecycle.md`.
+
+A completion verb alone is not enough. Do not close from quoted or forwarded history, future promises, drafts, negated statements, another actor's unrelated work, or partial completion.
 
 Completion signals include:
 
@@ -332,7 +348,7 @@ After Customer Tasks changes, update Accounts → Task status only as a summary 
 
 Use this mapping:
 
-- If one or more linked Customer Tasks are actionable (`Open`, `In Progress`, `Waiting on Internal Team`, `Blocked`, or `Needs Review`) → `Open`.
+- If one or more linked Customer Tasks are actionable (`Open`, `In Progress`, `Waiting on Internal Team`, `Waiting on Customer`, `Blocked`, or `Needs Review`) → `Open`.
 - If one or more linked Customer Tasks exist but all are not started and Airtable has a compatible option → `yet to start`.
 - If no linked Customer Tasks remain actionable and Airtable has a compatible option → `closed`.
 - If the exact select option is unavailable, do not create a new option unless the user explicitly asks.
@@ -365,33 +381,31 @@ Customer Tasks remains the source of truth.
 
 # Follow-Up Stage Progression Rules
 
-Do not advance outreach steps just because time passed. Advance only when the user input clearly says a follow-up was actually sent or the workflow includes both a follow-up draft and an explicit `/update notes` request.
+Do not advance outreach steps because time passed, because an email was drafted, or because a draft and `/update notes` appear in the same request.
 
-## Follow-up shorthand hard check
+## Draft-versus-sent hard check
 
-When the user asks to draft, make, write, or send a follow-up email/message and also asks to update notes in the same request, treat the activity as a sent follow-up unless the user explicitly says:
+Before writing Airtable for a follow-up:
 
-- draft only
-- for review only
-- not sent
-- not ready to log
-- do not update/send yet
-
-Before writing Airtable for any follow-up activity:
-
-1. Read the current Outreach Step.
-2. Compare the new activity signal against the current Outreach Step.
-3. If the new activity is a sent follow-up, advance exactly one follow-up step:
+1. Classify the event as Drafted, Sent, Received, Scheduled, Submitted/Raised, or Unknown.
+2. Treat Drafted and Unknown as not sent.
+3. Require explicit completion evidence such as `I sent the email`, `email sent`, or `this was shared with the customer` before recording a sent touch.
+4. If a draft contains a promise, create or update the promised task but do not close the delivery task.
+5. Read the current Outreach Step.
+6. Only for an explicitly sent follow-up, advance exactly one step:
    - `Intro sent`, `Not started`, or blank after a prior intro exists → `FU 1`
    - `FU 1` → `FU 2`
    - `FU 2` → `FU 3`
    - `FU 3` → `FU 4`
-   - `FU 4` → keep `FU 4`; consider recommending multithread or park, but do not auto-change without evidence
-4. Keep Engagement Status as `No response - follow-up needed` for no-response follow-up steps unless a higher-priority signal exists.
-5. In the final confirmation, explicitly show the Outreach Step transition.
-6. Never report `No change` for Outreach Step when a sent follow-up caused the step to advance.
+   - `FU 4` → keep `FU 4`; recommend multithread or park only when supported
+7. Keep Engagement Status as `No response - follow-up needed` for no-response follow-ups unless a higher-priority signal exists.
+8. Show the Outreach Step transition in the confirmation when it changed.
 
-If the user only asks for wording and does not ask to update Airtable, do not log the activity as sent.
+Examples:
+
+- `Write this email and update notes` → log the draft context and promised tasks only; do not mark sent.
+- `I sent this email; update notes` → log sent and apply supported progression/completion.
+- `I did not send the Pivot email; Ajit will send it and I will confirm with him` → do not close the email task; create or update Ranjodh's confirmation task.
 
 ---
 
