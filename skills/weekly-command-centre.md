@@ -32,6 +32,19 @@ The output should be easy to scan in about 60 seconds.
 
 ---
 
+## Shared Contracts
+
+Before running this workflow, apply:
+
+- `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
+- `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
+- `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
+- `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+
+If this skill conflicts with a shared contract, the shared contract wins.
+
+---
+
 ## Mandatory Assignment Filter
 
 By default, include only Airtable Accounts records assigned to Ranjodh.
@@ -333,12 +346,9 @@ Do not auto-close tasks in Weekly Command Centre unless the user explicitly asks
 
 Before ranking priorities, check whether Engagement Status and Outreach Step appear missing, stale, or inconsistent.
 
-Create:
+Weekly Command Centre is read-only by default. Create **Recommended Status Updates** and do not write them automatically.
 
-1. **Status Updates Applied** — high-confidence changes updated in Airtable.
-2. **Status Updates to Review** — recommended changes that should not be automatically written.
-
-Apply an update only when all are true:
+A recommendation is high-confidence only when:
 
 - Account match is exact or strongly matched.
 - Account passed the mandatory Assigned / Current Active CSM filter.
@@ -346,9 +356,9 @@ Apply an update only when all are true:
 - Update does not require guessing.
 - Update does not downgrade a support/blocker or churn/offboarding state.
 
-Never auto-increment outreach by time alone. Do not move follow-up steps unless notes clearly say the follow-up was actually sent.
+Never auto-increment outreach by time alone. A draft does not prove a follow-up was sent.
 
-If the user asks for review only, do not update fields.
+Apply recommended status changes only when the user explicitly asks to apply weekly updates. Before writing, restate the accounts and exact field changes being applied.
 
 ---
 
@@ -519,15 +529,15 @@ Task Check-Off Review
 |---|---|---|---|---|
 | [Account] | [Task] | [Status] | [Evidence] | [Close via /task centre or /update notes if confirmed] |
 
-Status Updates Applied
+Recommended Status Updates
 | Account | Engagement Status | Outreach Step | Reason |
 |---|---|---|---|
 | [Account] | [old → new or unchanged] | [old → new or unchanged] | [short reason] |
 
-Status Updates to Review
-| Account | Current Status | Recommended Update | Reason |
+Status Ambiguities
+| Account | Current Status | Possible Update | Why It Needs Review |
 |---|---|---|---|
-| [Account] | [current Engagement Status / Outreach Step] | [recommended values] | [why review is needed] |
+| [Account] | [current Engagement Status / Outreach Step] | [possible values] | [why the evidence is not conclusive] |
 
 Cadence Hygiene
 | Account | Current Cadence State | Cadence Frequency | Issue | Suggested Action |
@@ -573,9 +583,9 @@ If no customers are waiting on Ranjodh, omit **Customers Waiting on You** unless
 
 If no check-off review items exist, omit **Task Check-Off Review**.
 
-If no status updates were applied, say: `No high-confidence Engagement Status or Outreach Step updates were applied.`
+If no status recommendations exist, say: `No high-confidence Engagement Status or Outreach Step changes are recommended.`
 
-If no status review items exist, omit **Status Updates to Review**.
+If no status recommendations exist, omit **Recommended Status Updates**.
 
 If no cadence hygiene issues exist, omit **Cadence Hygiene**.
 
@@ -590,13 +600,13 @@ If no accounts fall inside the renewal focus window after applying filters, say:
 - Then show Customers Waiting on You as the first action-oriented section when any items exist.
 - Customers Waiting on You must not appear at the end.
 - Then show Task Check-Off Review when applicable.
-- Then show Status Updates Applied / Status Updates to Review when applicable.
+- Then show Recommended Status Updates and Status Ambiguities when applicable.
 - Then show Cadence Hygiene when applicable.
 - Then show Renewal Focus Window.
 - Then show Do First This Week.
 - Keep Do First This Week to the top 5–7 accounts/tasks.
 - Show Engagement Status / Outreach Step and Customer Task Status in renewal and priority tables.
-- Use tables for Customers Waiting on You, Task Check-Off Review, Status Updates Applied, Status Updates to Review, Cadence Hygiene, Renewal Focus Window, Do First This Week, Priority 2, Priority 3, and Stale / Risk Accounts.
+- Use tables for Customers Waiting on You, Task Check-Off Review, Recommended Status Updates, Status Ambiguities, Cadence Hygiene, Renewal Focus Window, Do First This Week, Priority 2, Priority 3, and Stale / Risk Accounts.
 - Use short account blocks only for Priority 1.
 - Do not include every possible task if it makes the output hard to read.
 - Prioritize what the user should actually act on.
@@ -605,8 +615,8 @@ Maximum length guidance:
 
 - Customers Waiting on You: max 8 rows
 - Task Check-Off Review: max 8 rows
-- Status Updates Applied: max 8 rows
-- Status Updates to Review: max 8 rows
+- Recommended Status Updates: max 8 rows
+- Status Ambiguities: max 8 rows
 - Cadence Hygiene: max 8 rows
 - Renewal Focus Window: show all if readable; otherwise max 20 rows
 - Do First This Week: max 7 rows
@@ -658,7 +668,7 @@ Activity exists for the selected range, but no open Customer Tasks or account ac
 
 ### Account has mixed signals
 
-Use the highest-priority signal. If Engagement Status conflicts with notes or Customer Tasks, include the account in Status Updates to Review unless the correct update is high-confidence.
+Use the highest-priority signal. If Engagement Status conflicts with notes or Customer Tasks, include the account in Status Ambiguities unless the evidence is sufficient for a clear Recommended Status Update.
 
 ### Customer waiting on internal team
 
@@ -674,7 +684,7 @@ Do not override `Support / blocker active` or `Churn / offboarding` unless notes
 
 ### User asks for review only
 
-If the user asks for review only, do not update Airtable. Provide recommendations in Status Updates to Review, Cadence Hygiene, and Task Check-Off Review where relevant.
+If the user asks for review only, do not update Airtable. Provide recommendations in Recommended Status Updates, Cadence Hygiene, and Task Check-Off Review where relevant.
 
 ### User asks to check off / close tasks
 
