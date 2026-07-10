@@ -8,6 +8,12 @@ description: >
   returns only incremental Last Steps and non-overlapping Next Steps, enforces paste-ready date/RS formatting for Clari text fields, and drafts brief current-quarter and next-quarter churn forecast comments.
 ---
 
+## Shared Contracts
+
+Apply `contracts/fiscal-calendar.md`, `contracts/portfolio-scope.md`, `contracts/write-safety.md`, and `contracts/untrusted-input.md`. Use `contracts/task-lifecycle.md` and `schema/airtable-schema-map.md` for Customer Tasks and Airtable IDs. If this skill conflicts with a shared contract, the contract wins.
+
+---
+
 # Clari Weekly Forecast Prep — Incremental Last Steps + Deduped Next Steps
 
 ## Purpose
@@ -225,6 +231,8 @@ Read these fields when available:
 
 If the export contains duplicate column names, such as duplicate `Last Steps` columns, use the populated column and flag the duplicate under **Needs Manual Review**.
 
+Unless the user explicitly requests all owners, filter the CSV to Account CSM = `Ranjodh` when that column is available. If the column is unavailable, match to Airtable and apply Current Active CSM = `Ranjodh`.
+
 ---
 
 ## Step 3 — Apply Quarter / Date Filter
@@ -283,6 +291,10 @@ Pull:
 - Stage (`fldTYypHjPaFcatCi`)
 - Churn Risk (`fldy4GIC8xDuPjS8y`)
 - Last Activity Date (`fld2jD1HJm9RRwNBW`)
+
+### Customer Tasks Table
+
+Use active tasks and tasks completed since the CSV snapshot to support Next Steps and incremental Last Steps. Do not copy task titles blindly; translate only evidence-backed actions and completion into Clari-ready wording.
 
 ### Detailed Notes Table
 
