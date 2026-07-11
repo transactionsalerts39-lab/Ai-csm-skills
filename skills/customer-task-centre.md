@@ -1,30 +1,27 @@
 ---
 name: customer-task-centre
 description: >
-  Show, create, update, review, and check off Customer Tasks in Airtable. Use this when the user
-  asks for task centre, open tasks, customer tasks, tasks waiting on me, close/check off a task,
-  mark tasks done, or review task hygiene. Customer Tasks is the durable execution tracker for
-  CSM-owned follow-ups, customer-waiting items, support/internal follow-ups, and completion evidence.
+  Show, prioritize, create, update, review, and check off 6sense work across Airtable Customer Tasks
+  and the canonical Notion Projects & tasks page. Use for task centre, task command centre, high-priority
+  tasks, customer tasks, manager/internal work, check-off, or task hygiene. Preserve source ownership:
+  Airtable for customer/account commitments and Notion for internal, manager, admin, AI/OKR, and project work.
 ---
 
-# Customer Task Centre
+# Task Centre — Unified 6sense Work
 
 ## Purpose
 
-Manage the Customer Tasks table directly.
+Manage one source-aware task view across Airtable and the 6sense Notion task page.
 
 Use this skill when Ranjodh wants to:
 
-- view open tasks
-- see customers waiting on him
-- check off tasks
-- mark tasks as done/cancelled/needs review
-- create a manual task
-- update owner, status, priority, due date, or customer-waiting flag
-- review tasks that may already be completed
-- inspect task hygiene across accounts
+- view a unified high-priority queue
+- see open customer tasks and customers waiting on him
+- see Notion high-priority, manager, admin, enablement, AI/OKR, or project tasks
+- check off, cancel, reopen, create, or update a task
+- review duplicates, stale items, missing due dates, or source hygiene
 
-This is the focused task-management workflow. Weekly Command Centre summarizes and prioritizes tasks; Update Notes and Meeting Summarizer capture tasks from source content; Task Centre is where tasks can be deliberately reviewed and changed.
+Weekly Command Centre summarizes the wider week and account portfolio. Update Notes and Meeting Summarizer capture customer commitments from evidence. Task Centre is the focused place to review and deliberately change tasks at their authoritative source.
 
 ---
 
@@ -36,6 +33,7 @@ Before running this workflow, apply:
 - `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
 - `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
 - `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+- `schema/notion-task-map.md` for the canonical 6sense Notion pages, task sections, source ownership, deduplication, and write rules.
 
 If this skill conflicts with a shared contract, the shared contract wins.
 
@@ -48,6 +46,10 @@ Use this skill for:
 - `/task manager`
 - `/task centre`
 - `/task center`
+- `/task command centre`
+- `/task command center`
+- `/high priority tasks`
+- `/6sense tasks`
 - `/tasks`
 - `/open tasks`
 - `/customer tasks`
@@ -61,6 +63,17 @@ Use this skill for:
 - `show my open tasks`
 - `show tasks for [Account]`
 - `mark [task] done for [Account]`
+
+---
+
+## Source Model
+
+Build one view from two authoritative sources:
+
+1. Airtable Customer Tasks for customer/account commitments, customer waiting, account-linked support/internal follow-ups, due dates, owners, lifecycle state, and completion evidence.
+2. Notion `6 sense → Projects & tasks` for high-priority internal, manager, admin, enablement, AI/OKR, and project work.
+
+Never silently mirror or bidirectionally sync tasks. Deduplicate cross-source customer items and keep the authoritative source visible.
 
 ---
 
@@ -111,40 +124,40 @@ Always use `schema/airtable-schema-map.md` for current field IDs and allowed val
 - Renewal Date: `fldPmw5pHDNDgZYgA`
 - Churn Risk: `fldy4GIC8xDuPjS8y`
 
+
+### Notion Task Source
+
+- Canonical page: `Projects & tasks`
+- Page ID: `2e6ecca2-ea5e-8187-a2d4-d05b217c7ec3`
+- Parent hub: `6 sense`
+- Default sections: `High Priority 🚨`, `Customer Tasks`, `Manager tasks 🚨`, and `AI OKR Project Tasks`
+- Open task: unchecked `[ ]`
+- Completed task: checked `[x]`
+
+Use `schema/notion-task-map.md` for exact URLs, exclusions, linked-page handling, source precedence, and writes. Do not read the unrelated personal `Tasks` page.
+
 ---
 
 ## Default Scope
 
-By default, show only Customer Tasks linked to accounts where Current Active CSM = `Ranjodh`.
+Default to current open work from both sources:
 
-Open/actionable statuses:
+- Airtable: Customer Tasks linked to accounts where Current Active CSM = `Ranjodh`
+- Notion: open items on the canonical 6sense `Projects & tasks` page
+- Exclude completed Notion checkboxes and Airtable `Done`/`Cancelled`
+- Include backlog/dump items only when asked or when they carry explicit urgency
+- Resolve Airtable row numbers to record IDs internally; resolve Notion items to the exact page and checkbox text internally
+- Never require Ranjodh to remember a record ID or page ID
 
-- `Open`
-- `In Progress`
-- `Waiting on Internal Team`
-- `Waiting on Customer`
-- `Blocked`
-- `Needs Review`
+Unified ranking:
 
-Closed statuses:
+1. Overdue or P1 customer-waiting work
+2. Open Notion `High Priority 🚨` work
+3. Other P1/renewal-risk customer work
+4. Due-soon manager/internal/project work
+5. P2, P3, undated, and hygiene items
 
-- `Done`
-- `Cancelled`
-
-Default view:
-
-- active tasks only
-- number displayed rows for easy conversational reference
-- resolve every displayed row to its Airtable record ID internally
-- never require Ranjodh to remember or type a task ID
-- Customer Waiting? checked first
-- P1 before P2 before P3
-- due soon before no due date
-- account renewal/risk context included when helpful
-
-If the user asks for a specific account, show tasks only for that account.
-
-If the user asks for closed/completed history, include `Done` and `Cancelled`.
+If a customer task appears in both systems, display one row with Airtable authoritative and Notion shown as a mirror/reference. If matching is uncertain, keep both under `Needs Source Review`.
 
 ---
 
@@ -153,102 +166,74 @@ If the user asks for closed/completed history, include `Done` and `Cancelled`.
 Use this by default:
 
 ```text
-Customer Task Centre
-Scope: [Ranjodh / specific account / requested filter]
+Task Centre
+Scope: 6sense work — Airtable + Notion
+
+Unified High Priority
+| # | Source | Account / Area | Task | Status | Priority | Due / Timing |
+|---:|---|---|---|---|---|---|
+| 1 | Airtable / Notion | [Account or work area] | [Task] | [Status/Open] | [Priority/High] | [Date/timing] |
 
 Customers Waiting on You
-| # | Account | Task | Owner | Status | Priority | Due Date | Notes |
-|---:|---|---|---|---|---|---:|---|
-| 1 | [Account] | [Task Title] | [Owner] | [Status] | [Priority] | [Due Date / Blank] | [short source summary] |
+| # | Account | Task | Owner | Status | Priority | Due Date |
+|---:|---|---|---|---|---|---:|
 
-Open Tasks
-| # | Account | Task | Owner | Status | Priority | Due Date | Customer Waiting? |
-|---:|---|---|---|---|---|---:|---|
-| 2 | [Account] | [Task Title] | [Owner] | [Status] | [Priority] | [Due Date / Blank] | [Yes/No] |
+Notion Work Queue
+| # | Section | Task | State | Notes |
+|---:|---|---|---|---|
 
-Needs Review
-| Account | Task | Issue | Suggested Action |
-|---|---|---|---|
-| [Account] | [Task Title] | [duplicate/completion/owner ambiguity] | [what to confirm] |
+Needs Review / Source Conflicts
+| # | Task | Sources | Issue | Suggested Action |
+|---:|---|---|---|---|
 ```
 
-Omit empty sections unless the user explicitly asks for all sections.
+Omit empty sections. Label every row `Airtable` or `Notion`. Keep row numbering unique across the response.
 
 ---
 
 ## Creating Tasks
 
-Create a Customer Task only when the user explicitly asks to add/create a task or when task creation is part of a source-ingestion workflow that has clear task evidence.
+Choose the authoritative source before creating:
 
-Required fields for manual task creation:
+- Concrete customer/account commitment → Airtable Customer Tasks.
+- High-priority internal, manager, admin, enablement, AI/OKR, or project action → canonical Notion `Projects & tasks` page.
+- Ambiguous classification → ask one short question.
 
-- Task Title
-- Account
-- Owner if known, else `Unknown`
-- Status, default `Open`
-- Priority, default `P2 - Should do`
-- Customer Waiting?, default based on wording
-- Source Type, default `Manual`
-- Source Date, default today in Asia/Kolkata
-- Source Summary, concise reason the task exists
-- Last Updated From = `Task Centre`
+Create only after an explicit request or an authorized source-ingestion workflow. Deduplicate within the target source and across both sources first.
 
-Before creating, search active tasks for the same account and similar title/owner to avoid duplicates.
+For Airtable creation, follow the existing schema and defaults: Status `Open`, Priority `P2 - Should do`, Source Type `Manual`, Source Date = today in Asia/Kolkata, and Last Updated From = `Task Centre`.
 
-If a similar task exists, update it instead of creating a duplicate unless the user explicitly says it is a separate task.
+For Notion creation, insert an unchecked item into the most specific canonical section. Do not add it to `High Priority 🚨` unless the user marks it high priority or the evidence shows a real deadline/critical consequence. Re-fetch the page after writing.
 
 ---
 
 ## Updating Tasks
 
-When the user asks to change a task, resolve it to the underlying Airtable record ID internally using:
+Resolve a task using source label, account/area, normalized task text, status, timing, current conversation, and displayed row number.
 
-1. Account
-2. Task Title / natural-language action
-3. Owner/status/due date if needed
-4. Current conversation context
-5. Displayed row number when the user says `number 2` or similar
+- Airtable-owned item → update the underlying Airtable record.
+- Notion-owned item → update the exact checkbox/text on the canonical page or linked child page.
+- Mirrored customer item → update Airtable only unless the user explicitly asks to sync Notion too.
+- Multiple plausible matches or source ambiguity → ask one concise clarification.
 
-If one strong match exists, update it without asking for an ID.
-
-If multiple matches exist, ask one short clarification question. Never require Ranjodh to remember a record ID or special command.
-
-Allow updates to:
-
-- Owner
-- Status
-- Priority
-- Due Date
-- Customer Waiting?
-- Source Summary
-- Completion Evidence
-- Completed Date
-- Needs Review
-- Last Updated From
-
-After task updates, recalculate Accounts → Task status for the linked account.
+Allow source-appropriate changes to owner, status, priority, due date, customer-waiting flag, source summary, completion evidence, review flag, Notion section, or checkbox state. After Airtable task changes, recalculate Accounts → Task status. After Notion changes, re-fetch and verify the exact item.
 
 ---
 
 ## Checking Off / Closing Tasks
 
-When the user naturally says a task is done, completed, sent, raised, resolved, closed, or should be checked off:
+When the user naturally says a task is done, sent, raised, resolved, closed, or should be checked off:
 
-1. Find the matching active task.
-2. Confirm there is explicit completion evidence from the user or source content.
-3. If evidence is explicit, update:
-   - Status = `Done`
-   - Completed Date = today in Asia/Kolkata unless a completion date is provided
-   - Completion Evidence = user-provided evidence or concise summary
-   - Needs Review = unchecked
-   - Last Updated From = `Task Centre`
-4. Recalculate Accounts → Task status.
+1. Resolve the displayed/source task.
+2. Apply `contracts/task-lifecycle.md` completion gates.
+3. Update only the authoritative source.
+4. Verify the write.
 
-If the user says a task is done and the task match is unambiguous, this is enough evidence to close it. Use Completion Evidence = `Marked done by Ranjodh via Task Centre.` Support multiple tasks in one request when every match is unambiguous.
+For Airtable: set Status = `Done`, Completed Date, concise Completion Evidence, Needs Review = unchecked, Last Updated From = `Task Centre`, then recalculate account Task status.
 
-If the task match is ambiguous, ask which task to close.
+For Notion: change the exact `[ ]` item to `[x]` on the canonical page or linked task page. Do not rewrite surrounding task content.
 
-If completion evidence is weak and the user did not explicitly instruct closure, do not close it; mark Needs Review instead.
+A direct unambiguous instruction such as `mark number 3 done` is sufficient. If a matching item exists in both systems but source ownership is unclear, ask which source to update rather than closing both.
 
 ---
 
@@ -298,7 +283,10 @@ For display-only requests, do not include an update confirmation.
 For changes, use:
 
 ```text
-Updated Customer Tasks in Airtable.
+Updated task source(s).
+
+Systems Updated:
+- [Airtable / Notion]
 
 Tasks Updated:
 - Created: [task] — [account] — [owner] — [status] — [priority]
@@ -322,9 +310,12 @@ Account Task Status:
 - Do not update Engagement Status or Outreach Step from Task Centre unless the user explicitly asks; use Weekly Command Centre or Update Notes for broader account workflow changes.
 - Do not include every closed task by default.
 - Do not include non-Ranjodh accounts unless explicitly requested.
+- Do not use the unrelated personal Notion `Tasks` page.
+- Do not auto-sync, auto-close, or create both Airtable and Notion copies.
+- Do not treat Notion `Dump` as high priority without an urgency signal.
 
 ---
 
 ## Final Rule
 
-Customer Tasks is the execution tracker. Use this skill to show, create, update, review, and check off tasks deliberately. Keep the output practical and action-focused.
+Task Centre is the unified 6sense work queue. Airtable remains authoritative for customer/account execution; Notion remains authoritative for internal and project work. Rank both together, preserve source ownership, and keep every change deliberate and verifiable.
