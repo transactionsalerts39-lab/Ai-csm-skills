@@ -23,8 +23,12 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/meeting summa` → Meeting Summarizer.
 - `/meeting follow-up` or `only email` → Meeting Follow-Up Email.
 - `/clari weekly forecast` → Clari Weekly Forecast.
-- `/task manager`, natural-language task completion, cancellation, or reopening → Customer Task Centre.
+- `/task manager`, `/task command centre`, `/high priority tasks`, and natural-language task completion, cancellation, or reopening → Customer Task Centre.
 - `/update notes` → Update Activity Notes even when the same turn also contains a draft; apply the Draft Is Not Sent rule.
+
+## Task Source Boundary
+
+Use `schema/notion-task-map.md`. Airtable Customer Tasks is authoritative for customer/account commitments. The 6sense Notion `Projects & tasks` page is authoritative for high-priority internal, manager, admin, enablement, AI/OKR, and project work. Unified views deduplicate overlaps and preserve the authoritative source.
 
 ## Natural-Language Task Actions
 
