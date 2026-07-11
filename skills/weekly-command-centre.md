@@ -14,21 +14,16 @@ description: >
 
 ## Purpose
 
-Create a compact, action-focused weekly command centre from Airtable.
+Create a compact, action-focused weekly command centre from Airtable and the canonical 6sense Notion task page.
 
-This is not a manager recap, highlights/lowlights report, raw Airtable dump, or full account dossier. The goal is to help Ranjodh quickly see:
+The goal is to help Ranjodh see, in one place:
 
-- customers waiting on him
-- open Customer Tasks that need action
-- accounts needing action this week
-- future renewals inside the rolling focus window
-- stale or risky accounts
-- support blockers
-- cadence hygiene issues
-- status hygiene issues
-- open follow-ups and next moves
+- unified high-priority work across both systems
+- customers waiting on him and open Customer Tasks
+- Notion high-priority, manager, internal, admin, enablement, AI/OKR, and project work
+- accounts needing action, renewal focus, stale/risk signals, support blockers, and cadence/status hygiene
 
-The output should be easy to scan in about 60 seconds.
+This is not a manager recap, raw dump, or full dossier. It should be scannable in about 60 seconds.
 
 ---
 
@@ -40,6 +35,7 @@ Before running this workflow, apply:
 - `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
 - `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
 - `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
+- `schema/notion-task-map.md` for the canonical 6sense Notion task page, sections, exclusions, deduplication, and source-aware writes.
 
 If this skill conflicts with a shared contract, the shared contract wins.
 
@@ -144,6 +140,20 @@ Always use `schema/airtable-schema-map.md` for current field IDs and allowed val
 
 ---
 
+## Notion Task Source
+
+Use `schema/notion-task-map.md`.
+
+- Canonical page: `6 sense → Projects & tasks` (`2e6ecca2-ea5e-8187-a2d4-d05b217c7ec3`)
+- Read open items from `High Priority 🚨`, `Customer Tasks`, `Manager tasks 🚨`, `AI OKR Project Tasks`, and other active work sections.
+- Exclude checked items by default.
+- Do not use the unrelated personal `Tasks` page.
+- Treat `Dump` as backlog unless explicitly requested or made urgent.
+- Airtable is authoritative for customer/account tasks; Notion is authoritative for internal and project tasks.
+- Deduplicate overlaps and never silently create or close both copies.
+
+---
+
 ## Customer Task Values
 
 Open/actionable Customer Task statuses:
@@ -237,46 +247,29 @@ Urgency labels:
 
 ## Task Retrieval and Ranking
 
-Pull Customer Tasks linked to Ranjodh-assigned accounts where Status is one of the open/actionable statuses.
+Retrieve both sources before ranking:
 
-Use Customer Tasks as the first source for:
+1. Airtable Customer Tasks for Ranjodh-assigned accounts in active states.
+2. Open tasks from the canonical Notion page and linked child task pages.
+3. Airtable Activity notes and Detailed Notes only as supporting/fallback evidence.
 
-- Customers Waiting on You
-- Do First This Week
-- Priority 1
-- Priority 2
-- Priority 3
-- Renewal Focus Window pending task / next move
+Build `Unified High Priority` from:
 
-Use Activity notes and Detailed Notes only to:
+1. Overdue/P1 customer-waiting Airtable tasks
+2. Open Notion `High Priority 🚨` items
+3. Other P1 or near-renewal/risk customer tasks
+4. Due-soon manager/internal/project items
 
-- verify task context
-- detect fallback tasks not yet converted into Customer Tasks
-- identify completion signals that may require Update Notes or Task Centre to check off tasks
-- support status/cadence/stale-account reasoning
+Label every item with its source. If a Notion customer item strongly matches Airtable, show one Airtable-authoritative row and mark Notion as a mirror. If uncertain, show both under `Needs Source Review`.
 
-If Activity notes or Detailed Notes show a task that is not yet in Customer Tasks, include it as a fallback item and label it `Not yet in Customer Tasks — capture via Update Notes/Task Centre`.
+A Notion-only customer action may appear as `Notion only — consider syncing to Customer Tasks`; do not create it in Airtable during a read.
 
 ### Completed vs open items
 
-For Customer Tasks, Status is authoritative.
-
-For fallback notes-only items, do not keep an item open if later Activity notes/Detailed Notes say it was completed.
-
-Completion signals include:
-
-- “this was done”
-- “sent the email”
-- “meeting done”
-- “support ticket resolved”
-- “I reverted”
-- “created a support case”
-- “looped in the sales POC”
-- “shared the docs”
-- “confirmed with the customer”
-- “scheduled the meeting”
-
-If a Customer Task appears complete based on notes but Status is still active, include it in **Task Check-Off Review** instead of silently removing it.
+- Airtable Status is authoritative for Airtable-owned tasks.
+- Notion checkbox state is authoritative for Notion-owned tasks.
+- Later evidence may place an active Airtable task into Task Check-Off Review, but must not close it silently.
+- Never infer that completing one source completed its mirror.
 
 ---
 
@@ -519,10 +512,25 @@ Date Range: [date range]
 Interesting Observations
 - [Only include 1–3 short observations if useful. Omit if not useful.]
 
+Unified High Priority
+| Rank | Source | Account / Area | Task | Status | Due / Timing | Why Now |
+|---:|---|---|---|---|---|---|
+| 1 | [Airtable / Notion] | [Account or work area] | [Task] | [Status/Open] | [Due/timing] | [customer waiting / high priority / renewal / deadline] |
+
 Customers Waiting on You
 | Account | Task / Waiting For | Owner | Status | Due / Timing |
 |---|---|---|---|---|
 | [Account] | [Customer Task Title or fallback owed item] | [Owner] | [Task Status or Engagement Status / Outreach Step] | [Due Date / today / this week / late] |
+
+Notion Work Queue
+| Section | Task | State | Timing / Notes |
+|---|---|---|---|
+| [High Priority / Manager / AI OKR / other] | [Task] | [Open] | [timing/context] |
+
+Needs Source Review
+| Task | Airtable Match | Notion Match | Issue | Suggested Action |
+|---|---|---|---|---|
+| [Task] | [record/none] | [item/none] | [duplicate/uncertain ownership] | [dedupe/sync/clarify] |
 
 Task Check-Off Review
 | Account | Task | Current Status | Possible Completion Evidence | Suggested Action |
@@ -597,7 +605,8 @@ If no accounts fall inside the renewal focus window after applying filters, say:
 
 - Compact format is mandatory unless the user explicitly asks for detailed mode.
 - Start with Interesting Observations when useful.
-- Then show Customers Waiting on You as the first action-oriented section when any items exist.
+- Show Unified High Priority as the first action-oriented section.
+- Then show Customers Waiting on You, followed by Notion Work Queue and Needs Source Review when applicable.
 - Customers Waiting on You must not appear at the end.
 - Then show Task Check-Off Review when applicable.
 - Then show Recommended Status Updates and Status Ambiguities when applicable.
@@ -613,7 +622,10 @@ If no accounts fall inside the renewal focus window after applying filters, say:
 
 Maximum length guidance:
 
+- Unified High Priority: max 8 rows
 - Customers Waiting on You: max 8 rows
+- Notion Work Queue: max 8 rows
+- Needs Source Review: max 8 rows
 - Task Check-Off Review: max 8 rows
 - Recommended Status Updates: max 8 rows
 - Status Ambiguities: max 8 rows
@@ -708,6 +720,6 @@ Do not infer cadence from a single meeting being scheduled. A one-off meeting sh
 
 ## Final Rule
 
-This skill is for running the week. Customer Tasks is the primary execution source. It should help Ranjodh quickly decide which customers are waiting on him, what to do first, which tasks may need to be checked off, which future renewals need attention, which accounts are stale or risky, which accounts need outreach progression, and which cadence-active accounts need cleanup.
+This skill is for running the week across Airtable and the canonical 6sense Notion task page. Airtable Customer Tasks is authoritative for customer/account execution; Notion is authoritative for internal and project execution. The unified queue should make what to do first obvious without silently syncing or changing either source.
 
 Always surface Customers Waiting on You near the top. Always apply the mandatory Ranjodh assignment filter unless explicitly overridden. Always exclude past renewal dates from the Renewal Focus Window by default.
