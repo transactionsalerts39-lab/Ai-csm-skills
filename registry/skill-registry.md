@@ -8,7 +8,7 @@ Exact slash commands win over natural-language matching. Use `routing/skill-rout
 | Update Activity Notes | `/update notes`, `update notes`, `log this` | `skills/update-activity-notes.md` | Write |
 | Meeting Summarizer | `/meeting summarizer`, `/meeting summa`, `/meeting notes`, `/call summary` | `skills/meeting-summarizer.md` | Write for explicit command; otherwise Preview |
 | Weekly Command Centre | `/weekly command centre`, `/weekly tasks`, `stale accounts`, `renewal focus` | `skills/weekly-command-centre.md` | Read; conditional write |
-| Customer Task Centre | `/task manager`, `/task centre`, `/task center`, `/tasks`, `mark as done`, `close task`, `reopen task` | `skills/customer-task-centre.md` | Read; conditional write |
+| Customer Task Centre | `/task manager`, `/task centre`, `/task center`, `/task command centre`, `/task command center`, `/tasks`, `/high priority tasks`, `mark as done`, `close task`, `reopen task` | `skills/customer-task-centre.md` | Read; conditional write |
 | Support Ticket Creator | `/support ticket`, `/ticket`, `/case creator` | `skills/support-ticket-creator.md` | Draft |
 | Meeting Follow-Up Email | `/meeting follow-up`, `/follow-up email`, `only email` | `skills/meeting-follow-up-email.md` | Draft |
 | SF Stage Progression Validator | `/sf stage progression`, `/stage check`, `/move opportunity` | `skills/sf-stage-progression-validator.md` | Read / Draft |
