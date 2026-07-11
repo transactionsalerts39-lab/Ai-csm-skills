@@ -13,8 +13,8 @@ Every skill must operate in one of four modes.
 - Support Ticket, Meeting Follow-Up Email, Clari, SF Stage Validator, weekly reports: Draft/Read
 - Update Notes: Write
 - Meeting Summarizer: Write when invoked through its explicit registered command; preview when the user asks only to summarize or draft
-- Customer Task Centre: Read by default; Conditional write for create/update/close/reopen/cancel requests
-- Weekly Command Centre: Read by default; Conditional write only after an explicit apply/close request
+- Customer Task Centre: Read by default; Conditional source-aware write for create/update/close/reopen/cancel requests in Airtable or the canonical 6sense Notion task page
+- Weekly Command Centre: Read by default; Conditional source-aware write only after an explicit apply/close request
 
 ## Draft Is Not Sent
 
@@ -31,7 +31,7 @@ Requests such as `write this and update notes` do not prove delivery. Log the un
 
 ## Reporting Workflows
 
-Reporting and preparation workflows must not silently modify Airtable, Salesforce, Clari, Slack, Gmail, or other systems.
+Reporting and preparation workflows must not silently modify Airtable, Notion, Salesforce, Clari, Slack, Gmail, or other systems.
 
 Show recommended changes separately. Apply them only when the user explicitly asks to apply, update, close, reopen, send, post, or submit them.
 
