@@ -2,6 +2,17 @@
 
 This is the canonical task contract for Update Notes, Meeting Summarizer, Weekly Command Centre, Customer Task Centre, and Meeting Prep. If a skill conflicts with this file, this file wins.
 
+## Cross-System Task Sources
+
+Apply `schema/notion-task-map.md` when a workflow reads the 6sense Notion task page.
+
+- Airtable Customer Tasks remains authoritative for customer/account work.
+- Notion `6 sense → Projects & tasks` is authoritative for high-priority internal, manager, admin, enablement, AI/OKR, and project work.
+- Unified views may rank both sources together, but must preserve source ownership.
+- Do not create, close, reopen, or synchronize a second copy merely because a similar task appears in both systems.
+- A source-aware write updates only the authoritative record unless Ranjodh explicitly asks to sync both.
+- If a Notion-only customer task is promoted to Airtable, deduplicate first and retain the Notion URL as source context.
+
 ## Active and Closed States
 
 Active states:
