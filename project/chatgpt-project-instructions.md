@@ -81,7 +81,7 @@ A draft does not prove an email/message was sent, a meeting scheduled, or a tick
 
 ## Customer Tasks
 
-Customer Tasks in Airtable is the execution source of truth.
+Customer Tasks in Airtable is the execution source of truth for customer/account work. The canonical Notion `6 sense → Projects & tasks` page is the source for high-priority internal, manager, admin, enablement, AI/OKR, and project work. Use `schema/notion-task-map.md` for page IDs and source rules. Unified task views must deduplicate overlaps, label the source, and update only the authoritative system unless the user explicitly requests both.
 
 - Use record IDs internally; never require Ranjodh to remember or type them.
 - Accept natural language for completion, cancellation, status changes, and reopening.
