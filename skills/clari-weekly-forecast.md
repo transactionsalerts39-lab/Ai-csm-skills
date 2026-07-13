@@ -141,9 +141,11 @@ Use Ranjodh's initials `RS` in every proposed Clari text-field value:
 - **Next Steps:** `M/D RS - [forward-looking action]; [second action]; [third action].`
 - **Renewal Risk Notes:** `Month DD, YYYY RS - [risk summary]. [What needs to happen next / what would reduce risk].`
 
-When a Clari table includes `Next Steps Recommendation` or `Renewal Risk Notes`, the cell should contain the actual paste-ready value in the required format, not just an instruction to replace, add, or review.
+When a Clari table includes `Next Steps` or `Renewal Risk Notes`, the cell must contain the complete paste-ready value in the required format, not an instruction to replace, add, review, or look elsewhere.
 
-Use review language only in separate commentary, `Update Type`, `ACV / Forecast Recommendation`, or `Needs Manual Review`, not inside the paste-ready text field itself.
+Forbidden table-cell outputs include `Replace—see block below`, `Replace—see below`, `See paste-ready block`, `Add risk note below`, or any equivalent cross-reference. The table is the canonical copy-paste surface.
+
+Use review language only in `ACV / Churn-Downsell Amount`, `Confidence`, or `Needs Manual Review`, not inside the paste-ready text fields.
 
 ---
 
@@ -551,29 +553,27 @@ Rows Included After Filter: [number]
 Rows Excluded Outside Scope: [number]
 ```
 
-Then output a table first.
+Then output one complete Clari Update Table. This table is the default and canonical account-level copy-paste surface.
 
-If working on forecast rollups, also output the quarterly churn comments after the account-level table.
+If working on forecast rollups, output Churn Commit Comments after the table. Add Needs Manual Review only when necessary.
 
 ## Clari Update Table
 
-Use this table by default because it is easy to review and copy.
-
-| Account | Opportunity | Close Date | Forecast Category | Stage | Incremental Last Steps Only | Next Steps Recommendation | Renewal Risk Notes | ACV / Forecast Recommendation | Confidence |
-|---|---|---:|---|---|---|---|---|---|---|
-| [Account] | [Opportunity] | [Close Date] | [Category] | [Stage] | `M/D RS - [completed action].` or `No incremental last steps found.` | `M/D RS - [next action]; [second action].` or `No Next Steps change recommended.` | `Month DD, YYYY RS - [risk note].` or `No renewal risk note change.` | [Recommendation] | [High/Medium/Low] |
+| Account | Quarter / Close | Forecast / Stage | Incremental Last Steps — Append | Next Steps — Paste/Replace | Renewal Risk Notes — Append | ACV / Churn-Downsell Amount | Confidence |
+|---|---|---|---|---|---|---|---|
+| [Account] | [QX · Close Date] | [Forecast Category · Stage] | `M/D RS - [completed action].` or `No incremental last steps found.` | `M/D RS - [forward-looking action]; [second action].` or `No Next Steps change recommended.` | `Month DD, YYYY RS - [risk summary]. [Mitigation/required next move].` or `No renewal risk note change.` | [Exact recommendation or `No ACV change recommended.`] | [High/Medium/Low] |
 
 ### Table Rules
 
-- Keep cells concise, but make Clari text fields directly copy-paste-ready.
-- Use `No incremental last steps found.` when there is no new Last Step.
-- Use `No Next Steps change recommended.` when current CSV Next Steps are still valid.
-- Use `No renewal risk note change.` when current risk notes are still valid.
-- Use `No ACV change recommended.` unless evidence supports an amount change.
-- Do not put `New:`, `Replace:`, `Add risk note:`, or `No change unless...` inside Last Steps, Next Steps, or Renewal Risk Notes cells. Those cells should either be paste-ready values or the exact no-update sentence.
-- Put update classification in paste-ready account blocks under `Update Type`, or in the `Needs Manual Review` section.
-
----
+- Put the complete paste-ready account update directly in the relevant table cell.
+- Never output `Replace—see block below`, `see below`, `see paste-ready block`, or any other placeholder/cross-reference.
+- Incremental Last Steps must use `M/D RS - [completed action].` and contain completed actions only.
+- Next Steps must use `M/D RS - [forward-looking actions].` and contain the complete value Ranjodh should paste. When replacement is required, provide the full replacement—not an instruction.
+- Renewal Risk Notes must use `Month DD, YYYY RS - [risk summary]. [Mitigation].` and remain separate from amount recommendations.
+- `ACV / Churn-Downsell Amount` is only for supported numeric/forecast-field recommendations and rationale; do not place Renewal Risk Notes there.
+- Use `No incremental last steps found.`, `No Next Steps change recommended.`, `No renewal risk note change.`, or `No ACV change recommended.` when applicable.
+- Do not put `New:`, `Replace:`, `Add risk note:`, or `No change unless...` inside paste-ready text cells.
+- Keep cells concise enough to scan, but do not shorten them into instructions that require another section.
 
 ## Churn Commit Comments
 
@@ -604,45 +604,18 @@ Rules:
 
 ---
 
-## Step 8 — Paste-Ready Account Blocks
+## Step 8 — Optional Paste-Ready Account Blocks
 
-After the table, provide paste-ready values per account only for fields that need an update.
+Do not output separate account blocks by default. The Clari Update Table already contains the canonical paste-ready values.
 
-If a field does not need an update, omit that field from the paste-ready block unless the user asks for full output.
+Provide account blocks only when the user explicitly asks for:
 
-All values in these blocks must be ready to paste into Clari exactly as written. Last Steps and Next Steps must start with `M/D RS -`. Renewal Risk Notes must start with `Month DD, YYYY RS -`.
+- account blocks
+- one account at a time
+- separate copy boxes
+- expanded paste-ready format
 
-Format:
-
-````md
-### [Account] — [Opportunity]
-
-Close Date: [Close Date]
-Forecast Quarter: [QX YYYY]
-Update Type: [Append / Replace / No update]
-
-**Incremental Last Steps to Append**
-```text
-M/D RS - [completed action].
-```
-
-**Next Steps**
-```text
-M/D RS - [forward-looking action]; [second action]; [third action].
-```
-
-**Renewal Risk Notes**
-```text
-Month DD, YYYY RS - [risk summary]. [What needs to happen next / what would reduce risk].
-```
-
-**ACV / Forecast Recommendation**
-```text
-[value]
-```
-````
-
----
+When requested, copy the exact same field values from the table without changing wording, dates, initials, or recommendations. Never use an account block as a destination for content omitted from the table.
 
 ## Step 9 — Needs Manual Review
 
@@ -671,11 +644,22 @@ Format:
 
 ### Default Mode
 
-Use table + paste-ready blocks.
+Output:
+
+1. Scope summary
+2. Complete Clari Update Table containing all account-level paste-ready values
+3. Churn Commit Comments when required
+4. Needs Manual Review when required
+
+Do not output separate paste-ready account blocks in Default Mode.
 
 ### Table Only
 
 If the user asks for table only, output only the Clari Update Table.
+
+### Optional Account Blocks
+
+Use only when the user explicitly asks for account blocks, separate copy boxes, or one-account-at-a-time output. Repeat the exact table values; do not move missing content out of the table.
 
 ### Incremental Last Steps Only
 
@@ -691,11 +675,11 @@ If the user asks for only Next Steps, output only:
 | Account | Opportunity | Current CSV Next Steps Summary | Suggested Next Steps | Update Type | Confidence |
 |---|---|---|---|---|---|
 
+Every Suggested Next Steps cell must contain either the complete `M/D RS - ...` value or `No Next Steps change recommended.`
+
 ### Full Detail Mode
 
-Use only if the user asks for full detail. Include source evidence from Airtable and CSV comparison.
-
----
+Use only when the user asks for full detail. Keep the complete paste-ready table first, then add source evidence and comparison commentary. Do not replace table values with cross-references.
 
 ## Guardrails
 
@@ -800,4 +784,4 @@ The output should clearly show:
 - What brief churn comment to paste for current quarter and next quarter
 - Whether any ACV / forecast field needs review
 
-Default to a table first, then paste-ready account blocks. All proposed Clari text-field values must include the required date and `RS` initials format.
+Default to one complete Clari Update Table, followed only by Churn Commit Comments and Needs Manual Review when applicable. Separate account blocks are opt-in. All proposed Clari text-field values must appear directly in the table and use the required date and `RS` initials format.
