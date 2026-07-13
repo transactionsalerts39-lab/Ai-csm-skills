@@ -30,3 +30,8 @@ Run these as dry-run/preview scenarios before changing lifecycle, routing, repor
 | 24 | Notion and Airtable contain similar but uncertain matches | Both appear under Needs Source Review; no write occurs |
 | 25 | Search finds the unrelated personal Notion `Tasks` page | It is excluded; only `6 sense → Projects & tasks` is used |
 | 26 | Notion is unavailable during Weekly Command Centre | Airtable results still render with a concise Notion-unavailable notice |
+| 27 | Clari Next Steps require replacement | Table contains the full `M/D RS - ...` replacement; it never says `Replace—see block below` or references another section |
+| 28 | New renewal risk evidence exists | Dedicated Renewal Risk Notes cell contains the full `Month DD, YYYY RS - ...` note |
+| 29 | No risk-note or ACV change is supported | Renewal Risk Notes says `No renewal risk note change.`; amount column separately says `No ACV change recommended.` |
+| 30 | Default Clari forecast output | Scope summary + complete table + churn comments/manual review when applicable; no separate account blocks |
+| 31 | Churn Commit Comments are required | Comments remain a separate rollup section after the table and are not merged into account-level Renewal Risk Notes |
