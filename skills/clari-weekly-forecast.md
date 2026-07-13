@@ -393,6 +393,10 @@ Rules:
 
 - Use the latest completed actions since the CSV Last Steps appear to have been updated.
 - Keep to 1–4 incremental entries per account unless the user asks for all.
+- Sort multiple incremental entries in reverse chronological order: newest date first, then older dates below it.
+- Use the actual evidence date for sorting, not discovery order or source order.
+- When two entries share the same date, use the more precise timestamp when available; otherwise preserve their source order.
+- When placing the new block into an existing Clari Last Steps field, put it above older history so the full field remains newest-first.
 - Include dates when available.
 - Do not include open tasks.
 - Do not repeat existing CSV Last Steps.
@@ -567,7 +571,7 @@ If working on forecast rollups, output Churn Commit Comments after the table. Ad
 
 - Put the complete paste-ready account update directly in the relevant table cell.
 - Never output `Replace—see block below`, `see below`, `see paste-ready block`, or any other placeholder/cross-reference.
-- Incremental Last Steps must use `M/D RS - [completed action].` and contain completed actions only.
+- Incremental Last Steps must use `M/D RS - [completed action].`, contain completed actions only, and list multiple entries newest-first. For example, `7/11` must appear above `7/8`.
 - Next Steps must use `M/D RS - [forward-looking actions].` and contain the complete value Ranjodh should paste. When replacement is required, provide the full replacement—not an instruction.
 - Renewal Risk Notes must use `Month DD, YYYY RS - [risk summary]. [Mitigation].` and remain separate from amount recommendations.
 - `ACV / Churn-Downsell Amount` is only for supported numeric/forecast-field recommendations and rationale; do not place Renewal Risk Notes there.
