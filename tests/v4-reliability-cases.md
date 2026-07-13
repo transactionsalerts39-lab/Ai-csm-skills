@@ -35,3 +35,4 @@ Run these as dry-run/preview scenarios before changing lifecycle, routing, repor
 | 29 | No risk-note or ACV change is supported | Renewal Risk Notes says `No renewal risk note change.`; amount column separately says `No ACV change recommended.` |
 | 30 | Default Clari forecast output | Scope summary + complete table + churn comments/manual review when applicable; no separate account blocks |
 | 31 | Churn Commit Comments are required | Comments remain a separate rollup section after the table and are not merged into account-level Renewal Risk Notes |
+| 32 | Incremental Clari Last Steps contain dated updates from 7/8 and 7/11 | The `7/11 RS - ...` entry appears first and `7/8 RS - ...` appears below it; the block is placed above older existing history |
