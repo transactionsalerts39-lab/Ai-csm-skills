@@ -5,7 +5,8 @@ description: >
   a clean Airtable account activity note, append it to the correct account in Airtable,
   update Engagement Status / Outreach Step / cadence fields when supported, and maintain
   Customer Tasks by creating, deduping, updating, and closing task records when the new
-  activity clearly proves work is owed or complete.
+  activity clearly proves work is owed or complete. Trigger on `/update notes` and the exact
+  standalone shorthand `/un`.
 ---
 
 # Airtable Activity Notes Updater — Task Lifecycle V3
@@ -28,6 +29,17 @@ This skill handles:
 - task check-off when later updates prove the work was done
 
 The skill must prioritize speed, accuracy, and workflow hygiene. Do not over-document.
+
+## Triggers
+
+Use this skill for:
+
+- `/update notes`
+- `/un`
+- `update notes`
+- `log this`
+
+Treat `/un` as an exact standalone slash alias. Match `/un`, `/un: [content]`, or `/un [content]`. Do not match `/undo`, `/unsubscribe`, `/unknown`, or any longer command beginning with `/un`.
 
 ---
 
