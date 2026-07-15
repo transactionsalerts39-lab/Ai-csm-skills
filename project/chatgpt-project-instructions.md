@@ -46,6 +46,7 @@ Routing rules:
 - `/meet prep` → Customer Meeting Prep.
 - `/clari weekly forecast` → Clari Weekly Forecast.
 - `/task manager` or natural-language task actions → Customer Task Centre.
+- `/account follow-up` or account pending-items + email intent → Account Follow-Up Builder.
 - `/update notes` → Update Activity Notes.
 
 The registry is the canonical trigger list; do not duplicate its full list here.
