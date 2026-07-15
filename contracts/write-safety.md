@@ -10,6 +10,7 @@ Every skill must operate in one of four modes.
 ## Default Modes
 
 - Docs Assistant, Meeting Prep: Read
+- Account Follow-Up Builder: Read / Draft
 - Support Ticket, Meeting Follow-Up Email, Clari, SF Stage Validator, weekly reports: Draft/Read
 - Update Notes: Write
 - Meeting Summarizer: Write when invoked through its explicit registered command; preview when the user asks only to summarize or draft
