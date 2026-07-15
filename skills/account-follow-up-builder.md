@@ -35,6 +35,14 @@ Apply:
 - `schema/airtable-schema-map.md`
 - `schema/notion-task-map.md`
 
+Load supporting canonical skills only for the relevant stage:
+
+- `skills/customer-task-centre.md` for task retrieval/display semantics
+- `skills/docs-assistant.md` when product research is required
+- `skills/meeting-follow-up-email.md` before drafting the email
+
+Do not load Update Notes inside this read/draft run; route to it only after explicit sent evidence.
+
 If this skill conflicts with a shared contract, the shared contract wins.
 
 ## Triggers
