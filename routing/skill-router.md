@@ -22,6 +22,7 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/weekly command centre` and `/weekly tasks` → Weekly Command Centre.
 - `/meeting summa` → Meeting Summarizer.
 - `/meeting follow-up` or `only email` → Meeting Follow-Up Email.
+- `/account follow-up`, `/follow-up builder`, or combined account pending-items + customer-email intent → Account Follow-Up Builder. Plain account task lists remain Customer Task Centre.
 - `/clari weekly forecast` → Clari Weekly Forecast.
 - `/task manager`, `/task command centre`, `/high priority tasks`, and natural-language task completion, cancellation, or reopening → Customer Task Centre.
 - `/update notes` or exact standalone `/un` → Update Activity Notes even when the same turn also contains a draft; apply the Draft Is Not Sent rule. Do not treat longer commands beginning with `/un` as this alias.
