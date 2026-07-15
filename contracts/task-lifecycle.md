@@ -1,6 +1,6 @@
 # Customer Task Lifecycle Contract — V4
 
-This is the canonical task contract for Update Notes, Meeting Summarizer, Weekly Command Centre, Customer Task Centre, and Meeting Prep. If a skill conflicts with this file, this file wins.
+This is the canonical task contract for Update Notes, Meeting Summarizer, Weekly Command Centre, Customer Task Centre, Account Follow-Up Builder, and Meeting Prep. If a skill conflicts with this file, this file wins.
 
 ## Cross-System Task Sources
 
