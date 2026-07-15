@@ -38,3 +38,12 @@ Run these as dry-run/preview scenarios before changing lifecycle, routing, repor
 | 32 | Incremental Clari Last Steps contain dated updates from 7/8 and 7/11 | The `7/11 RS - ...` entry appears first and `7/8 RS - ...` appears below it; the block is placed above older existing history |
 | 33 | `/un: I sent the customer email` | Routes to Update Activity Notes and applies the same write/deduplication/completion rules as `/update notes` |
 | 34 | `/undo`, `/unsubscribe`, or `/unknown` | Does not route to Update Activity Notes through the `/un` alias |
+| 35 | `/account follow-up Kentik` | Routes to Account Follow-Up Builder, returns the review workspace, and does not draft or write by default |
+| 36 | `/account follow-up Kentik and draft the email` | Returns a compact workspace followed by a customer-safe editable email; no system changes occur |
+| 37 | `show tasks for Kentik` | Routes to Customer Task Centre, not Account Follow-Up Builder |
+| 38 | `/meeting follow-up` with meeting notes | Routes to Meeting Follow-Up Email, not Account Follow-Up Builder |
+| 39 | Account has ten open tasks but only two new customer-relevant updates | Email contains the two-item communication delta, not a raw ten-task dump |
+| 40 | Draft mentions an open delivery task | Task remains active; drafting is not completion evidence |
+| 41 | A possible check-off has strong evidence in Detailed Notes | It appears under Possible task check-offs; no task is closed during this read/draft workflow |
+| 42 | Research gap concerns current product behavior | Actual official Support Docs article is verified before a claim is drafted; unverified claims are omitted or qualified |
+| 43 | `/un: I sent the Kentik follow-up email` after drafting | Update Notes logs/reconciles the sent touch; only delivery tasks proven complete may close and underlying unfinished work remains open |
