@@ -5,9 +5,11 @@ description: >
   Outreach Step, cadence fields, renewal dates, and risk signals to create a focused
   weekly command centre. Use this when the user asks for weekly tasks, accounts to focus
   on, stale accounts, renewal focus, customer follow-ups, customers waiting on Ranjodh,
-  or a weekly command centre based on Airtable. By default, only include accounts assigned
-  to Ranjodh. Customer Tasks is the primary source for open work; Activity notes and
-  Detailed Notes are supporting fallback evidence.
+  or a weekly command centre based on Airtable. The exact command
+  `/weekly command center - dashboard` activates the opt-in interactive dashboard mode;
+  no other wording should activate that presentation. By default, only include accounts
+  assigned to Ranjodh. Customer Tasks is the primary source for open work; Activity notes
+  and Detailed Notes are supporting fallback evidence.
 ---
 
 # Weekly Account Task Catch-Up / Weekly Command Centre — Customer Tasks V3
@@ -501,9 +503,102 @@ For each stale account, include Account, Status, Signal, and Suggested move.
 
 ---
 
+## Exact Opt-In Dashboard Mode
+
+Dashboard mode is activated **only** when the user message, after trimming surrounding whitespace, is exactly:
+
+```text
+/weekly command center - dashboard
+```
+
+Command rules:
+
+- Match the literal command above case-insensitively.
+- Do not activate dashboard mode for `/weekly command centre`, `/weekly command center`, `/weekly tasks`, natural-language dashboard requests, or messages that merely contain the command.
+- All non-exact variants continue to use the normal compact text output.
+- Dashboard mode is read-only. It must not update Airtable, Notion, task status, cadence, outreach, or account fields.
+- Use the same assignment filter, source hierarchy, date rules, retrieval, deduplication, renewal logic, hygiene checks, and rankings as the normal command centre.
+
+### Stable dashboard payload
+
+After completing the normal retrieval and analysis, map the result into one stable payload rather than redesigning the dashboard for each run.
+
+Include:
+
+- Snapshot metadata: date range, refresh date/time, assignee, and read-only state.
+- Summary metrics when supported by retrieved data: active Customer Tasks, accounts with active tasks, customer-waiting actions, Needs Review count, tasks without due dates, renewal-window account count, and renewal-window ACV.
+- Priority mix: P1, P2, and P3 task counts.
+- Rows with: stable row ID, view, filter group, source, account/work area, signal label, status, owner, Why it surfaced, Recommended next move, timing, and short source context.
+- Never invent a metric, date, owner, renewal value, task count, or source context. Omit an unavailable metric.
+
+### Fixed dashboard presentation
+
+Render an inline interactive dashboard using the available visualization/artifact capability. Reuse this fixed information architecture on every run; only the payload changes.
+
+Required top-level views:
+
+1. **Priority queue** — P1, P2, P3, and unified high-priority Airtable/Notion work.
+2. **Waiting on you** — customer-waiting actions owned by Ranjodh, Support, Internal Team, Shared, AE/AM, or Unknown.
+3. **Renewals** — all accounts in the Renewal Focus Window.
+4. **Follow-up & cadence** — pending follow-ups, cadence gaps, and stale accounts.
+5. **Hygiene & risk** — task check-off review, status ambiguities, cadence hygiene, and stale/risk review.
+
+Required controls:
+
+- Account or work-area search.
+- One context-aware **Show** filter:
+  - Priority queue: All / P1 / P2 / P3
+  - Waiting on you: All / Internal team / Ranjodh-owned / Needs Review
+  - Renewals: All / Immediate / Near-term / Upcoming / Later
+  - Follow-up & cadence: All / Pending follow-ups / Cadence not set or incomplete / Stale accounts
+  - Hygiene & risk: All / Task check-off review / Cadence gaps / Status ambiguities / Stale or risk
+
+Required table columns:
+
+| Account | Status / Signal | Why it surfaced | Recommended next move | Timing |
+|---|---|---|---|---|
+
+Column rules:
+
+- Show Source below Account.
+- Show Owner within Status / Signal.
+- **Why it surfaced** must cite the specific evidence that caused inclusion: customer waiting, task priority, blocker, overdue follow-up, renewal proximity, missing cadence, stale activity, duplicate task, Needs Review, or another verified signal.
+- **Recommended next move** must be one clear action grounded in the underlying task/account evidence. Include an owner or date only when the source supports it.
+- On narrow screens, stack the columns with visible column labels rather than creating horizontal scrolling.
+
+### Follow-up & cadence view
+
+Group rows as follows:
+
+- **Pending follow-ups** — open customer-waiting actions, no-response/FU1–FU4 accounts, overdue scheduling follow-ups, or another explicit unsent follow-up supported by current state. A draft alone is not a sent follow-up.
+- **Cadence not set or incomplete** — apply Cadence Hygiene rules and also include `Connected - no cadence` when a recurring cadence still needs agreement.
+- **Stale accounts** — apply Stale / Risk Accounts logic using meaningful activity evidence, renewal proximity, risk, and open tasks.
+
+If one account has materially different actions across groups, separate rows are allowed. Deduplicate identical actions and place the most urgent row first.
+
+### Selection and actions
+
+- Rows must be selectable.
+- Selection reveals the source, why it surfaced, recommended next move, status/owner, timing, and expandable source context.
+- A **Continue with this item** action may open a follow-up prompt:
+  - Airtable customer/account item → `/account follow-up for [account]`
+  - Notion internal/project item → `/task centre` with the selected work area and action
+- The dashboard action starts another workflow only. It must never silently write, close, check off, or update a task.
+- Keep filters and selection local to the snapshot.
+
+### Dashboard output boundary
+
+- Output the inline dashboard only; do not also print the full compact report unless the user explicitly asks for both.
+- Do not expose raw HTML, JavaScript, JSON, local paths, or a standalone file link.
+- Clearly label the dashboard as a read-only snapshot with its date range and refresh time.
+- If interactive visualization is unavailable, use the compact text format and state briefly that the interactive dashboard could not be rendered.
+- Optimize for reuse and short generation time: fixed layout, fixed field contract, fresh data only.
+
+---
+
 ## Required Output Format — Compact Command Centre
 
-Always use this compact format by default.
+Use this compact format for every run except the exact opt-in dashboard command.
 
 ```text
 Weekly Account Task Catch-Up
@@ -603,7 +698,7 @@ If no accounts fall inside the renewal focus window after applying filters, say:
 
 ## Presentation Rules
 
-- Compact format is mandatory unless the user explicitly asks for detailed mode.
+- Compact format is mandatory unless the user explicitly asks for detailed mode or uses the exact dashboard command.
 - Start with Interesting Observations when useful.
 - Show Unified High Priority as the first action-oriented section.
 - Then show Customers Waiting on You, followed by Notion Work Queue and Needs Source Review when applicable.
@@ -723,3 +818,5 @@ Do not infer cadence from a single meeting being scheduled. A one-off meeting sh
 This skill is for running the week across Airtable and the canonical 6sense Notion task page. Airtable Customer Tasks is authoritative for customer/account execution; Notion is authoritative for internal and project execution. The unified queue should make what to do first obvious without silently syncing or changing either source.
 
 Always surface Customers Waiting on You near the top. Always apply the mandatory Ranjodh assignment filter unless explicitly overridden. Always exclude past renewal dates from the Renewal Focus Window by default.
+
+Only the exact `/weekly command center - dashboard` command activates the interactive dashboard; every other weekly command keeps the existing text presentation.
