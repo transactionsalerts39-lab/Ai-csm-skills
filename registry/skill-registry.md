@@ -4,7 +4,7 @@ Exact slash commands win over natural-language matching. Use `routing/skill-rout
 
 | Workflow | Primary triggers | Canonical path | Default mode |
 |---|---|---|---|
-| Docs / RevCity Assistant | `/docs`, `/support docs`, `/revcity`, `/product updates` | `skills/docs-assistant.md` | Read / Draft |
+| Docs / RevCity / 6sense.com Assistant | `/docs`, `/support docs`, `/revcity`, `/product updates`, `/6sense articles` | `skills/docs-assistant.md` | Read / Draft |
 | Update Activity Notes | `/update notes`, `/un`, `update notes`, `log this` | `skills/update-activity-notes.md` | Write |
 | Meeting Summarizer | `/meeting summarizer`, `/meeting summa`, `/meeting notes`, `/call summary` | `skills/meeting-summarizer.md` | Write for explicit command; otherwise Preview |
 | Weekly Command Centre | `/weekly command centre`, `/weekly tasks`, `stale accounts`, `renewal focus` | `skills/weekly-command-centre.md` | Read; conditional write |
