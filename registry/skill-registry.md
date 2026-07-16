@@ -7,7 +7,7 @@ Exact slash commands win over natural-language matching. Use `routing/skill-rout
 | Docs / RevCity / 6sense.com Assistant | `/docs`, `/support docs`, `/revcity`, `/product updates`, `/6sense articles` | `skills/docs-assistant.md` | Read / Draft |
 | Update Activity Notes | `/update notes`, `/un`, `update notes`, `log this` | `skills/update-activity-notes.md` | Write |
 | Meeting Summarizer | `/meeting summarizer`, `/meeting summa`, `/meeting notes`, `/call summary` | `skills/meeting-summarizer.md` | Write for explicit command; otherwise Preview |
-| Weekly Command Centre | `/weekly command centre`, `/weekly tasks`, `stale accounts`, `renewal focus` | `skills/weekly-command-centre.md` | Read; conditional write |
+| Weekly Command Centre | `/weekly command centre`, `/weekly command center`, exact `/weekly command center - dashboard`, `/weekly tasks`, `stale accounts`, `renewal focus` | `skills/weekly-command-centre.md` | Read; conditional write; dashboard is read-only |
 | Customer Task Centre | `/task manager`, `/task centre`, `/task center`, `/task command centre`, `/task command center`, `/tasks`, `/high priority tasks`, `mark as done`, `close task`, `reopen task` | `skills/customer-task-centre.md` | Read; conditional write |
 | Account Follow-Up Builder | `/account follow-up`, `/follow-up builder`, `/account email prep`, `/pending follow-up` | `skills/account-follow-up-builder.md` | Read / Draft |
 | Support Ticket Creator | `/support ticket`, `/ticket`, `/case creator` | `skills/support-ticket-creator.md` | Draft |
