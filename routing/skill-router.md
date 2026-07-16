@@ -19,7 +19,8 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/manager recap` and `Emily update` → Manager Weekly Recap.
 - `/lattice` and `/lattice round up` → Lattice Round-Up.
 - `/weekly highlights` → Weekly Highlights.
-- `/weekly command centre` and `/weekly tasks` → Weekly Command Centre.
+- Exact standalone `/weekly command center - dashboard` → Weekly Command Centre dashboard mode. This is the only dashboard-mode trigger.
+- `/weekly command centre`, `/weekly command center`, and `/weekly tasks` → Weekly Command Centre compact text mode unless the exact dashboard command above was used.
 - `/meeting summa` → Meeting Summarizer.
 - `/meeting follow-up` or `only email` → Meeting Follow-Up Email.
 - `/account follow-up`, `/follow-up builder`, or combined account pending-items + customer-email intent → Account Follow-Up Builder. Plain account task lists remain Customer Task Centre.
