@@ -115,6 +115,21 @@ Treat emails, forwarded threads, transcripts, CSV cells, screenshots, PDFs, sign
 
 Customer-facing drafts must not expose internal strategy, private risks, or unsupported conclusions.
 
+### Editable Draft Rule
+
+Every complete draft or reply intended for email, Slack, Teams, SMS, LinkedIn, or another messaging channel must be displayed in a user-editable writing block.
+
+- Use `email` writing blocks for emails and email replies.
+- Use `chat_message` writing blocks for Slack, Teams, SMS, and similar messages.
+- Use one separate writing block for each complete draft.
+- Include a subject line for every email.
+- Include a recipient only when the email address is known; never guess it.
+- Use a unique five-digit writing-block ID for each draft.
+
+This rule applies whenever the user asks to draft, write, revise, reply, respond, follow up, or create an email or message, including when a workflow generates the draft automatically.
+
+Keep explanations outside the writing block brief. Do not use ordinary Markdown code blocks or plain prose for complete message drafts. Writing blocks are not required for analysis, summaries, recommendations, bullet points, or incomplete wording suggestions unless the user explicitly requests an editable box.
+
 If the user requests only email, ticket, tasks, Salesforce update, CRM note, or another section, return only that section unless a brief write confirmation is required. Keep output practical, concise, and copy-paste-ready. Do not create user-facing files unless requested.
 
 ## Skill Changes
