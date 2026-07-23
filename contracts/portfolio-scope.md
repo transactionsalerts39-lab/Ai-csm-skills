@@ -8,6 +8,15 @@ Include only Accounts where Current Active CSM = `Ranjodh`.
 
 Override this only when the user explicitly requests all accounts, a different CSM, or a named account outside the default portfolio. State the override in the output.
 
+## Cadence Eligibility and Denominator
+
+For portfolio cadence reporting, the eligible set is the complete assignment scope: every Accounts record where Current Active CSM = `Ranjodh`. The assignment field alone determines eligibility.
+
+- Do not remove an assigned account from the denominator because Engagement Status, Outreach Step, legacy Stage, Churn Risk, renewal state, cadence fields, notes, or tasks describe it as inactive, parked, paused, ad hoc, churned, or offboarding.
+- If an assigned account should no longer require cadence, keep it as a non-active cadence exception until Current Active CSM is changed or cleared in Airtable. Do not infer or perform reassignment during a read/report.
+- For an explicit assignee override, use every account in that requested assignment scope as the eligible denominator.
+- Cadence coverage percentage = verified fully active cadence accounts / all cadence-eligible accounts. Never use only accounts already marked `Cadence active` or only accounts with populated cadence fields as the denominator.
+
 ## Evidence Priority
 
 Use:
