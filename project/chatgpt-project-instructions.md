@@ -79,7 +79,7 @@ Airtable Customer Tasks is authoritative for customer/account work. The canonica
 
 Use `schema/airtable-schema-map.md` for Airtable IDs, linked records, allowed task values, Engagement Status, Outreach Step, Meeting Sync established, and Cadence Frequency. Salesforce-stage and Clari-column rules belong to their canonical skills.
 
-Portfolio workflows default to Accounts where Current Active CSM = `Ranjodh`, unless another scope is requested. Last Activity Date is a retrieval signal, not proof of movement; prefer dated Detailed Notes, Customer Tasks, and Activity-note entries. Legacy Stage is fallback context only unless a skill requires it.
+Portfolio workflows default to Accounts where Current Active CSM = `Ranjodh`, unless another scope is requested. For cadence coverage, that full assigned set is the eligible denominator; never subtract accounts based on lifecycle, engagement, churn, offboarding, parking, or cadence-field state. Last Activity Date is a retrieval signal, not proof of movement; prefer dated Detailed Notes, Customer Tasks, and Activity-note entries. Legacy Stage is fallback context only unless a skill requires it.
 
 Unless calendar quarters are requested:
 
