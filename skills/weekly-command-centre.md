@@ -37,6 +37,7 @@ Before running this workflow, apply:
 - `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
 - `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
 - `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
+- `contracts/portfolio-scope.md` for the full assigned-account cadence denominator and portfolio evidence rules.
 - `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
 - `schema/notion-task-map.md` for the canonical 6sense Notion task page, sections, exclusions, deduplication, and source-aware writes.
 
@@ -62,6 +63,14 @@ Rules:
 - When using Customer Tasks or Detailed Notes, use records only for accounts that passed the Accounts-table assignment filter.
 - If the user explicitly asks for another assignee, use that assignee instead.
 - If the user explicitly asks for all accounts, state that the default Ranjodh assignment filter is being overridden for that run.
+
+### Cadence eligibility denominator
+
+For cadence reporting, every account that passes this assignment filter is cadence eligible. The eligible denominator is the full count of those accounts.
+
+- Do not subtract accounts because they are described as inactive, parked, paused, ad hoc, churned, offboarding, low priority, or missing cadence data.
+- If an assigned account should no longer be managed for cadence, keep it as a non-active exception with the next action `Confirm ownership / update Current Active CSM`; only an Airtable assignment change removes it from the default denominator.
+- Never calculate coverage from accounts already marked `Cadence active`, accounts with populated cadence fields, or a manually inferred practical subset.
 
 ---
 
@@ -323,11 +332,50 @@ If no customers are waiting on Ranjodh, omit the section unless the user explici
 
 ---
 
+## Cadence OKR Coverage
+
+This is a mandatory portfolio-completeness section in compact chat and dashboard mode. Calculate it from the full cadence-eligible set defined by the Mandatory Assignment Filter and `contracts/portfolio-scope.md`.
+
+Show these portfolio metrics:
+
+- Eligible Accounts
+- Fully Active Cadence
+- Setup / Restore Required
+- Slipping
+- Needs Review
+- Coverage % = Fully Active Cadence / Eligible Accounts
+
+Classify every eligible account into exactly one primary cadence-health state:
+
+- `Fully active`: Meeting Sync established = `yes`; Cadence Frequency is Weekly, Bi-weekly, Monthly, or Quarterly; explicit evidence supports a recurring customer rhythm; no open setup/reschedule obligation exists; and the cadence is not slipping.
+- `Slipping`: a recurring cadence is established, but the latest confirmed meeting exceeds the frequency threshold and no future meeting is explicitly scheduled, or current evidence shows repeated missed/cancelled syncs.
+- `Setup / restore required`: cadence is not established, Meeting Sync is blank/no/unclear, Cadence Frequency is blank, `TBD / not confirmed`, `Ad hoc / as needed`, or `Paused`, or a recurring invite/meeting rhythm must be established or restored.
+- `Needs review`: fields or evidence conflict, or there is not enough trusted evidence to classify the account without guessing.
+
+An inactive, parked, churned, or offboarding label never makes an assigned account ineligible. Keep it as a non-active exception and use the next action `Establish/restore cadence or correct Current Active CSM assignment` when appropriate.
+
+Below the scorecard, show every eligible account not classified as Fully active. This exception table is uncapped and must reconcile exactly: non-active exception rows = Eligible Accounts - Fully Active Cadence.
+
+For each exception, show:
+
+- Account
+- Cadence Health
+- Current Evidence
+- Gap
+- Next Action
+- Cadence Task
+
+Use active Customer Tasks to identify a cadence setup/restoration task. If none exists, show `No cadence task captured`. Do not create a task during this read-only report.
+
+If no assigned accounts exist, show Eligible Accounts = 0 and Coverage = `N/A`. If all eligible accounts are Fully active, show `All cadence-eligible accounts have verified active cadence.`
+
+---
+
 ## Meeting Follow-Ups & Cadence Gaps
 
 This is a mandatory section in the compact chat output. It is the chat equivalent of the dashboard's Follow-up & cadence view and must appear on every Weekly Command Centre run, even when no qualifying accounts are found.
 
-Place it immediately after Customers Waiting on You. If Customers Waiting on You is omitted, place it immediately after Unified High Priority.
+Place it immediately after Cadence OKR Coverage.
 
 The purpose is to provide one complete action list for Ranjodh-assigned accounts where a customer meeting needs to be scheduled, restored, clarified, or brought back onto the expected cadence. Do not rely on the same account happening to surface in Customers Waiting on You, Cadence Hygiene, a priority section, or Stale / Risk Accounts.
 
@@ -357,8 +405,9 @@ Include qualifying accounts under one of these Gap Types:
 **Cadence not established or unclear**
 
 - Engagement Status is Connected - no cadence.
-- Meeting Sync established is blank, no, or unclear and current evidence shows that an ongoing customer rhythm is expected.
-- Cadence Frequency is blank or TBD / not confirmed while notes or tasks indicate that regular meetings should be established.
+- Meeting Sync established is blank, no, or unclear for a cadence-eligible account.
+- Cadence Frequency is blank or `TBD / not confirmed` for a cadence-eligible account.
+- Cadence Frequency is `Ad hoc / as needed` or `Paused`; the assigned account remains eligible and the active cadence must be established/restored or ownership corrected.
 - Only a one-off meeting is captured and a recurring cadence still needs agreement.
 - Cadence fields conflict, using the Cadence Hygiene rules.
 
@@ -370,9 +419,9 @@ Include qualifying accounts under one of these Gap Types:
   - Bi-weekly: more than 21 days.
   - Monthly: more than 45 days.
   - Quarterly: more than 110 days.
-- Cadence Frequency is Paused but the reason, restart condition, or next follow-up is missing while an active relationship or renewal action remains.
+- Cadence Frequency is `Paused`; capture the restart action or confirm that Current Active CSM ownership should change.
 
-Do not flag Ad hoc / as needed based on elapsed time alone. Do not flag an inactive, churned, offboarded, or intentionally parked account merely because cadence fields are blank unless a live task or explicit meeting commitment remains.
+Do not use elapsed time alone to label `Ad hoc / as needed` as slipping. It still remains a non-active cadence exception while the account is assigned. Inactive, churned, offboarded, or intentionally parked labels do not remove an assigned account from cadence eligibility.
 
 ### Evidence and safety rules
 
@@ -607,7 +656,7 @@ After completing the normal retrieval and analysis, map the result into one stab
 Include:
 
 - Snapshot metadata: date range, refresh date/time, assignee, and read-only state.
-- Summary metrics when supported by retrieved data: active Customer Tasks, accounts with active tasks, customer-waiting actions, Needs Review count, tasks without due dates, renewal-window account count, and renewal-window ACV.
+- Summary metrics when supported by retrieved data: active Customer Tasks, accounts with active tasks, customer-waiting actions, Needs Review count, tasks without due dates, renewal-window account count, renewal-window ACV, Cadence Eligible Accounts, Fully Active Cadence, Setup / Restore Required, Slipping, Cadence Needs Review, and Cadence Coverage %.
 - Priority mix: P1, P2, and P3 task counts.
 - Rows with: stable row ID, view, filter group, source, account/work area, signal label, status, owner, Why it surfaced, Recommended next move, timing, and short source context.
 - Never invent a metric, date, owner, renewal value, task count, or source context. Omit an unavailable metric.
@@ -652,7 +701,8 @@ Column rules:
 Group rows as follows:
 
 - **Pending follow-ups** — open customer-waiting actions, no-response/FU1–FU4 accounts, overdue scheduling follow-ups, or another explicit unsent follow-up supported by current state. A draft alone is not a sent follow-up.
-- **Cadence not set or incomplete** — apply Cadence Hygiene rules and also include `Connected - no cadence` when a recurring cadence still needs agreement.
+- **Cadence OKR exceptions** — include every cadence-eligible account not classified as Fully active, without a row cap; use the same classification and reconciliation rules as Cadence OKR Coverage.
+- **Cadence not set or incomplete** — apply Cadence Hygiene rules and include every assigned account whose recurring cadence is not established, even when its status says inactive, parked, churned, or offboarding.
 - **Stale accounts** — apply Stale / Risk Accounts logic using meaningful activity evidence, renewal proximity, risk, and open tasks.
 
 If one account has materially different actions across groups, separate rows are allowed. Deduplicate identical actions and place the most urgent row first.
@@ -697,6 +747,16 @@ Customers Waiting on You
 | Account | Task / Waiting For | Owner | Status | Due / Timing |
 |---|---|---|---|---|
 | [Account] | [Customer Task Title or fallback owed item] | [Owner] | [Task Status or Engagement Status / Outreach Step] | [Due Date / today / this week / late] |
+
+Cadence OKR Coverage
+| Eligible Accounts | Fully Active | Setup / Restore Required | Slipping | Needs Review | Coverage |
+|---:|---:|---:|---:|---:|---:|
+| [all accounts assigned to Ranjodh] | [count] | [count] | [count] | [count] | [Fully Active / Eligible] |
+
+Cadence Exceptions — every eligible account not Fully active
+| Account | Cadence Health | Current Evidence | Gap | Next Action | Cadence Task |
+|---|---|---|---|---|---|
+| [Account] | [Setup / restore required, Slipping, or Needs review] | [cadence fields + trusted evidence] | [specific gap] | [one concrete action] | [active task or No cadence task captured] |
 
 Meeting Follow-Ups & Cadence Gaps
 | Account | Gap Type | Evidence / Current State | Required Follow-Up | Owner | Timing |
@@ -768,6 +828,8 @@ Stale / Risk Accounts to Watch
 | [Account] | [Engagement Status / Outreach Step] | [stale/risk signal] | [action] |
 ```
 
+Always render **Cadence OKR Coverage** using the full assigned-account denominator and the uncapped non-active exception table.
+
 Always render **Meeting Follow-Ups & Cadence Gaps**. If no evidence-backed items qualify, show: `No evidence-backed meeting follow-ups or cadence gaps found.`
 
 If no customers are waiting on Ranjodh, omit **Customers Waiting on You** unless the user explicitly asks for empty sections.
@@ -789,7 +851,7 @@ If no accounts fall inside the renewal focus window after applying filters, say:
 - Compact format is mandatory unless the user explicitly asks for detailed mode or uses the exact dashboard command.
 - Start with Interesting Observations when useful.
 - Show Unified High Priority as the first action-oriented section.
-- Then show Customers Waiting on You when applicable, followed by the mandatory Meeting Follow-Ups & Cadence Gaps section, then Notion Work Queue and Needs Source Review when applicable.
+- Then show Customers Waiting on You when applicable, followed by mandatory Cadence OKR Coverage and Meeting Follow-Ups & Cadence Gaps, then Notion Work Queue and Needs Source Review when applicable.
 - Customers Waiting on You must not appear at the end.
 - Then show Task Check-Off Review when applicable.
 - Then show Recommended Status Updates and Status Ambiguities when applicable.
@@ -798,7 +860,7 @@ If no accounts fall inside the renewal focus window after applying filters, say:
 - Then show Do First This Week.
 - Keep Do First This Week to the top 5–7 accounts/tasks.
 - Show Engagement Status / Outreach Step and Customer Task Status in renewal and priority tables.
-- Use tables for Customers Waiting on You, Meeting Follow-Ups & Cadence Gaps, Task Check-Off Review, Recommended Status Updates, Status Ambiguities, Cadence Hygiene, Renewal Focus Window, Do First This Week, Priority 2, Priority 3, and Stale / Risk Accounts.
+- Use tables for Customers Waiting on You, Cadence OKR Coverage, Cadence Exceptions, Meeting Follow-Ups & Cadence Gaps, Task Check-Off Review, Recommended Status Updates, Status Ambiguities, Cadence Hygiene, Renewal Focus Window, Do First This Week, Priority 2, Priority 3, and Stale / Risk Accounts.
 - Use short account blocks only for Priority 1.
 - Do not include every possible task if it makes the output hard to read.
 - Prioritize what the user should actually act on.
@@ -807,6 +869,8 @@ Maximum length guidance:
 
 - Unified High Priority: max 8 rows
 - Customers Waiting on You: max 8 rows
+- Cadence OKR Coverage: always show the scorecard
+- Cadence Exceptions: no row cap; show every eligible account not Fully active
 - Meeting Follow-Ups & Cadence Gaps: max 12 rows; if more qualify, keep the most urgent and state how many were omitted
 - Notion Work Queue: max 8 rows
 - Needs Source Review: max 8 rows
@@ -831,6 +895,7 @@ Detailed mode only when the user explicitly says: detailed, full details, expand
 
 If useful, include 1–3 observations such as:
 
+- Cadence coverage is [Fully Active]/[Eligible] across the complete Ranjodh-assigned portfolio.
 - Customers are waiting on Ranjodh across multiple accounts.
 - Active Customer Tasks exist without due dates.
 - Active Customer Tasks look completed but are not checked off yet.
@@ -908,6 +973,6 @@ Do not infer cadence from a single meeting being scheduled. A one-off meeting sh
 
 This skill is for running the week across Airtable and the canonical 6sense Notion task page. Airtable Customer Tasks is authoritative for customer/account execution; Notion is authoritative for internal and project execution. The unified queue should make what to do first obvious without silently syncing or changing either source.
 
-Always surface Customers Waiting on You near the top. Always render the dedicated Meeting Follow-Ups & Cadence Gaps section in compact chat mode, including its explicit empty state when nothing qualifies. Always apply the mandatory Ranjodh assignment filter unless explicitly overridden. Always exclude past renewal dates from the Renewal Focus Window by default.
+Always surface Customers Waiting on You near the top. Always render Cadence OKR Coverage from every Ranjodh-assigned account, reconcile every non-active exception without a row cap, and then render the dedicated Meeting Follow-Ups & Cadence Gaps section in compact chat mode. Always apply the mandatory Ranjodh assignment filter unless explicitly overridden. Never shrink the cadence denominator based on lifecycle, engagement, churn, parking, or cadence-field state. Always exclude past renewal dates from the Renewal Focus Window by default.
 
 Only the exact `/weekly command center - dashboard` command activates the interactive dashboard; every other weekly command keeps the existing text presentation.
