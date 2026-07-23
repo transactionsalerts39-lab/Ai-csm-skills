@@ -352,6 +352,8 @@ Classify every eligible account into exactly one primary cadence-health state:
 - `Setup / restore required`: cadence is not established, Meeting Sync is blank/no/unclear, Cadence Frequency is blank, `TBD / not confirmed`, `Ad hoc / as needed`, or `Paused`, or a recurring invite/meeting rhythm must be established or restored.
 - `Needs review`: fields or evidence conflict, or there is not enough trusted evidence to classify the account without guessing.
 
+Apply classification in this order: Needs review for material evidence conflicts; otherwise Slipping when an established cadence fails the recency/reliability test; otherwise Setup / restore required when any establishment gate is missing; Fully active only when every positive gate passes. The five scorecard counts must be mutually exclusive.
+
 An inactive, parked, churned, or offboarding label never makes an assigned account ineligible. Keep it as a non-active exception and use the next action `Establish/restore cadence or correct Current Active CSM assignment` when appropriate.
 
 Below the scorecard, show every eligible account not classified as Fully active. This exception table is uncapped and must reconcile exactly: non-active exception rows = Eligible Accounts - Fully Active Cadence.
