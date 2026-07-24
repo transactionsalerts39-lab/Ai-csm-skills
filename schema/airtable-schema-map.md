@@ -46,7 +46,7 @@ No Airtable field is currently mapped for `CSM Sentiment Notes`, an authoritativ
 Until the exact destination system and field are verified:
 
 - Generate CSM Sentiment Notes as Draft/Preview only.
-- Do not use `Chrun riks`, Renewal Forecast Category, or another risk field as if it were an authoritative health score/color.
+- Do not use Churn Risk (the live Airtable label currently appears as `Chrun riks`), Renewal Forecast Category, or another risk field as if it were an authoritative health score/color.
 - Do not write sentiment copy into Activity notes or Detailed Notes as a substitute destination.
 - Treat every proposed health color as a labeled CSM recommendation requiring review.
 
