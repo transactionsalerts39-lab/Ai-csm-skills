@@ -60,7 +60,7 @@ Defaults:
 - Update Notes is a write workflow.
 - Explicit registered Meeting Summarizer commands authorize defined writes; generic summarization or drafting is Preview only.
 - Customer Task Centre reads by default. A natural-language task action authorizes only the matching action.
-- Weekly Command Centre and portfolio reports are read-only.
+- Weekly Command Centre and reporting-only portfolio workflows are read-only. CSM Sentiment Notes is Draft/Preview by default and follows its conditional-write contract only after a complete preview, exact destination mapping, and fresh explicit apply confirmation.
 - Docs, Meeting Prep, Clari, SF Stage Validator, Support Ticket, Meeting Follow-Up Email, Weekly Slack, Manager Recap, Lattice, and Weekly Highlights never send, post, submit, or update external systems by default.
 
 A draft does not prove an email/message was sent, a meeting scheduled, or a ticket submitted. Before writing, resolve the exact account and record. If several plausible records remain, ask one concise clarification.
