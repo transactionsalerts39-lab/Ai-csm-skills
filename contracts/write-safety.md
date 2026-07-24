@@ -16,6 +16,23 @@ Every skill must operate in one of four modes.
 - Meeting Summarizer: Write when invoked through its explicit registered command; preview when the user asks only to summarize or draft
 - Customer Task Centre: Read by default; Conditional source-aware write for create/update/close/reopen/cancel requests in Airtable or the canonical 6sense Notion task page
 - Weekly Command Centre: Read by default; Conditional source-aware write only after an explicit apply/close request
+- CSM Sentiment Notes: Draft/Preview by default; Conditional write only after an explicit apply/update request and exact destination mapping
+
+## Bulk CSM Sentiment Writes
+
+A portfolio sentiment request must first produce a complete preview, including every eligible account exactly once.
+
+Before any write:
+
+1. Resolve the exact destination system, object/table, record, field ID, and overwrite-versus-append behavior.
+2. Fetch the current destination value for every target record.
+3. Show counts for eligible, changed, unchanged, needs review, insufficient evidence, and unmapped/skipped accounts.
+4. Require an explicit apply/update request for that resolved destination.
+5. Skip normalized no-change values and report them as unchanged.
+6. Write only the CSM Sentiment destination field; never substitute Activity notes, Detailed Notes, tasks, status, cadence, or risk fields.
+7. Report every failed, ambiguous, or unmapped target; never imply a complete portfolio update when any account was skipped.
+
+If the destination or authoritative health mapping is missing, remain in Draft/Preview mode.
 
 ## Draft Is Not Sent
 
