@@ -1,6 +1,6 @@
 # Portfolio Scope and Evidence Contract
 
-Apply this contract to Weekly Command Centre, Weekly Highlights, Manager Weekly Recap, Weekly Slack Update, Lattice Round-Up, and portfolio-level Clari workflows.
+Apply this contract to Weekly Command Centre, CSM Sentiment Notes, Weekly Highlights, Manager Weekly Recap, Weekly Slack Update, Lattice Round-Up, and portfolio-level Clari workflows.
 
 ## Default Assignment Scope
 
@@ -29,6 +29,16 @@ Use:
 Last Activity Date is a retrieval signal, not proof of customer movement.
 
 Do not count metadata edits, rollups, automation touches, or generic CRM cleanup as customer movement.
+
+## CSM Sentiment Portfolio Completeness
+
+For a portfolio CSM Sentiment Notes run, include every account in the assignment scope exactly once.
+
+Reconcile:
+
+`Eligible Accounts = Ready Drafts + Needs CSM Review + Insufficient Evidence`
+
+Do not omit inactive, parked, churned, offboarding, low-engagement, or stale accounts. If an account lacks enough evidence for a credible note, show it under `Insufficient Evidence` rather than inventing a health assessment.
 
 ## Reporting Boundary
 
