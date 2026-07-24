@@ -21,6 +21,7 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/weekly highlights` → Weekly Highlights.
 - Exact standalone `/weekly command center - dashboard` → Weekly Command Centre dashboard mode. This is the only dashboard-mode trigger.
 - `/weekly command centre`, `/weekly command center`, and `/weekly tasks` → Weekly Command Centre compact text mode unless the exact dashboard command above was used.
+- `/cadence coverage`, `/cadence radar`, `/book of business cadence`, `/bob cadence`, or a request for cadence information for every assigned account → Cadence Coverage Radar. This is the literal full-roster view, including fully active accounts; Weekly Command Centre remains the broader weekly triage workflow.
 - `/meeting summa` → Meeting Summarizer.
 - `/meeting follow-up` or `only email` → Meeting Follow-Up Email.
 - `/account follow-up`, `/follow-up builder`, or combined account pending-items + customer-email intent → Account Follow-Up Builder. Plain account task lists remain Customer Task Centre.
