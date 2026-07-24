@@ -49,11 +49,11 @@ When the user names one account, resolve the exact assigned account and generate
 
 Write only when all are true:
 
-1. The user explicitly asks to apply/update the reviewed CSM Sentiment Notes.
-2. The exact destination system, object/table, account record, field ID, and write behavior are mapped.
+1. A complete preview has already been shown.
+2. The exact destination system, object/table, account record, field ID, and overwrite behavior are mapped.
 3. The current destination value has been read.
 4. The portfolio preview reconciles every eligible account.
-5. The requested notes have been reviewed or the user explicitly authorizes the full resolved preview.
+5. After the preview and destination resolution, the user gives a fresh explicit confirmation to apply the reviewed preview or named approved subset.
 
 The current Airtable schema has no mapped CSM Sentiment Notes, authoritative health score, or authoritative health color field. Until a destination is verified, remain in Draft/Preview and explain the blocker. Never substitute Activity notes, Detailed Notes, Customer Tasks, status, cadence, or risk fields.
 
@@ -84,14 +84,15 @@ Retrieve:
 4. Dated paragraphs in Accounts → Activity notes.
 5. Current account metadata, including Engagement Status, Outreach Step, renewal date, ACV, churn/risk, cadence, entitlements, Clari forecast/risk fields, and upsell signal when populated.
 
-Use this evidence order:
+Use the evidence order from `contracts/portfolio-scope.md`:
 
-1. Explicit authoritative health color/score with its source date and verified score-to-color mapping, if available.
-2. Dated Detailed Notes and meeting notes.
-3. Active Customer Tasks and their Source Date/Summary.
-4. Dated Activity notes.
-5. Current risk, renewal, commercial, engagement, and cadence metadata.
-6. Last Activity Date only as a retrieval signal, never as proof of customer progress.
+1. Dated Detailed Notes and meeting notes.
+2. Active Customer Tasks and their Source Date/Summary.
+3. Dated Activity notes.
+4. Current risk, renewal, commercial, engagement, and cadence metadata.
+5. Last Activity Date only as a retrieval signal, never as proof of customer progress.
+
+Read an authoritative health color/score separately and preserve it as a display value only when its source date and score-to-color mapping are verified. It does not override the evidence hierarchy used for the rationale, risks, or opportunities.
 
 Do not use the Notion internal task page as customer-health evidence unless the user explicitly asks to add internal context and the claim is independently supported.
 
@@ -123,7 +124,13 @@ Interpret dates in Asia/Kolkata.
 
 Use the most recent Monday–Friday work week for weekly-change detection, but carry forward independently confirmed open tasks and risks regardless of source date.
 
-If no substantive evidence exists within 60 days, do not infer health from Last Activity Date or silence. Use Insufficient Evidence or Needs CSM Review.
+Use mutually exclusive draft-status buckets:
+
+- Ready: Usable evidence supports a complete draft and no material conflict affects the health rationale, risks, or opportunities.
+- Needs CSM Review: Usable evidence exists, but a material conflict or ambiguity affects at least one claim or the recommended health.
+- Insufficient Evidence: No usable substantive evidence exists within 60 days and no independently confirmed active risk/status can support a credible assessment.
+
+If no substantive evidence exists within 60 days, do not infer health from Last Activity Date or silence. Use Insufficient Evidence, not Needs CSM Review.
 
 ## Health Handling
 
@@ -144,9 +151,11 @@ When no authoritative health exists, a color may be proposed only as a labeled C
 - Green: Requires current positive evidence of adoption, value, outcomes, or relationship health and no material unresolved risk. Silence or absence of complaints is insufficient.
 - Yellow: Requires a current, credible, manageable adoption, value, engagement, stakeholder, technical, commercial, or renewal concern.
 - Red: Requires explicit current evidence of severe deterioration, such as confirmed churn/non-renewal, material unresolved nonpayment, executive escalation, or a blocker preventing meaningful use/value.
-- Needs review: Use when evidence is stale, insufficient, materially conflicting, or cannot support a color without guessing.
+If usable sources materially conflict, use `Health: Needs CSM Review — conflicting evidence prevents a reliable color recommendation.`
 
-Do not convert Chrun riks, Renewal Forecast Category, Clari risk fields, Engagement Status, or cadence fields directly into health. Treat them as evidence to reconcile with dated notes and active tasks.
+If usable evidence is absent, use `Health: Insufficient evidence — not enough current evidence to assign a color.`
+
+Do not convert Churn Risk (the live Airtable label currently appears as “Chrun riks”), Renewal Forecast Category, Clari risk fields, Engagement Status, or cadence fields directly into health. Treat them as evidence to reconcile with dated notes and active tasks.
 
 Never invent a numeric score.
 
@@ -198,7 +207,7 @@ When a prior CSM Sentiment snapshot is retrievable, compare material claims and 
 - No material change
 - Needs review
 
-Do not rewrite unchanged notes merely for style. Preserve the prior note and mark No material change.
+Do not rewrite unchanged notes merely for style. Preserve the prior note, keep its draft status in one of the three mutually exclusive buckets, and mark Weekly change as No material change.
 
 On the first run, or while no destination/history is mapped, show:
 
@@ -217,7 +226,7 @@ Eligible Accounts: [N]
 Ready Drafts: [N]
 Needs CSM Review: [N]
 Insufficient Evidence: [N]
-No Material Change: [N or Baseline unavailable]
+No Material Change: [N or Baseline unavailable; weekly-change metric, not a draft-status bucket]
 Coverage Check: Eligible = Ready + Needs Review + Insufficient Evidence
 ```
 
@@ -225,7 +234,7 @@ Then show every eligible account once:
 
 ```text
 [Account Name]
-Draft status: [Ready | Needs CSM Review | Insufficient Evidence | No Material Change]
+Draft status: [Ready | Needs CSM Review | Insufficient Evidence]
 Evidence through: [latest substantive date or Unverified]
 Freshness: [Current | Aging | Stale | Unverified]
 Confidence: [High | Medium | Low]
@@ -248,19 +257,26 @@ If the counts do not reconcile, stop and fix the missing/duplicate account cover
 
 ## Conditional Write Procedure
 
-When a valid destination is mapped and the user explicitly asks to apply:
+V1 supports overwrite of one mapped CSM Sentiment Notes field only. If the destination is append-only, remain in Draft/Preview until a stable snapshot/block identity and append-specific duplicate check are defined.
+
+After the complete preview, destination resolution, and fresh user confirmation:
 
 1. Resolve each target by stable record ID.
 2. Read the current destination value.
 3. Normalize whitespace and compare current versus proposed copy.
-4. Skip unchanged notes.
+4. Assign every eligible target exactly one final write outcome:
+   - Updated: a changed, approved note was written and verified.
+   - Unchanged: the normalized current value already matched.
+   - Not approved: the note was outside the approved subset or remained in review/insufficient status without explicit approval.
+   - Unmapped: no exact destination record/field could be resolved.
+   - Failed: a write was attempted but did not verify.
 5. Apply changed notes only to the mapped CSM Sentiment field.
 6. Do not update health color/score unless that field is separately mapped and explicitly requested.
-7. Report eligible, changed, unchanged, skipped, needs-review, and failed counts.
-8. List every skipped or failed account by name.
-9. Re-fetch changed records and verify the final values.
+7. Re-fetch updated records and verify the final values.
+8. Reconcile `Eligible = Updated + Unchanged + Not approved + Unmapped + Failed`.
+9. List every Not approved, Unmapped, or Failed account by name and reason.
 
-Never claim the whole portfolio was updated when any target was unmapped, ambiguous, skipped unexpectedly, or failed.
+Never claim the whole portfolio was updated when the write-outcome equation does not reconcile or any target was unmapped, ambiguous, not approved, or failed.
 
 ## Edge Cases
 
