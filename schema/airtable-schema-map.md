@@ -26,6 +26,30 @@ Base ID: `app6O8peF5ywLe1GM`
 - Task status: `fldaYegYsT0eA3NAK`
 - Customer Tasks linked records: `fldaetB5w1BersFeV`
 
+### Additional Sentiment / Renewal Evidence Fields
+
+- Upsell opportunity: `fldMq113Hz7xrQ6GK`
+- Entitlements: `fldakm251jNyVn9up`
+- Renewal Forecast Category: `fld6UN3RDjXxMeqkV`
+- Baseline ACV: `fld3bz5DgDfcgofmN`
+- Expected Renewal ACV: `fldCr0T8tbiUeYb8p`
+- Churn / Downsell Risk Amount: `fldu508bgwXqdKmUv`
+- Churn / Downsell Risk Category: `fldxChoxMzVCy5yFT`
+- Churn / Downsell Risk Reason: `fldxrAV62YcLeRmKG`
+- Current Renewal Risk Notes: `fldGUYsDlKG1Orrcf`
+- Last Clari Sync Date: `fldis0hysSxrlNN84`
+
+### CSM Sentiment Destination Boundary
+
+No Airtable field is currently mapped for `CSM Sentiment Notes`, an authoritative health score, or an authoritative health color.
+
+Until the exact destination system and field are verified:
+
+- Generate CSM Sentiment Notes as Draft/Preview only.
+- Do not use `Chrun riks`, Renewal Forecast Category, or another risk field as if it were an authoritative health score/color.
+- Do not write sentiment copy into Activity notes or Detailed Notes as a substitute destination.
+- Treat every proposed health color as a labeled CSM recommendation requiring review.
+
 ## Detailed Notes Fields
 
 - Notes: `fldcfsEsMgFHoB8VH`
