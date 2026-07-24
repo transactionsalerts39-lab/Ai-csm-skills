@@ -1,6 +1,6 @@
 # Portfolio Scope and Evidence Contract
 
-Apply this contract to Weekly Command Centre, CSM Sentiment Notes, Weekly Highlights, Manager Weekly Recap, Weekly Slack Update, Lattice Round-Up, and portfolio-level Clari workflows.
+Apply this contract to Cadence Coverage Radar, Weekly Command Centre, CSM Sentiment Notes, Weekly Highlights, Manager Weekly Recap, Weekly Slack Update, Lattice Round-Up, and portfolio-level Clari workflows.
 
 ## Default Assignment Scope
 
