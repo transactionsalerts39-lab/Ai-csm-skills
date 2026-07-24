@@ -22,7 +22,7 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - Exact standalone `/weekly command center - dashboard` → Weekly Command Centre dashboard mode. This is the only dashboard-mode trigger.
 - `/weekly command centre`, `/weekly command center`, and `/weekly tasks` → Weekly Command Centre compact text mode unless the exact dashboard command above was used.
 - `/csm sentiment`, `/weekly csm sentiment`, `/sentiment notes`, or explicit CSM Sentiment Notes intent → CSM Sentiment Notes.
-- `update CSM Sentiment Notes for my book/all my accounts` → CSM Sentiment Notes; treat it as apply intent only after the exact destination field is mapped. Otherwise produce the complete preview and report the destination blocker.
+- `update CSM Sentiment Notes for my book/all my accounts` → CSM Sentiment Notes Preview. After the complete preview and exact destination resolution, require a fresh explicit apply confirmation; the initial wording does not pre-authorize the bulk write.
 - Single-account raw activity logging remains Update Activity Notes unless the user explicitly names CSM Sentiment Notes.
 - `/cadence coverage`, `/cadence radar`, `/book of business cadence`, `/bob cadence`, or a request for cadence information for every assigned account → Cadence Coverage Radar. This is the literal full-roster view, including fully active accounts; Weekly Command Centre remains the broader weekly triage workflow.
 - `/meeting summa` → Meeting Summarizer.
