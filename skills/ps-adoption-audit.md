@@ -10,7 +10,7 @@ description: >
   a PS request or modify customer systems.
 ---
 
-# PS Adoption Audit — V1
+# PS Adoption Audit — V2
 
 ## Purpose
 
@@ -110,7 +110,7 @@ Use confidence:
 
 Require all five gates for `Ready to nominate`:
 
-1. **Adoption-fit problem** — a documented strategy, enablement, technical activation, workflow, measurement, or value-realization gap that PS can address.
+1. **Adoption-fit problem** — a documented need that maps to at least one capability in the authoritative PS service catalogue below; generic account risk or value concern alone is not enough.
 2. **Specific outcome** — a concrete end state, behavior, asset, workflow, decision, or measurement plan can be completed or materially advanced.
 3. **Customer readiness** — a viable stakeholder, working-session availability, inputs, and willingness to act are documented.
 4. **Feasible scope** — the proposed work fits the default PS envelope of five total hours and no more than two customer-facing calls.
@@ -133,18 +133,34 @@ Do not classify an account `Ready to nominate` when the primary issue is:
 
 A Support issue may coexist with a PS opportunity, but the issue must be triaged separately and must not block the proposed adoption outcome. PS must not be used to bypass Support, Product, Deal Desk, Finance, Legal, or standard CSM ownership.
 
-## PS Route Selection
+## Authoritative PS Service Catalogue and Route Selection
 
-Recommend exactly one primary route. Add one secondary route only when the work genuinely crosses disciplines and the handoff is explicit.
+Treat this capability mapping as authoritative for this workflow. It determines functional fit; it does not prove that an account has the entitlement, capacity, or approval to receive the engagement.
 
-Use these routing heuristics; they are capability labels, not claims about official package names or entitlement:
+- `RMC` — intent, segment and audience strategy; AI Email; marketing workflows; and campaign strategy or activation.
+- `SIC` — Sales Intelligence training and configuration; seller or SDR adoption; and repeatable seller prospecting workflows.
+- `RTC` — model-efficacy reviews, account matching, Data Workflows, MarTech architecture, and migration or model scoping. A model-efficacy review assesses the current model and recommends next steps; **it does not include a model refresh**.
+- `VA` — reporting and data ingestion: Reporting API, Data Packs, standard reports, and custom reporting.
 
-- `RMC` — marketing strategy, ICP/audience design, buying-stage or campaign motion, adoption planning, KPI definition, value/ROI framing, or executive/marketing alignment.
-- `SIC` — seller or SDR adoption, Sales Intelligence behaviors, alert/account prioritization, manager reinforcement, enablement, or a repeatable seller workflow.
-- `RTC` — technical platform activation, integrations, data/workflow configuration, measurement setup, or operational design that is not a break/fix Support issue.
-- `VA` — a sharply defined cross-functional activation sprint where the inputs, owner, and measurable outcome are ready and one specialist route alone would be too narrow.
+Recommend exactly one primary route. Add one secondary route only when the work genuinely crosses catalogue capabilities and the handoff is explicit.
 
-If the available evidence does not support a reliable route, use `Needs review` and state the capability required instead of guessing an acronym.
+Route by the principal deliverable:
+
+- Marketing audience, intent, AI Email, campaign, or non-Data-Workflow activation deliverable → `RMC`.
+- Seller behavior, SI configuration, training, adoption, or prospecting deliverable → `SIC`.
+- Model, matching, Data Workflow, MarTech architecture, migration, or technical scoping deliverable → `RTC`.
+- Reporting, Reporting API, Data Pack, standard-report, custom-report, or data-ingestion deliverable → `VA`.
+
+Apply these boundaries:
+
+- Do not use `VA` as a generic cross-functional activation sprint.
+- Do not use `RTC` as a generic technical catch-all or for reporting/data-ingestion work.
+- Distinguish marketing workflows (`RMC`) from Data Workflows (`RTC`).
+- Keep defects and break/fix issues with Support or Product even when the surrounding adoption need maps to PS.
+- If a model refresh is the desired outcome, `RTC` may scope or assess the need, but the plan must label the refresh itself as out of scope and must not promise it as an engagement deliverable.
+- For mixed needs, select the route whose specialist owns the principal deliverable and describe any secondary handoff. Do not invent a hybrid route.
+
+If the available evidence does not support a reliable route, use `Needs review` and state the required capability instead of guessing an acronym.
 
 ## Classification
 
@@ -301,6 +317,9 @@ Before presenting the audit, verify:
 - Every Ready account passes all five gates.
 - Every Ready plan totals no more than 5.0 hours and contains no more than two customer calls.
 - Every recommendation has a dated evidence source or an explicit evidence limitation.
+- Every RMC, SIC, RTC, and VA recommendation matches the authoritative capability catalogue.
+- No VA recommendation is based on a generic activation sprint; every VA plan has a reporting or data-ingestion deliverable.
+- Every RTC model-efficacy plan states that a model refresh is not included and does not promise one.
 - Every non-PS owner recommendation names the correct ownership boundary.
 
 Show `PASS` only when all checks succeed. If Airtable pagination, permissions, missing linked evidence, or another source failure prevents a complete audit, label the output `INCOMPLETE`, state what was retrieved, and do not claim definitive portfolio coverage.
@@ -314,6 +333,8 @@ Show `PASS` only when all checks succeed. If Airtable pagination, permissions, m
 - Support blocker plus adoption need: separate the Support owner from the later PS outcome and state the sequencing.
 - Renewal urgency only: do not recommend PS without adoption fit, readiness, and a feasible outcome.
 - Missing entitlements: do not claim PS availability; mark entitlement verification as a prerequisite.
+- Reporting need mixed with technical setup: use VA when the principal deliverable is reporting or data ingestion; use RTC only when architecture, matching, Data Workflows, migration, or model scoping is the principal deliverable.
+- Model refresh request: do not promise a refresh inside RTC; scope or assess the need and label the refresh as out of scope.
 - Conflicting sources: use Needs review and name the conflict.
 - Stale evidence: do not infer current willingness; request a discovery refresh.
 
