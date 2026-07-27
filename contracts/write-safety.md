@@ -13,6 +13,7 @@ Every skill must operate in one of four modes.
 - Cadence Coverage Radar: Read
 - Account Follow-Up Builder: Read / Draft
 - Support Ticket, Meeting Follow-Up Email, Clari, SF Stage Validator, weekly reports: Draft/Read
+- PS Adoption Audit: Read / Draft; never submit a PS request or modify customer systems
 - Update Notes: Write
 - Meeting Summarizer: Write when invoked through its explicit registered command; preview when the user asks only to summarize or draft
 - Customer Task Centre: Read by default; Conditional source-aware write for create/update/close/reopen/cancel requests in Airtable or the canonical 6sense Notion task page
