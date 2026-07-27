@@ -1,6 +1,6 @@
 # Portfolio Scope and Evidence Contract
 
-Apply this contract to Cadence Coverage Radar, Weekly Command Centre, CSM Sentiment Notes, Weekly Highlights, Manager Weekly Recap, Weekly Slack Update, Lattice Round-Up, and portfolio-level Clari workflows.
+Apply this contract to Cadence Coverage Radar, Weekly Command Centre, CSM Sentiment Notes, PS Adoption Audit, Weekly Highlights, Manager Weekly Recap, Weekly Slack Update, Lattice Round-Up, and portfolio-level Clari workflows.
 
 ## Default Assignment Scope
 
@@ -39,6 +39,16 @@ Reconcile:
 `Eligible Accounts = Ready Drafts + Needs CSM Review + Insufficient Evidence`
 
 Do not omit inactive, parked, churned, offboarding, low-engagement, or stale accounts. If an account lacks enough evidence for a credible note, show it under `Insufficient Evidence` rather than inventing a health assessment.
+
+## PS Adoption Audit Completeness
+
+For a portfolio PS Adoption Audit run, include every account in the assignment scope exactly once.
+
+Reconcile:
+
+`Audited Accounts = Ready to Nominate + Prerequisite First + CSM / Other Team Led + Needs Review`
+
+Do not omit healthy, inactive, parked, churned, offboarding, low-engagement, or stale accounts. Portfolio inclusion does not imply PS qualification.
 
 ## Reporting Boundary
 
