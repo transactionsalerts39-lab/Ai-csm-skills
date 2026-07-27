@@ -23,6 +23,7 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/weekly command centre`, `/weekly command center`, and `/weekly tasks` → Weekly Command Centre compact text mode unless the exact dashboard command above was used.
 - `/csm sentiment`, `/weekly csm sentiment`, `/sentiment notes`, or explicit CSM Sentiment Notes intent → CSM Sentiment Notes.
 - `update CSM Sentiment Notes for my book/all my accounts` → CSM Sentiment Notes Preview. After the complete preview and exact destination resolution, require a fresh explicit apply confirmation; the initial wording does not pre-authorize the bulk write.
+- `/ps adoption audit`, `/ps audit`, `/professional services audit`, `/adoption services audit`, or explicit full-book PS-candidate intent → PS Adoption Audit. Account risk alone stays in Weekly Command Centre; a technical break/fix issue stays with Support Ticket Creator unless the user explicitly asks for a separate adoption-fit audit.
 - Single-account raw activity logging remains Update Activity Notes unless the user explicitly names CSM Sentiment Notes.
 - `/cadence coverage`, `/cadence radar`, `/book of business cadence`, `/bob cadence`, or a request for cadence information for every assigned account → Cadence Coverage Radar. This is the literal full-roster view, including fully active accounts; Weekly Command Centre remains the broader weekly triage workflow.
 - `/meeting summa` → Meeting Summarizer.
