@@ -5,7 +5,7 @@ description: >
   and optional Salesforce opportunity context. Use this when the user asks what to fill in
   Clari, wants weekly forecast updates, uploads a Clari opportunity export, or asks for
   renewal forecast prep by quarter. This version compares against the uploaded Clari CSV,
-  returns only incremental Last Steps and non-overlapping Next Steps, enforces paste-ready date/RS formatting for Clari text fields, and drafts brief current-quarter and next-quarter churn forecast comments.
+  always shows Last Steps (the latest existing value or a new incremental append) and the complete current/final Next Steps for every included opportunity, preserves deduplication, enforces paste-ready date/RS formatting for Clari text fields, and drafts brief current-quarter and next-quarter churn forecast comments.
 ---
 
 ## Shared Contracts
@@ -14,14 +14,14 @@ Apply `contracts/fiscal-calendar.md`, `contracts/portfolio-scope.md`, `contracts
 
 ---
 
-# Clari Weekly Forecast Prep — Incremental Last Steps + Deduped Next Steps
+# Clari Weekly Forecast Prep — Guaranteed Last Steps + Final Next Steps
 
 ## Purpose
 
 Generate review-first, paste-ready weekly Clari updates for the fields Ranjodh maintains:
 
-- Incremental Last Steps only
-- Next Steps
+- Last Steps visibility for every included opportunity: incremental append when new, otherwise latest existing value
+- Complete current/final Next Steps for every included opportunity
 - Renewal Risk Notes
 - ACV Amount / Expected Renewal ACV / Churn/Downsell Risk Amount recommendations
 - Brief current-quarter and next-quarter churn forecast comments
@@ -33,7 +33,7 @@ The skill should combine:
 - Optional Salesforce opportunity context
 - Meeting notes, customer emails, and raw updates already stored in Airtable
 
-The main goal is to avoid duplicate Clari updates. The skill must compare proposed updates against the existing CSV values before recommending anything to paste. It must also produce concise churn comments for the current quarter and next quarter when the user is updating renewal forecast rollups.
+The main goal is to make both Last Steps and Next Steps visible on every included opportunity without duplicating Clari updates. Compare proposed updates against the existing CSV values before recommending anything to paste. When no change is needed, repeat the relevant current Clari value and label it unchanged. It must also produce concise churn comments for the current quarter and next quarter when the user is updating renewal forecast rollups.
 
 Do not directly update Clari unless a confirmed Clari or Salesforce writeback connector is available and the user explicitly asks to update.
 
@@ -43,6 +43,7 @@ Do not directly update Clari unless a confirmed Clari or Salesforce writeback co
 
 Use this skill when the user says things like:
 
+- `/weekly clari forecast`
 - `/clari forecast prep`
 - `/weekly clari update`
 - `/forecast prep`
@@ -87,39 +88,26 @@ Use it to read what is already in:
 
 If a Clari CSV is not uploaded, ask for it before generating incremental Last Steps, unless the user explicitly says to draft from Airtable only.
 
-### 2. Last Steps Must Be Incremental Only
+### 2. Always Show Last Steps
 
-Do not output a full replacement for `Last Steps` by default.
+For every included opportunity, populate `Last Steps — Latest / Append`.
 
-Only return actions that are:
+- If a new completed action is supported and not already represented in the CSV, show the paste-ready incremental append and label `Last Steps: Append` in `Update Type`.
+- If no new completed action exists and the CSV Last Steps are populated, repeat the latest existing Clari Last Step verbatim and label `Last Steps: Unchanged`.
+- If neither the CSV nor approved evidence supports a completed action, show `Evidence gap — no supported Last Steps value.`, label `Last Steps: Evidence gap`, and add the opportunity to **Needs Manual Review**.
 
-- Completed since the current CSV Last Steps were last updated, or
-- Clearly missing from the CSV Last Steps, and
-- Supported by Airtable, Salesforce, or user-provided context.
+Do not output a full Last Steps replacement by default. Never present an already-represented action as a new append.
 
-If a completed action is already represented in the CSV Last Steps, do not include it again.
+### 3. Always Show the Complete Current/Final Next Steps
 
-If there are no new completed actions, output:
+For every included opportunity, populate `Next Steps — Final Value` after comparing against the CSV.
 
-```text
-No incremental last steps found.
-```
+- If the current CSV Next Steps remain accurate, repeat the complete current value verbatim and label `Next Steps: Unchanged`.
+- If the current value is stale, unclear, incomplete, too long, or contains completed work, provide the complete paste-ready final replacement and label `Next Steps: Replace`.
+- If the CSV field is blank and a forward-looking action is supported, provide the complete paste-ready value and label `Next Steps: New`.
+- If neither the CSV nor approved evidence supports a forward-looking action, show `Evidence gap — no supported Next Steps value.`, label `Next Steps: Evidence gap`, and add the opportunity to **Needs Manual Review**.
 
-### 3. Next Steps Must Not Overlap With CSV Next Steps
-
-Compare proposed Next Steps against the CSV `Next Steps` field.
-
-Only suggest a Next Steps update if:
-
-- The existing CSV Next Steps are stale, unclear, too long, or no longer accurate, or
-- There is a new forward-looking action not already captured, or
-- A completed action currently listed in Next Steps should be removed and moved to Last Steps.
-
-If the current CSV Next Steps already capture the right action, output:
-
-```text
-No Next Steps change recommended.
-```
+Never use `No Next Steps change recommended.` as a substitute for the actual current/final value.
 
 ### 4. Separate Completed Actions From Future Actions
 
@@ -137,15 +125,15 @@ All Clari text-field recommendations must be directly copy-paste-ready. Do not o
 
 Use Ranjodh's initials `RS` in every proposed Clari text-field value:
 
-- **Incremental Last Steps:** `M/D RS - [completed action].`
-- **Next Steps:** `M/D RS - [forward-looking action]; [second action]; [third action].`
+- **New Last Steps append:** `M/D RS - [completed action].`
+- **New or replacement Next Steps:** `M/D RS - [forward-looking action]; [second action]; [third action].`
 - **Renewal Risk Notes:** `Month DD, YYYY RS - [risk summary]. [What needs to happen next / what would reduce risk].`
 
-When a Clari table includes `Next Steps` or `Renewal Risk Notes`, the cell must contain the complete paste-ready value in the required format, not an instruction to replace, add, review, or look elsewhere.
+When a Clari table includes `Last Steps`, `Next Steps`, or `Renewal Risk Notes`, the cell must contain the actual value, not an instruction to replace, add, review, or look elsewhere. Newly proposed values must use the required date/RS format. An unchanged existing Clari value may be repeated verbatim and identified as unchanged in `Update Type`.
 
 Forbidden table-cell outputs include `Replace—see block below`, `Replace—see below`, `See paste-ready block`, `Add risk note below`, or any equivalent cross-reference. The table is the canonical copy-paste surface.
 
-Use review language only in `ACV / Churn-Downsell Amount`, `Confidence`, or `Needs Manual Review`, not inside the paste-ready text fields.
+Use review language only in `Update Type`, `ACV / Churn-Downsell Amount`, `Confidence`, or `Needs Manual Review`, not inside supported paste-ready text values. The two exact evidence-gap markers are allowed only when no supported field value exists.
 
 ---
 
@@ -355,35 +343,37 @@ Do not add:
 Check with Heather on whether the maturity model survey is complete.
 ```
 
-### Incremental Last Steps Selection
+### Last Steps Selection
 
-A proposed Last Step is valid only if all are true:
+A proposed Last Steps append is valid only if all are true:
 
 - It is completed.
 - It is supported by Airtable, Salesforce, meeting notes, email notes, or user context.
 - It is not already represented in CSV `Last Steps`.
 - It is not a future action.
 
+After testing for a valid append, still populate the row: show the append when valid, otherwise repeat the latest existing CSV Last Step, otherwise use the exact Last Steps evidence-gap marker and flag manual review.
+
 ### Next Steps Selection
 
-A proposed Next Step is valid only if all are true:
+A proposed new or replacement Next Steps value is valid only if all are true:
 
-- It is forward-looking.
-- It is specific and actionable.
-- It is not already represented in CSV `Next Steps`.
-- It is not already completed and therefore better suited to Last Steps.
+- Every included action is forward-looking.
+- Every included action is specific and actionable.
+- Completed work has been removed.
+- The complete final value is supported by the approved sources.
 
-If a cleaner replacement is better than appending, recommend replacement and explain why.
+After comparison, always populate the row with one of: the complete current value unchanged, a complete final new/replacement value, or the exact Next Steps evidence-gap marker plus manual review. If a cleaner replacement is better than retaining or appending text, provide the complete replacement and explain the reason in `Update Type` or surrounding commentary.
 
 ---
 
 ## Step 6 — Field Generation Rules
 
-## A. Incremental Last Steps
+## A. Last Steps — Latest Existing or Incremental Append
 
-Generate only new completed actions.
+Generate only completed actions as new append content.
 
-Preferred format:
+Preferred format for a new append:
 
 ```text
 M/D RS - [completed action].
@@ -399,14 +389,15 @@ Rules:
 - When placing the new block into an existing Clari Last Steps field, put it above older history so the full field remains newest-first.
 - Include dates when available.
 - Do not include open tasks.
-- Do not repeat existing CSV Last Steps.
-- If no new completed action is found, say `No incremental last steps found.`
+- Do not repeat existing CSV Last Steps as new content.
+- If there is no new completed action, repeat the latest existing CSV Last Step verbatim and label it unchanged.
+- If no existing or evidence-backed completed action exists, use `Evidence gap — no supported Last Steps value.` and add the row to **Needs Manual Review**.
 
-## B. Next Steps
+## B. Next Steps — Complete Current/Final Value
 
 Generate future actions only.
 
-Mandatory paste-ready format:
+Mandatory format for a new or replacement value:
 
 ```text
 M/D RS - [next action]; [next action]; [next action].
@@ -415,12 +406,14 @@ M/D RS - [next action]; [next action]; [next action].
 Rules:
 
 - Compare against the CSV `Next Steps` first.
-- Do not repeat current CSV Next Steps.
-- If current CSV Next Steps are still accurate, say `No Next Steps change recommended.`
-- If current CSV Next Steps are stale or include completed work, recommend a paste-ready replacement using `M/D RS -` at the start.
-- Keep to 1–3 actions.
+- If current CSV Next Steps remain accurate, repeat the complete value verbatim and label it unchanged.
+- If the current value is stale, incomplete, or contains completed work, provide the complete paste-ready replacement using `M/D RS -` at the start.
+- If the current value is blank and a supported action exists, provide the complete new paste-ready value.
+- Do not output only an incremental fragment; the cell must show the complete final Next Steps value.
+- Keep new/replacement values to 1–3 actions.
 - Prioritize renewal movement, customer engagement, stakeholder alignment, support blockers, ROI/value proof, commercial next steps, and Salesforce stage progression.
-- Do not output `New:`, `Replace:`, `Add:`, or `Review:` inside the Next Steps value. Put that classification in `Update Type` or surrounding commentary instead.
+- Do not output `New:`, `Replace:`, `Add:`, or `Review:` inside the Next Steps value. Put that classification in `Update Type`.
+- If no current or evidence-backed forward action exists, use `Evidence gap — no supported Next Steps value.` and add the row to **Needs Manual Review**.
 
 ## C. Renewal Risk Notes
 
@@ -555,6 +548,10 @@ Date Range: [date range]
 CSV Rows Reviewed: [number]
 Rows Included After Filter: [number]
 Rows Excluded Outside Scope: [number]
+Rows with Last Steps cells: [number]
+Rows with Next Steps cells: [number]
+Field Coverage: [Pass/Fail] — Rows Included = Rows with Last Steps cells = Rows with Next Steps cells
+Evidence Gaps: [Last Steps count] Last Steps · [Next Steps count] Next Steps
 ```
 
 Then output one complete Clari Update Table. This table is the default and canonical account-level copy-paste surface.
@@ -563,20 +560,23 @@ If working on forecast rollups, output Churn Commit Comments after the table. Ad
 
 ## Clari Update Table
 
-| Account | Quarter / Close | Forecast / Stage | Incremental Last Steps — Append | Next Steps — Paste/Replace | Renewal Risk Notes — Append | ACV / Churn-Downsell Amount | Confidence |
-|---|---|---|---|---|---|---|---|
-| [Account] | [QX · Close Date] | [Forecast Category · Stage] | `M/D RS - [completed action].` or `No incremental last steps found.` | `M/D RS - [forward-looking action]; [second action].` or `No Next Steps change recommended.` | `Month DD, YYYY RS - [risk summary]. [Mitigation/required next move].` or `No renewal risk note change.` | [Exact recommendation or `No ACV change recommended.`] | [High/Medium/Low] |
+| Account | Quarter / Close | Forecast / Stage | Last Steps — Latest / Append | Next Steps — Final Value | Update Type | Renewal Risk Notes — Append | ACV / Churn-Downsell Amount | Confidence |
+|---|---|---|---|---|---|---|---|---|
+| [Account] | [QX · Close Date] | [Forecast Category · Stage] | `M/D RS - [completed action].`, latest existing Last Step, or the exact evidence-gap marker | `M/D RS - [complete forward-looking actions].`, complete current CSV value, or the exact evidence-gap marker | Last Steps: Append/Unchanged/Evidence gap; Next Steps: New/Replace/Unchanged/Evidence gap | `Month DD, YYYY RS - [risk summary]. [Mitigation/required next move].` or `No renewal risk note change.` | [Exact recommendation or `No ACV change recommended.`] | [High/Medium/Low] |
 
 ### Table Rules
 
-- Put the complete paste-ready account update directly in the relevant table cell.
+- Populate both Last Steps and Next Steps cells for every included opportunity.
+- Put the actual current/final or paste-ready value directly in the relevant table cell.
 - Never output `Replace—see block below`, `see below`, `see paste-ready block`, or any other placeholder/cross-reference.
-- Incremental Last Steps must use `M/D RS - [completed action].`, contain completed actions only, and list multiple entries newest-first. For example, `7/11` must appear above `7/8`.
-- Next Steps must use `M/D RS - [forward-looking actions].` and contain the complete value Ranjodh should paste. When replacement is required, provide the full replacement—not an instruction.
+- New Last Steps append content must use `M/D RS - [completed action].`, contain completed actions only, and list multiple entries newest-first. For example, `7/11` must appear above `7/8`.
+- When no Last Steps append is needed, repeat the latest existing Clari Last Step verbatim and label it unchanged.
+- Next Steps must show the complete current/final field value. When new or replacement content is required, use `M/D RS - [forward-looking actions].` and provide the full value—not an instruction or incremental fragment.
+- Put `Append`, `New`, `Replace`, `Unchanged`, or `Evidence gap` only in `Update Type`, not inside a supported field value.
+- If a supported value does not exist, use the applicable exact evidence-gap marker and add the opportunity to **Needs Manual Review**.
 - Renewal Risk Notes must use `Month DD, YYYY RS - [risk summary]. [Mitigation].` and remain separate from amount recommendations.
 - `ACV / Churn-Downsell Amount` is only for supported numeric/forecast-field recommendations and rationale; do not place Renewal Risk Notes there.
-- Use `No incremental last steps found.`, `No Next Steps change recommended.`, `No renewal risk note change.`, or `No ACV change recommended.` when applicable.
-- Do not put `New:`, `Replace:`, `Add risk note:`, or `No change unless...` inside paste-ready text cells.
+- Use `No renewal risk note change.` or `No ACV change recommended.` when applicable.
 - Keep cells concise enough to scan, but do not shorten them into instructions that require another section.
 
 ## Churn Commit Comments
@@ -629,6 +629,7 @@ Create a **Needs Manual Review** section for rows where:
 - ACV change is uncertain
 - Salesforce and Airtable conflict
 - Clari field is blank but no supportable value exists
+- Either guaranteed field uses an evidence-gap marker
 - Duplicate columns were detected
 - Churn/downsell amount requires manager/commercial confirmation
 - Close Date and Airtable Renewal Date fall in different quarters
@@ -669,17 +670,17 @@ Use only when the user explicitly asks for account blocks, separate copy boxes, 
 
 If the user asks for only incremental Last Steps, output only:
 
-| Account | Opportunity | Current CSV Last Steps Summary | Incremental Last Steps to Append | Confidence |
+| Account | Opportunity | Last Steps — Latest / Append | Update Type | Confidence |
 |---|---|---|---|---|
 
 ### Next Steps Only
 
 If the user asks for only Next Steps, output only:
 
-| Account | Opportunity | Current CSV Next Steps Summary | Suggested Next Steps | Update Type | Confidence |
+| Account | Opportunity | Current CSV Next Steps | Next Steps — Final Value | Update Type | Confidence |
 |---|---|---|---|---|---|
 
-Every Suggested Next Steps cell must contain either the complete `M/D RS - ...` value or `No Next Steps change recommended.`
+Every `Next Steps — Final Value` cell must contain the complete current value, the complete new/replacement `M/D RS - ...` value, or the exact Next Steps evidence-gap marker plus manual review.
 
 ### Full Detail Mode
 
@@ -706,7 +707,7 @@ Do not repeat content already present in the uploaded CSV Last Steps or Next Ste
 
 This is the most important rule in this skill.
 
-When there is no new information, output the exact no-update sentence for that field rather than inventing activity. Safe internal review activity may be used only when it actually happened or is explicitly requested by the user, and it must still follow the required date/RS format.
+When there is no new information, repeat the relevant current Clari value and label it unchanged. If the current value is blank and no approved evidence supports one, use the exact evidence-gap marker and flag manual review rather than inventing activity. Safe internal review activity may be used only when it actually happened or is explicitly requested by the user, and any proposed change must follow the required date/RS format.
 
 ## CSV Comparison Is Required
 
@@ -755,8 +756,8 @@ Suggest only. Do not update unless there is clear commercial evidence or user ap
 Before forecast review:
 
 ```text
-/clari forecast prep
-Use this Clari export and Airtable context. I’m updating Q2. Only give incremental Last Steps and deduped Next Steps.
+/weekly clari forecast
+Use this Clari export and Airtable context. I’m updating Q2. Always show Last Steps and the complete current/final Next Steps for every included opportunity; deduplicate only the proposed changes.
 ```
 
 After customer meetings or emails:
@@ -782,10 +783,10 @@ This skill should make weekly Clari updating fast, safe, and non-duplicative.
 The output should clearly show:
 
 - What is new since the uploaded CSV
-- What should be appended to Last Steps
-- Whether Next Steps need to be replaced, appended, or left unchanged
+- The new Last Steps append or, when unchanged, the latest existing Last Step
+- The complete current/final Next Steps value and whether it is new, replaced, or unchanged
 - Whether Renewal Risk Notes need a new dated update
 - What brief churn comment to paste for current quarter and next quarter
 - Whether any ACV / forecast field needs review
 
-Default to one complete Clari Update Table, followed only by Churn Commit Comments and Needs Manual Review when applicable. Separate account blocks are opt-in. All proposed Clari text-field values must appear directly in the table and use the required date and `RS` initials format.
+Default to one complete Clari Update Table, followed only by Churn Commit Comments and Needs Manual Review when applicable. Separate account blocks are opt-in. Every included row must contain both a Last Steps cell and a Next Steps cell. Reconcile `Rows Included = Rows with Last Steps cells = Rows with Next Steps cells`; regenerate missing cells or flag the evidence gap before returning the result. All proposed Clari text-field values must appear directly in the table and use the required date and `RS` initials format.
