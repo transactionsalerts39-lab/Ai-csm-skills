@@ -17,7 +17,7 @@ Exact slash commands win over natural-language matching. Use `routing/skill-rout
 | Meeting Follow-Up Email | `/meeting follow-up`, `/follow-up email`, `only email` | `skills/meeting-follow-up-email.md` | Draft |
 | SF Stage Progression Validator | `/sf stage progression`, `/stage check`, `/move opportunity` | `skills/sf-stage-progression-validator.md` | Read / Draft |
 | Customer Meeting Prep Brief | `/meeting prep`, `/meet prep`, `/prep call`, `/customer prep` | `skills/customer-meeting-prep-brief.md` | Read |
-| Clari Weekly Forecast | `/clari forecast`, `/clari weekly forecast`, `/forecast prep` | `skills/clari-weekly-forecast.md` | Read / Draft |
+| Clari Weekly Forecast | `/clari forecast`, `/clari weekly forecast`, `/weekly clari forecast`, `/forecast prep` | `skills/clari-weekly-forecast.md` | Read / Draft |
 | Weekly Highlights Report | `/weekly highlights`, `/weekly report` | `skills/weekly-highlights-report.md` | Read / Draft |
 | Manager Weekly Recap | `/manager weekly recap`, `/manager recap`, `Emily update` | `skills/manager-weekly-recap.md` | Read / Draft |
 | Weekly Slack Update | `/weekly slack update`, `/slack update` | `skills/weekly-slack-update.md` | Read / Draft |
