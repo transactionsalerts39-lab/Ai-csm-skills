@@ -1,4 +1,4 @@
-# Skill Router — V4
+# Skill Router — V5
 
 Use GitHub skill files as the live source of truth. Use uploaded project Sources only as fallback snapshots when GitHub access is unavailable.
 
@@ -21,6 +21,7 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/weekly highlights` → Weekly Highlights.
 - Exact standalone `/weekly command center - dashboard` → Weekly Command Centre dashboard mode. This is the only dashboard-mode trigger.
 - `/weekly command centre`, `/weekly command center`, and `/weekly tasks` → Weekly Command Centre compact text mode unless the exact dashboard command above was used.
+- Explicit internal, manager, admin, enablement, AI/OKR, or project-task intent → Weekly Command Centre or another explicitly Notion-aware workflow; never infer Notion access inside Customer Task Centre.
 - `/csm sentiment`, `/weekly csm sentiment`, `/sentiment notes`, or explicit CSM Sentiment Notes intent → CSM Sentiment Notes.
 - `update CSM Sentiment Notes for my book/all my accounts` → CSM Sentiment Notes Preview. After the complete preview and exact destination resolution, require a fresh explicit apply confirmation; the initial wording does not pre-authorize the bulk write.
 - `/ps adoption audit`, `/ps audit`, `/professional services audit`, `/adoption services audit`, or explicit full-book PS-candidate intent → PS Adoption Audit. Account risk alone stays in Weekly Command Centre; a technical break/fix issue stays with Support Ticket Creator unless the user explicitly asks for a separate adoption-fit audit.
@@ -30,12 +31,15 @@ Repository: `transactionsalerts39-lab/Ai-csm-skills`
 - `/meeting follow-up` or `only email` → Meeting Follow-Up Email.
 - `/account follow-up`, `/follow-up builder`, or combined account pending-items + customer-email intent → Account Follow-Up Builder. Plain account task lists remain Customer Task Centre.
 - `/clari weekly forecast` or `/weekly clari forecast` → Clari Weekly Forecast.
-- `/task manager`, `/task command centre`, `/high priority tasks`, and natural-language task completion, cancellation, or reopening → Customer Task Centre.
+- `/task manager`, `/task centre`, `/task center`, `/task command centre`, `/task command center`, `/task centre compact`, `/task centre detailed`, `/task centre history`, `/task centre sort: renewal`, `/task centre sort: due`, `/task centre sort: priority`, `/task centre priority: P1`, `/task centre: [Account]`, `/customer tasks`, `/open customer tasks`, `/task hygiene`, and natural-language Customer Task completion, cancellation, or reopening → Customer Task Centre.
+- Generic `/tasks`, `/open tasks`, or `/high priority tasks` is intentionally unregistered. Route by explicit customer/account versus internal/project context; if that scope is not clear, ask one short clarification before loading Airtable or Notion.
 - `/update notes` or exact standalone `/un` → Update Activity Notes even when the same turn also contains a draft; apply the Draft Is Not Sent rule. Do not treat longer commands beginning with `/un` as this alias.
 
 ## Task Source Boundary
 
-Use `schema/notion-task-map.md`. Airtable Customer Tasks is authoritative for customer/account commitments. The 6sense Notion `Projects & tasks` page is authoritative for high-priority internal, manager, admin, enablement, AI/OKR, and project work. Unified views deduplicate overlaps and preserve the authoritative source.
+Airtable Customer Tasks is authoritative for customer/account commitments. Customer Task Centre is Airtable-only: do not load `schema/notion-task-map.md`, query Notion, merge Notion items, or write Notion from that workflow.
+
+The 6sense Notion `Projects & tasks` page remains authoritative for internal, manager, admin, enablement, AI/OKR, and project work only in workflows that explicitly authorize and load `schema/notion-task-map.md`. Do not infer Notion access from generic task language.
 
 ## Natural-Language Task Actions
 
