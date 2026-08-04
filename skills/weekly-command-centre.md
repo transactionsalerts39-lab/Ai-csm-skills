@@ -465,7 +465,7 @@ For each item, show:
 - Possible completion evidence
 - Suggested action
 
-Do not auto-close tasks in Weekly Command Centre unless the user explicitly asks to close/check off tasks. Weekly Command Centre is primarily a review/reporting workflow; Update Notes and Task Centre are the preferred check-off engines.
+Do not auto-close tasks in Weekly Command Centre unless the user explicitly asks to close/check off tasks. Weekly Command Centre is primarily a review/reporting workflow. Update Notes and Customer Task Centre are preferred for Airtable customer-task check-offs; Notion-owned check-offs remain in Weekly Command Centre or another explicitly Notion-aware workflow.
 
 ---
 
@@ -715,7 +715,7 @@ If one account has materially different actions across groups, separate rows are
 - Selection reveals the source, why it surfaced, recommended next move, status/owner, timing, and expandable source context.
 - A **Continue with this item** action may open a follow-up prompt:
   - Airtable customer/account item → `/account follow-up for [account]`
-  - Notion internal/project item → `/task centre` with the selected work area and action
+  - Notion internal/project item → continue in Weekly Command Centre or an explicitly Notion-aware internal-task workflow; do not route it to Customer Task Centre
 - The dashboard action starts another workflow only. It must never silently write, close, check off, or update a task.
 - Keep filters and selection local to the snapshot.
 
@@ -953,7 +953,7 @@ If the user asks for review only, do not update Airtable. Provide recommendation
 
 ### User asks to check off / close tasks
 
-If the user explicitly asks Weekly Command Centre to check off tasks, only close tasks when completion evidence is explicit. Otherwise mark `Needs Review` and explain what evidence is missing. Ranjodh can state naturally which task is complete; resolve it through Customer Task Centre without requiring a command or ID.
+If the user explicitly asks Weekly Command Centre to check off tasks, only close tasks when completion evidence is explicit. Otherwise mark `Needs Review` and explain what evidence is missing. Ranjodh can state naturally which Airtable Customer Task is complete; resolve that Airtable task through Customer Task Centre without requiring a command or ID. Resolve a Notion-owned task inside Weekly Command Centre or another explicitly Notion-aware workflow, never through Customer Task Centre.
 
 ### No renewal-focus accounts found
 
