@@ -1,17 +1,16 @@
-# Customer Task Lifecycle Contract — V4
+# Customer Task Lifecycle Contract — V5
 
 This is the canonical task contract for Update Notes, Meeting Summarizer, Weekly Command Centre, Customer Task Centre, Account Follow-Up Builder, and Meeting Prep. If a skill conflicts with this file, this file wins.
 
-## Cross-System Task Sources
+## Task Sources
 
-Apply `schema/notion-task-map.md` when a workflow reads the 6sense Notion task page.
-
-- Airtable Customer Tasks remains authoritative for customer/account work.
-- Notion `6 sense → Projects & tasks` is authoritative for high-priority internal, manager, admin, enablement, AI/OKR, and project work.
-- Unified views may rank both sources together, but must preserve source ownership.
-- Do not create, close, reopen, or synchronize a second copy merely because a similar task appears in both systems.
-- A source-aware write updates only the authoritative record unless Ranjodh explicitly asks to sync both.
-- If a Notion-only customer task is promoted to Airtable, deduplicate first and retain the Notion URL as source context.
+- Airtable Customer Tasks is authoritative for customer/account work.
+- Customer Task Centre is Airtable-only. It must not read, display, deduplicate, create, close, reopen, or update Notion tasks.
+- Apply `schema/notion-task-map.md` only when the routed canonical skill explicitly authorizes Notion task access.
+- Notion `6 sense → Projects & tasks` remains authoritative for high-priority internal, manager, admin, enablement, AI/OKR, and project work in those explicitly Notion-aware workflows.
+- Do not create, close, reopen, or synchronize a second copy merely because a similar task appears in another system.
+- A source-aware write updates only the authoritative record unless Ranjodh explicitly asks to sync both and the routed workflow authorizes both systems.
+- If a Notion-only customer task is explicitly promoted to Airtable in a Notion-aware workflow, deduplicate first and retain the Notion URL as source context.
 
 ## Active and Closed States
 
@@ -42,7 +41,7 @@ Accept natural language such as:
 - `The Kentik email was sent`
 - `Reopen the Pivot follow-up`
 
-When showing several tasks, number the rows for convenience. A user may say `mark number 3 done` within that conversation. Resolve the number to the underlying Airtable record ID internally.
+When showing several tasks, number the rows or task references for convenience. A user may say `mark 1.2 done` within that conversation. Resolve the reference to the underlying Airtable record ID internally.
 
 If one strong match exists, act on it. If multiple plausible matches exist, ask one short clarification question before writing.
 
@@ -62,7 +61,14 @@ Reprocessing the same source must update the existing task, not create a duplica
 
 Do not use status as part of semantic identity. A task remains the same task when it moves between active states.
 
-When similarity is uncertain, do not merge or close automatically. Mark the best candidate `Needs Review` or ask for clarification.
+When similarity is uncertain, do not merge or close automatically.
+
+- If several plausible records remain, ask one clarification before any write.
+- If one record is the clear candidate but identity/completion evidence is still insufficient, a
+  write-authorized ingestion workflow may set the separate Needs Review checkbox and leave the
+  lifecycle Status active. In a read-only workflow, recommend that flag without writing it.
+- Do not change lifecycle Status to `Needs Review` merely as a substitute for resolving multiple
+  record matches.
 
 ## Completion Gates
 
@@ -114,9 +120,12 @@ Reopen `Done` or `Cancelled` only when Ranjodh explicitly requests reopening or 
 
 ## Rollup
 
-Set Accounts → Task status:
+Set Accounts → Task status with this precedence:
 
-- `Open` when any linked task is active, including `Waiting on Customer`.
-- `closed` when no linked task is active.
-- Use `yet to start` only when the exact Airtable option exists and every active task is genuinely unstarted.
-- Never create a select option implicitly.
+1. `closed` when no linked task is active and the exact option exists.
+2. Otherwise, `yet to start` only when the exact option exists, every active task has Status `Open`,
+   and no active task has Completion Evidence or Completed Date.
+3. Otherwise, `Open`, including when any linked task is In Progress, waiting, Blocked, or Needs
+   Review.
+
+`Waiting on Customer` remains active. Never create a select option implicitly.
