@@ -1,27 +1,33 @@
 ---
 name: customer-task-centre
 description: >
-  Show, prioritize, create, update, review, and check off 6sense work across Airtable Customer Tasks
-  and the canonical Notion Projects & tasks page. Use for task centre, task command centre, high-priority
-  tasks, customer tasks, manager/internal work, check-off, or task hygiene. Preserve source ownership:
-  Airtable for customer/account commitments and Notion for internal, manager, admin, AI/OKR, and project work.
+  Show, consolidate, sort, create, update, review, and check off customer/account work in
+  Airtable Customer Tasks. Use for task centre, task command centre, all active tasks,
+  account-grouped tasks, renewal-sorted tasks, detailed task audit, task history, task
+  hygiene, check-off, cancellation, or reopening. This workflow is Airtable-only and must
+  not query, display, deduplicate, or update Notion.
 ---
 
-# Task Centre — Unified 6sense Work
+# Customer Task Centre — Airtable
 
 ## Purpose
 
-Manage one source-aware task view across Airtable and the 6sense Notion task page.
+Provide an exhaustive but compact operating view of Customer Tasks. The default view groups
+tasks by account so fewer rows never means fewer tasks.
 
-Use this skill when Ranjodh wants to:
+Use this skill to:
 
-- view a unified high-priority queue
-- see open customer tasks and customers waiting on him
-- see Notion high-priority, manager, admin, enablement, AI/OKR, or project tasks
-- check off, cancel, reopen, create, or update a task
-- review duplicates, stale items, missing due dates, or source hygiene
+- show every active Customer Task linked to Ranjodh's assigned accounts, plus active unmapped
+  records as a data-hygiene addendum
+- consolidate tasks into one account row with Renewal Date
+- sort accounts by urgency, renewal, due date, or priority
+- switch to a one-row-per-task audit view
+- create, update, complete, cancel, reopen, or review an Airtable task
+- identify multi-account tasks, missing links, stale due dates, and other task hygiene gaps
 
-Weekly Command Centre summarizes the wider week and account portfolio. Update Notes and Meeting Summarizer capture customer commitments from evidence. Task Centre is the focused place to review and deliberately change tasks at their authoritative source.
+Weekly Command Centre remains the wider weekly portfolio workflow. Update Notes and Meeting
+Summarizer capture commitments from evidence. Customer Task Centre is the focused Airtable
+execution queue.
 
 ---
 
@@ -30,16 +36,35 @@ Weekly Command Centre summarizes the wider week and account portfolio. Update No
 Before running this workflow, apply:
 
 - `contracts/task-lifecycle.md` for task state, matching, deduplication, completion, and reopening.
-- `contracts/write-safety.md` for read/draft/write boundaries and draft-versus-sent rules.
+- `contracts/write-safety.md` for read/write boundaries and draft-versus-sent rules.
+- `contracts/portfolio-scope.md` for the default assigned-account scope.
 - `contracts/untrusted-input.md` for emails, transcripts, pasted notes, and external content.
 - `schema/airtable-schema-map.md` for current Airtable IDs and allowed values.
-- `schema/notion-task-map.md` for the canonical 6sense Notion pages, task sections, source ownership, deduplication, and write rules.
 
-If this skill conflicts with a shared contract, the shared contract wins.
+Do not load `schema/notion-task-map.md` for this workflow. If this skill conflicts with a
+shared contract, the shared contract wins.
 
 ---
 
-## Triggers
+## Source Boundary
+
+Customer Task Centre is Airtable-only.
+
+- Read and write only Airtable Customer Tasks and the linked Airtable Accounts needed for scope,
+  Renewal Date, and account-level Task status.
+- Do not query, display, deduplicate, create, close, reopen, or update Notion tasks.
+- Do not use a Notion item as evidence that an Airtable task exists or is complete.
+- If the user asks for internal, manager, admin, enablement, AI/OKR, or project work, explain that
+  it is outside this workflow and route the current request to Weekly Command Centre or another
+  explicitly Notion-aware workflow. Ask one clarification only when customer versus internal scope
+  is genuinely ambiguous.
+- Missing Airtable evidence is an evidence gap. Do not expand automatically to another connector.
+
+No change to this workflow deletes or alters existing Notion data.
+
+---
+
+## Triggers and Modes
 
 Use this skill for:
 
@@ -48,274 +73,351 @@ Use this skill for:
 - `/task center`
 - `/task command centre`
 - `/task command center`
-- `/high priority tasks`
-- `/6sense tasks`
-- `/tasks`
-- `/open tasks`
 - `/customer tasks`
-- `/tasks waiting on me`
-- `/customers waiting on me`
-- `/check off task`
-- `/close task`
-- `/mark task done`
+- `/open customer tasks`
+- `/task centre priority: P1`
+- `/task centre compact`
+- `/task centre detailed`
+- `/task centre history`
+- `/task centre sort: renewal`
+- `/task centre sort: due`
+- `/task centre sort: priority`
+- `/task centre: [Account]`
 - `/task hygiene`
-- `/review tasks`
-- `show my open tasks`
-- `show tasks for [Account]`
-- `mark [task] done for [Account]`
+- natural-language create, update, close, cancel, or reopen requests for Customer Tasks
 
----
+Modes:
 
-## Source Model
+| Request | Behaviour |
+|---|---|
+| `/task centre` | Exhaustive active tasks, consolidated to one row per account |
+| `/task centre compact` | Intentionally shortened priority subset; label the omitted count |
+| `/task centre detailed` | Exhaustive active tasks, one row per task |
+| `/task centre history` | Exhaustive detailed view including `Done` and `Cancelled` |
+| `/task centre: [Account]` | Every active task for the named account |
+| `/task centre priority: P1` | Detailed one-row-per-task view of every active P1 Customer Task |
+| `sort: renewal` | Upcoming Renewal Date ascending; missing dates last |
+| `sort: due` | Earliest active Due Date ascending; missing dates last |
+| `sort: priority` | Accounts containing P1 tasks first, then P2, then P3 |
 
-Build one view from two authoritative sources:
-
-1. Airtable Customer Tasks for customer/account commitments, customer waiting, account-linked support/internal follow-ups, due dates, owners, lifecycle state, and completion evidence.
-2. Notion `6 sense → Projects & tasks` for high-priority internal, manager, admin, enablement, AI/OKR, and project work.
-
-Never silently mirror or bidirectionally sync tasks. Deduplicate cross-source customer items and keep the authoritative source visible.
+Default to Read. A natural-language task action authorizes only the matched Airtable change.
 
 ---
 
 ## Airtable Source of Truth
 
-Base:
-
-- Book of Business Management
-- Base ID: `app6O8peF5ywLe1GM`
+Base: Book of Business Management (`app6O8peF5ywLe1GM`)
 
 Tables:
 
 - Customer Tasks: `tblWUzwjGM4pwhAqR`
 - Accounts: `tblr6UnvfaqfNvwyU`
-- Detailed Notes: `tblI5cCnIY63S6pZq`
 
-Always use `schema/airtable-schema-map.md` for current field IDs and allowed values.
+Always use `schema/airtable-schema-map.md` for field IDs and allowed values.
 
-### Customer Tasks Fields
+Active task states:
 
-| Field | Field ID | Use |
-|---|---|---|
-| Task Title | `fldbPKh3KNG9vbeXS` | Task name |
-| Account | `fldMIaXj2PtqHkmNk` | Linked account |
-| Owner | `fldVF6TQNNaPmv8qf` | Task owner |
-| Status | `fldFbZYJvZUZmrGf2` | Task state |
-| Priority | `fldGixN6MmFNAbTdG` | Task priority |
-| Due Date | `fldm4uWSm23HVxZPC` | Due date |
-| Customer Waiting? | `fldDXgxychawzNCZn` | Customer is waiting on Ranjodh/6sense/internal owner |
-| Source Type | `fldRaStx1IoK4ooqv` | Source type |
-| Source Date | `fldp9gpKEdSIywADe` | Source date |
-| Source Summary | `fldKEtfu2JfA5VTKK` | Why the task exists |
-| Source Detail Note | `fldo4zvmVhOXqed2p` | Linked Detailed Notes record |
-| Related Email / Meeting Summary | `fldhj5zbRG2dwT2sF` | Source excerpt/context |
-| Completion Evidence | `fldsWVTfAAagVBTPT` | Evidence for closure |
-| Completed Date | `fldcOYlYd9dfmyl5K` | Completion date |
-| Needs Review | `fld5SXTsSrQNl96t2` | Ambiguous/review flag |
-| Last Updated From | `fldg0rM7UT6Jt148a` | Always write `Task Centre` from this skill |
+- `Open`
+- `In Progress`
+- `Waiting on Internal Team`
+- `Waiting on Customer`
+- `Blocked`
+- `Needs Review`
 
-### Account Fields
+Closed states:
 
-- Account Name: `fldOSLvopNOX6ae3Z`
-- Current Active CSM: `fldTQWeUcqj5HQoAH`
-- Task status: `fldaYegYsT0eA3NAK`
-- Customer Tasks linked records: `fldaetB5w1BersFeV`
-- Engagement Status: `fldyrxDGOzWF3c7wm`
-- Outreach Step: `fldhX3nTqX4a2eKt8`
-- Renewal Date: `fldPmw5pHDNDgZYgA`
-- Churn Risk: `fldy4GIC8xDuPjS8y`
-
-
-### Notion Task Source
-
-- Canonical page: `Projects & tasks`
-- Page ID: `2e6ecca2-ea5e-8187-a2d4-d05b217c7ec3`
-- Parent hub: `6 sense`
-- Default sections: `High Priority 🚨`, `Customer Tasks`, `Manager tasks 🚨`, and `AI OKR Project Tasks`
-- Open task: unchecked `[ ]`
-- Completed task: checked `[x]`
-
-Use `schema/notion-task-map.md` for exact URLs, exclusions, linked-page handling, source precedence, and writes. Do not read the unrelated personal `Tasks` page.
+- `Done`
+- `Cancelled`
 
 ---
 
-## Default Scope
+## Retrieval and Join
 
-Default to current open work from both sources:
+For the default portfolio view:
 
-- Airtable: Customer Tasks linked to accounts where Current Active CSM = `Ranjodh`
-- Notion: open items on the canonical 6sense `Projects & tasks` page
-- Exclude completed Notion checkboxes and Airtable `Done`/`Cancelled`
-- Include backlog/dump items only when asked or when they carry explicit urgency
-- Resolve Airtable row numbers to record IDs internally; resolve Notion items to the exact page and checkbox text internally
-- Never require Ranjodh to remember a record ID or page ID
+1. Retrieve every Accounts record where Current Active CSM = `Ranjodh`. Follow pagination until
+   the complete eligible-account set is loaded.
+2. Retrieve every Customer Tasks record in every state. Follow pagination until the complete task
+   table is loaded; do not discard records during retrieval.
+3. Partition the complete task set into: active linked to an eligible account, closed linked to an
+   eligible account, active unmapped, closed unmapped, and linked only to non-eligible accounts.
+4. Join task Account record IDs to eligible Account record IDs. For a multi-account task, retrieve
+   the name and Renewal Date of every linked Account record needed for display, including a linked
+   non-eligible account; inclusion still requires at least one eligible account.
+5. Read Renewal Date only from Accounts → Renewal Date. Never infer it from task dates, notes,
+   Clari, or another field.
+6. In default/detailed modes, display active eligible-linked tasks plus active unmapped hygiene
+   records. In history mode, display eligible-linked and unmapped records in every state. Keep tasks
+   linked only to non-eligible accounts outside the default scope.
+7. Include in-scope tasks regardless of Owner, Priority, Due Date, Customer Waiting flag, or Needs
+   Review.
 
-Unified ranking:
+Do not sample, cap, silently truncate, or replace the full roster with account summaries. If the
+response would exceed a single message, calculate the complete ordered roster first, preserve one
+global task-reference map, and continue as `Part X of Y — task references A–B`. Do not renumber
+between parts. Provide the reconciliation only after the final part has been shown.
 
-1. Overdue or P1 customer-waiting work
-2. Open Notion `High Priority 🚨` work
-3. Other P1/renewal-risk customer work
-4. Due-soon manager/internal/project work
-5. P2, P3, undated, and hygiene items
+### Multi-account and unmapped tasks
 
-If a customer task appears in both systems, display one row with Airtable authoritative and Notion shown as a mirror/reference. If matching is uncertain, keep both under `Needs Source Review`.
+- A task linked to exactly one eligible account belongs in that account row.
+- A task linked to multiple accounts must appear once under `Multi-account / Needs Review`, with
+  every linked account named. Do not repeat it in each account row.
+- Number multi-account task references `M.1`, `M.2`, and so on. They do not contribute to any
+  individual account row's Active, Overdue, or Next Due calculation.
+- Place the Multi-account / Needs Review section after all regular account rows. Within it, apply
+  the same task urgency order, then earliest linked Renewal Date, then Task Title.
+- In renewal-sorted mode, keep multi-account tasks in the separate section after the account rows
+  and order them by the earliest recorded Renewal Date among their eligible linked accounts.
+- Show the Renewal Date for a multi-account task as `Account: Date` for every linked eligible
+  account; use `Not recorded` for any missing date.
+- An active task with a missing Account link is not silently assigned. Show it under `Unmapped /
+  Data Hygiene` in every exhaustive mode, including the default view.
+- Number unmapped task references `U.1`, `U.2`, and so on.
+- Place `Unmapped / Data Hygiene` after `Multi-account / Needs Review`.
+- A task linked only to non-eligible accounts is outside the default scope unless the user asks for
+  that account or a broader scope.
 
 ---
 
-## Task Display Format
+## Default Consolidated View
 
-Use this by default:
+Use one account row while preserving each underlying task:
 
-```text
-Task Centre
-Scope: 6sense work — Airtable + Notion
+| Account | Renewal Date | Active / Overdue | Next Due | All Active Tasks |
+|---|---|---:|---|---|
+| [Account] | [Date or Not recorded] | [count / count] | [earliest date or None] | **1.1** [Task] — [Priority] · [Status] · [Owner] · [Due timing] · [Customer waiting when true] |
 
-Unified High Priority
-| # | Source | Account / Area | Task | Status | Priority | Due / Timing |
-|---:|---|---|---|---|---|---|
-| 1 | Airtable / Notion | [Account or work area] | [Task] | [Status/Open] | [Priority/High] | [Date/timing] |
+Requirements:
 
-Customers Waiting on You
-| # | Account | Task | Owner | Status | Priority | Due Date |
-|---:|---|---|---|---|---|---:|
+- Number account rows `1`, `2`, `3` and task references `1.1`, `1.2`, `2.1`, and so on.
+- Preserve the mapping from each displayed task reference to its Airtable record ID internally.
+- Include every active task in the `All Active Tasks` cell; do not use `+N more`.
+- Show `Not recorded` for a missing Renewal Date and `No due date` for a missing Due Date.
+- Calculate Overdue only when Due Date is before today in Asia/Kolkata and the task is active.
+- Calculate Next Due as the earliest nonblank active Due Date for that account.
 
-Notion Work Queue
-| # | Section | Task | State | Notes |
-|---:|---|---|---|---|
+Default account order:
 
-Needs Review / Source Conflicts
-| # | Task | Sources | Issue | Suggested Action |
-|---:|---|---|---|---|
-```
+1. Customer-waiting P1 or overdue P1
+2. Other overdue work
+3. Other P1 work
+4. Earliest Next Due
+5. Earliest Renewal Date
+6. Account name
 
-Omit empty sections. Label every row `Airtable` or `Notion`. Keep row numbering unique across the response.
+Within each account, order tasks by overdue/customer-waiting urgency, Priority, Due Date, then Task
+Title.
+
+---
+
+## Detailed View
+
+Use this for `/task centre detailed`, history, hygiene, or when the user asks to audit every row:
+
+| # | Account | Renewal Date | Task | Owner | Status | Priority | Due Date | Customer Waiting? | Source Date |
+|---:|---|---|---|---|---|---|---|---|---|
+
+Show one task exactly once. Keep the same internal record-ID mapping used for task actions.
+
+Use sequential integers `1`, `2`, `3`, and so on for ordinary single-account rows in detailed and
+history modes. Reserve `M.n` for multi-account rows and `U.n` for unmapped rows. Account-based
+references such as `1.1` apply only to the default consolidated account view.
+
+Detailed row order:
+
+1. Regular account task rows using the default account and within-account task order
+2. Multi-account task rows using `M.n` references
+3. Unmapped/data-hygiene rows using `U.n` references
+
+---
+
+## Completeness Checks
+
+Before responding, reconcile:
+
+`Eligible Active Airtable Tasks = Task References in Account Rows + Multi-account / Needs Review`
+
+`Displayed Active Task Records = Eligible Active Airtable Tasks + Unmapped Active Hygiene Rows`
+
+For detailed mode:
+
+`Eligible Active Airtable Tasks = Eligible Detailed Active Rows`
+
+`Displayed Detailed Rows = Eligible Detailed Active Rows + Unmapped Active Hygiene Rows`
+
+For history mode, additionally report:
+
+`Eligible Linked All-State Tasks = Active Linked Rows + Done Linked Rows + Cancelled Linked Rows`
+
+`Displayed History Rows = Eligible Linked All-State Tasks + Unmapped All-State Hygiene Rows`
+
+Unmapped rows are a data-hygiene addendum, not part of the assigned-account eligibility equation.
+
+Also report:
+
+- Eligible assigned accounts
+- Accounts with active tasks
+- Eligible active tasks
+- Rows or task references displayed
+- Multi-account tasks
+- Unmapped/data-hygiene tasks displayed
+
+If an equation fails, do not claim completeness. Continue retrieval, regenerate the display, or
+place the unresolved records under Needs Review.
+
+History row order:
+
+1. Active rows using the default urgency ranking
+2. `Done` and `Cancelled` rows by Completed Date descending; missing Completed Date last, then
+   Source Date descending, then Task Title
+3. Unmapped/data-hygiene rows last
+
+---
+
+## Compact Mode
+
+Use compact mode only when explicitly requested.
+
+- Show the highest-urgency accounts/tasks using the default ranking.
+- State `Compact subset: X of Y active tasks shown`.
+- Never label compact mode as all tasks or exhaustive.
+- Preserve task reference mapping for displayed rows.
+
+For `/task centre priority: P1`, filter only after the complete active set is partitioned and
+reconciled. Use the detailed one-row-per-task layout and its ordering/numbering rules. Show:
+
+- every P1 active task linked to at least one eligible account
+- every P1 active unmapped task under `Unmapped / Data Hygiene`
+- no non-P1 row
+
+Reconcile:
+
+`Displayed P1 Rows = Eligible-linked P1 Rows + Unmapped P1 Hygiene Rows`
+
+State both denominators: `Eligible-linked P1: X of Y eligible active tasks` and `Unmapped P1: U of
+V active unmapped tasks`. This is a scoped exhaustive view, not compact mode.
 
 ---
 
 ## Creating Tasks
 
-Choose the authoritative source before creating:
+Create only after an explicit request or an authorized source-ingestion workflow.
 
-- Concrete customer/account commitment → Airtable Customer Tasks.
-- High-priority internal, manager, admin, enablement, AI/OKR, or project action → canonical Notion `Projects & tasks` page.
-- Ambiguous classification → ask one short question.
-
-Create only after an explicit request or an authorized source-ingestion workflow. Deduplicate within the target source and across both sources first.
-
-For Airtable creation, follow the existing schema and defaults: Status `Open`, Priority `P2 - Should do`, Source Type `Manual`, Source Date = today in Asia/Kolkata, and Last Updated From = `Task Centre`.
-
-For Notion creation, insert an unchecked item into the most specific canonical section. Do not add it to `High Priority 🚨` unless the user marks it high priority or the evidence shows a real deadline/critical consequence. Re-fetch the page after writing.
+- Create customer/account commitments in Airtable Customer Tasks.
+- Resolve the exact account before writing; ask one concise question if several records remain.
+- Deduplicate against active and recently closed tasks before creation.
+- Use Status `Open`, Priority `P2 - Should do`, Source Type `Manual`, Source Date = today in
+  Asia/Kolkata, and Last Updated From = `Task Centre` unless stronger evidence supports other values.
+- Do not create an Airtable task for a purely internal/project action unless the user explicitly
+  wants it tracked as an account-linked Customer Task.
 
 ---
 
-## Updating Tasks
+## Updating, Completing, Cancelling, and Reopening
 
-Resolve a task using source label, account/area, normalized task text, status, timing, current conversation, and displayed row number.
+Resolve the task from account, normalized title, state, timing, current conversation, and displayed
+task reference. Use the Airtable record ID internally.
 
-- Airtable-owned item → update the underlying Airtable record.
-- Notion-owned item → update the exact checkbox/text on the canonical page or linked child page.
-- Mirrored customer item → update Airtable only unless the user explicitly asks to sync Notion too.
-- Multiple plausible matches or source ambiguity → ask one concise clarification.
+For updates:
 
-Allow source-appropriate changes to owner, status, priority, due date, customer-waiting flag, source summary, completion evidence, review flag, Notion section, or checkbox state. After Airtable task changes, recalculate Accounts → Task status. After Notion changes, re-fetch and verify the exact item.
+- Change only the fields requested or supported by evidence.
+- Re-fetch the Airtable record after the write.
+- Recalculate Accounts → Task status after any Customer Task state change.
 
----
+For completion:
 
-## Checking Off / Closing Tasks
+- Apply `contracts/task-lifecycle.md` completion gates.
+- Set Status = `Done`, Completed Date, concise Completion Evidence, Needs Review = unchecked, and
+  Last Updated From = `Task Centre`.
+- `Status = Needs Review` is an active lifecycle state. `Needs Review` (`fld5SXTsSrQNl96t2`) is a
+  separate ambiguity checkbox; completion clears the checkbox while Status becomes `Done`.
+- A draft or future promise is not completion.
 
-When the user naturally says a task is done, sent, raised, resolved, closed, or should be checked off:
+For cancellation:
 
-1. Resolve the displayed/source task.
-2. Apply `contracts/task-lifecycle.md` completion gates.
-3. Update only the authoritative source.
-4. Verify the write.
+- Set Status = `Cancelled` and record the reason in Completion Evidence or Source Summary.
+- Do not delete the task record.
 
-For Airtable: set Status = `Done`, Completed Date, concise Completion Evidence, Needs Review = unchecked, Last Updated From = `Task Centre`, then recalculate account Task status.
+For reopening:
 
-For Notion: change the exact `[ ]` item to `[x]` on the canonical page or linked task page. Do not rewrite surrounding task content.
+- Resolve the existing `Done` or `Cancelled` record instead of creating a duplicate.
+- Set the supported active state, clear Completed Date when supported, record the reopening reason,
+  and set Last Updated From = `Task Centre`.
 
-A direct unambiguous instruction such as `mark number 3 done` is sufficient. If a matching item exists in both systems but source ownership is unclear, ask which source to update rather than closing both.
-
----
-
-## Cancelling Tasks
-
-Use Status = `Cancelled` when the user says the task is no longer needed, irrelevant, superseded, or should be removed from action tracking.
-
-Set Completion Evidence / Source Summary to explain why it was cancelled.
-
-Do not delete task records unless the user explicitly asks to delete records.
+After any write, rerun the affected-scope completeness check.
 
 ---
 
-## Reopening Tasks
+## Account-Level Task Status
 
-Reopen a `Done` or `Cancelled` task only when Ranjodh explicitly asks or new evidence clearly proves more work remains.
+Customer Tasks remains authoritative. Update Accounts → Task status after a task state change:
 
-When reopening:
+- `closed` when no linked Customer Tasks remains active and the exact option exists.
+- Otherwise, `yet to start` only when the exact option exists, every active task has Status `Open`,
+  and no active task has Completion Evidence or Completed Date.
+- Otherwise, `Open`, including when any task is In Progress, waiting, Blocked, or Needs Review.
 
-- Resolve the existing closed record rather than creating a duplicate.
-- Set the appropriate active status.
-- Clear Completed Date when supported.
-- Record why it was reopened.
-- Set Last Updated From = `Task Centre`.
-- Recalculate Accounts → Task status.
+Apply that precedence in order: `closed` → strict `yet to start` → `Open`.
+
+Never create a select option implicitly.
 
 ---
 
-## Account-Level Task Status Rollup
+## Companion Airtable Dashboard
 
-After Customer Tasks changes, update Accounts → Task status as a summary signal:
+The Airtable `Accounts` interface may contain a `Customer Task Centre` dashboard with:
 
-- `Open` when one or more linked Customer Tasks are active.
-- `yet to start` when tasks exist but none has started and the field value is available.
-- `closed` when no linked Customer Tasks remain active and the field value is available.
+- a Renewal Date-sorted Accounts list showing Task status and linked Customer Tasks
+- an active Customer Tasks list grouped by Account
+- filters/tabs for overdue, P1, customer-waiting, and Needs Review work
 
-If the exact select option is unavailable, do not force-create a new option.
-
-Customer Tasks remains the source of truth.
+Treat the dashboard as an interactive convenience layer. The live Airtable tables and this skill's
+retrieval/reconciliation rules remain authoritative. Do not assume the dashboard proves completeness;
+reconcile from Accounts and Customer Tasks for every `/task centre` run.
 
 ---
 
 ## Confirmation Format
 
-For display-only requests, do not include an update confirmation.
+For display-only requests, do not include a write confirmation.
 
-For changes, use:
+After a write, report:
 
 ```text
-Updated task source(s).
-
-Systems Updated:
-- [Airtable / Notion]
+System Updated:
+- Airtable
 
 Tasks Updated:
-- Created: [task] — [account] — [owner] — [status] — [priority]
-- Updated: [task] — [what changed]
-- Done: [task] — [completion evidence]
-- Cancelled: [task] — [reason]
-- Needs Review: [task] — [why]
+- [Created / Updated / Done / Cancelled / Reopened]: [task] — [account] — [change]
 
 Account Task Status:
 - [Account]: [old value → new value, or No change]
+
+Verification:
+- [Re-fetched record and affected-scope reconciliation]
 ```
 
 ---
 
 ## What Not To Do
 
-- Do not create duplicate tasks when an equivalent active or explicitly reopened task exists.
-- Do not expose Airtable record IDs or require special task commands.
-- Do not delete records unless explicitly asked.
-- Do not close tasks unless completion is explicit or the user directly says to mark the task done.
-- Do not update Engagement Status or Outreach Step from Task Centre unless the user explicitly asks; use Weekly Command Centre or Update Notes for broader account workflow changes.
-- Do not include every closed task by default.
-- Do not include non-Ranjodh accounts unless explicitly requested.
-- Do not use the unrelated personal Notion `Tasks` page.
-- Do not auto-sync, auto-close, or create both Airtable and Notion copies.
-- Do not treat Notion `Dump` as high priority without an urgency signal.
+- Do not access Notion from Customer Task Centre.
+- Do not silently truncate the default or detailed roster.
+- Do not hide P2, P3, undated, customer-owned, Support-owned, waiting, blocked, or Needs Review tasks.
+- Do not duplicate a multi-account task across account rows.
+- Do not expose Airtable record IDs or require special record-ID commands.
+- Do not delete Customer Task records in this workflow; use `Cancelled` to preserve history. A
+  separate explicit destructive request requires fresh exact-record confirmation outside normal
+  Task Centre actions.
+- Do not close a task without explicit or contract-valid completion evidence.
+- Do not update Engagement Status, Outreach Step, or other account workflow fields unless the user
+  explicitly requests that separate change.
+- Do not infer Renewal Date.
 
 ---
 
 ## Final Rule
 
-Task Centre is the unified 6sense work queue. Airtable remains authoritative for customer/account execution; Notion remains authoritative for internal and project work. Rank both together, preserve source ownership, and keep every change deliberate and verifiable.
+Customer Task Centre is an Airtable-only, exhaustive execution queue. Consolidate by account without
+losing task identity, show Renewal Date from the authoritative Accounts field, preserve every active
+task exactly once, and make every write deliberate and verifiable.
