@@ -16,9 +16,11 @@ Every skill must operate in one of four modes.
 - PS Adoption Audit: Read / Draft; never submit a PS request or modify customer systems
 - Update Notes: Write
 - Meeting Summarizer: Write when invoked through its explicit registered command; preview when the user asks only to summarize or draft
-- Customer Task Centre: Read by default; Conditional source-aware write for create/update/close/reopen/cancel requests in Airtable or the canonical 6sense Notion task page
+- Customer Task Centre: Read by default; Conditional Airtable-only write for explicit Customer Task create/update/close/reopen/cancel requests
 - Weekly Command Centre: Read by default; Conditional source-aware write only after an explicit apply/close request
 - CSM Sentiment Notes: Draft/Preview by default; Conditional write only after a complete preview, exact destination mapping, and fresh explicit apply confirmation
+
+Customer Task Centre never writes Notion. Generic task language does not authorize Notion access or mutation.
 
 ## Bulk CSM Sentiment Writes
 
