@@ -1,6 +1,8 @@
 # 6sense Notion Task Source Map
 
-Use this file for the Notion side of Weekly Command Centre and Customer Task Centre.
+Use this file only for workflows that explicitly authorize the Notion side of 6sense internal/project work, including Weekly Command Centre where its canonical skill requires it.
+
+Do not load or apply this file for Customer Task Centre. Customer Task Centre is Airtable-only.
 
 ## Canonical Pages
 
@@ -15,7 +17,7 @@ Do not use the separate personal `Tasks` page (`abef401a-65e5-4beb-9111-1863aa0b
 
 ## Task Sections
 
-Read open checkboxes and linked task pages from:
+When the routed workflow explicitly authorizes Notion, read open checkboxes and linked task pages from:
 
 1. `High Priority 🚨`
 2. `Customer Tasks`
@@ -30,11 +32,13 @@ The generic `Dump` is an inbox, not automatically high priority. Include it only
 ## Source Ownership
 
 - Airtable Customer Tasks is authoritative for customer/account commitments, customer waiting, support/internal follow-ups tied to an account, due dates, owners, lifecycle state, and completion evidence.
-- Notion `Projects & tasks` is authoritative for high-priority internal work, manager actions, administration, enablement, AI/OKR work, and broader 6sense projects.
-- A customer item captured only in Notion may be displayed as `Notion only — consider syncing to Customer Tasks`.
+- Notion `Projects & tasks` is authoritative for high-priority internal work, manager actions, administration, enablement, AI/OKR work, and broader 6sense projects in workflows that explicitly authorize Notion.
+- A customer item captured only in Notion may be displayed as `Notion only — consider syncing to Customer Tasks` only in a Notion-aware workflow.
 - Never silently create a second record or maintain automatic bidirectional sync.
 
-## Unified Deduplication
+## Cross-Source Deduplication
+
+Apply this section only inside a routed workflow that explicitly reads both sources.
 
 Before displaying or promoting a Notion customer item, compare it with active Airtable Customer Tasks using:
 
@@ -44,19 +48,21 @@ Before displaying or promoting a Notion customer item, compare it with active Ai
 4. Due date/timing
 5. Source context
 
-If a strong Airtable match exists, show one unified item with Airtable as authoritative and label Notion as a mirror/reference. If matching is uncertain, keep both visible under `Needs Source Review`.
+If a strong Airtable match exists, show one item with Airtable authoritative and label Notion as a mirror/reference. If matching is uncertain, keep both visible under `Needs Source Review`.
+
+Customer Task Centre does not perform this comparison because it must not access Notion.
 
 ## Source-Aware Writes
 
 A read/report request never changes Notion or Airtable.
 
-After an explicit task action:
+Only an explicitly Notion-aware workflow may perform these actions after an explicit task request:
 
 - Airtable-owned task: update Airtable only.
-- Notion-owned task: update the exact checkbox/text on the canonical Notion task page or linked child page only.
-- Mirrored task: update the authoritative Airtable task; update Notion only if the user explicitly asks to sync both.
+- Notion-owned internal/project task: update the exact checkbox/text on the canonical Notion task page or linked child page only.
+- Mirrored task: update the authoritative Airtable task; update Notion only if the user explicitly asks to sync both and the routed workflow authorizes both.
 - Ambiguous source or multiple text matches: ask one concise clarification.
 
-To promote a Notion-only customer task into Airtable, require an explicit sync/move/capture request. Deduplicate first, then use Airtable Source Type = `Other`, Last Updated From = `Task Centre`, and include the Notion page URL in Source Summary. Do not create new select options.
+To promote a Notion-only customer task into Airtable, require an explicit sync/move/capture request in a Notion-aware workflow. Deduplicate first, then use Airtable Source Type = `Other`, an allowed Last Updated From value matching the routed workflow (`Weekly Command Centre` for that workflow; otherwise `Manual`), and include the Notion page URL in Source Summary. Do not create new select options.
 
 After a Notion write, fetch the page again and verify the exact task state.
