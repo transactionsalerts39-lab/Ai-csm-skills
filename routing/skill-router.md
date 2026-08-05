@@ -1,4 +1,4 @@
-# Skill Router — V6
+# Skill Router — V7
 
 Use GitHub skill files as the live source of truth. Use uploaded project Sources only as fallback snapshots when GitHub access is unavailable.
 
@@ -34,6 +34,7 @@ If the current message explicitly requests Gmail alongside another workflow, lim
 - `/weekly highlights` → Weekly Highlights.
 - Exact standalone `/weekly command center - dashboard` → Weekly Command Centre dashboard mode. This is the only dashboard-mode trigger.
 - `/weekly command centre`, `/weekly command center`, and `/weekly tasks` → Weekly Command Centre compact text mode unless the exact dashboard command above was used.
+- Exact `/task center renewal focus` or `/task centre renewal focus` → Customer Task Centre — Renewal Focus. Plain `renewal focus` remains Weekly Command Centre.
 - Explicit internal, manager, admin, enablement, AI/OKR, or project-task intent → Weekly Command Centre or another explicitly Notion-aware workflow; never infer Notion access inside Customer Task Centre.
 - `/csm sentiment`, `/weekly csm sentiment`, `/sentiment notes`, or explicit CSM Sentiment Notes intent → CSM Sentiment Notes.
 - `update CSM Sentiment Notes for my book/all my accounts` → CSM Sentiment Notes Preview. After the complete preview and exact destination resolution, require a fresh explicit apply confirmation; the initial wording does not pre-authorize the bulk write.
