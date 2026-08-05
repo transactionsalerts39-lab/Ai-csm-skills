@@ -1,11 +1,19 @@
 # Read, Draft, and Write Safety Contract
 
+Apply `contracts/tool-access-safety.md` before any external connector call. Read/Draft/Write mode controls the permitted operation after the system itself has been authorized; it does not grant blanket connector access.
+
 Every skill must operate in one of four modes.
 
-- Read: retrieve and analyze only.
-- Draft: create copy or recommendations only.
+- Read: retrieve and analyze only from sources authorized by the routed workflow and `contracts/tool-access-safety.md`.
+- Draft: create copy or recommendations only from authorized sources.
 - Write: update the named system because the explicit command authorizes it.
 - Conditional write: read by default and write only after an explicit action request.
+
+## Read Access Is Access
+
+Searching, listing, fetching, inspecting, summarizing, or retrieving data from a connected application counts as accessing that system.
+
+A Read or Draft workflow may not inspect an unrelated connected application merely because the action is non-destructive. The top-level routed skill's source boundary and `contracts/tool-access-safety.md` determine which systems may be read.
 
 ## Default Modes
 
@@ -45,6 +53,8 @@ If the CSM Sentiment destination is missing, remain in Draft/Preview mode. A mis
 
 Creating or editing an email, Slack message, support ticket, calendar response, or customer reply does not prove it was sent, posted, submitted, scheduled, or raised.
 
+Drafting email copy in ChatGPT also does not authorize Gmail search, thread retrieval, Gmail draft creation, recipient lookup, or sending. Those operations require separate current-turn authorization under `contracts/tool-access-safety.md`.
+
 Treat an action as completed only when the user or trusted source explicitly says it happened, for example:
 
 - `I sent the email`
@@ -56,7 +66,7 @@ Requests such as `write this and update notes` do not prove delivery. Log the un
 
 ## Reporting Workflows
 
-Reporting and preparation workflows must not silently modify Airtable, Notion, Salesforce, Clari, Slack, Gmail, or other systems.
+Reporting and preparation workflows must not silently read from or modify Airtable, Notion, Salesforce, Clari, Slack, Gmail, or other systems outside the source and action boundaries of the routed workflow.
 
 Show recommended changes separately. Apply them only when the user explicitly asks to apply, update, close, reopen, send, post, or submit them.
 
