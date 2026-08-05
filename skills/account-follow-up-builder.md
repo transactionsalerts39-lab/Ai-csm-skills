@@ -29,6 +29,7 @@ It orchestrates those sources; it does not replace them or write to their system
 Apply:
 
 - `contracts/task-lifecycle.md`
+- `contracts/tool-access-safety.md`
 - `contracts/write-safety.md`
 - `contracts/untrusted-input.md`
 - `contracts/portfolio-scope.md`
@@ -43,7 +44,7 @@ Load supporting canonical skills only for the relevant stage:
 
 Do not load Update Notes inside this read/draft run; route to it only after explicit sent evidence.
 
-If this skill conflicts with a shared contract, the shared contract wins.
+Supporting skills do not expand this workflow's connector permissions. If this skill conflicts with a shared contract, the shared contract wins.
 
 ## Triggers
 
@@ -70,6 +71,32 @@ Read / Draft only.
 - Never treat a draft as sent.
 - Never close a task because its content appears in the draft.
 - Possible task check-offs are review suggestions, not writes.
+
+## Tool Access Boundary
+
+Allowed by default for this workflow:
+
+- Airtable records and fields required by this skill and `schema/airtable-schema-map.md`
+- Canonical 6sense Notion task references explicitly permitted by `schema/notion-task-map.md`
+- Official 6sense Support Docs, RevCity, and 6sense.com only when product research is required
+- Evidence supplied directly in the current conversation
+
+Not allowed by default:
+
+- Gmail
+- Google Calendar
+- Google Contacts
+- Google Drive
+- Slack
+- any unrelated connected application
+
+Do not search, read, list, inspect, summarize, or retrieve Gmail messages, threads, drafts, attachments, labels, recipients, or inbox metadata during `/account follow-up`, `/account email prep`, a request to `draft the email`, or any other normal run of this skill.
+
+The words `email`, `follow-up`, `reply`, `customer communication`, an account name, a recipient name, or a supporting email-writing skill do not authorize Gmail access. Pasted email content is evidence, not permission to open Gmail.
+
+Gmail may be used only when the user's current message separately and explicitly asks for a Gmail operation, such as searching for or reading a named thread. Limit that access to the exact requested operation and scope. Gmail read/search permission does not authorize creating a Gmail draft or sending.
+
+Draft customer copy in an editable writing block inside ChatGPT. Do not create a draft inside Gmail unless the user explicitly requests that separate action.
 
 ## Run Modes
 
@@ -103,7 +130,7 @@ Use the smallest sufficient evidence set:
 6. Canonical 6sense Notion tasks only when they reference the account; deduplicate against Airtable
 7. Verified official 6sense Support Docs / RevCity when product research is required
 
-Do not use Last Activity Date as proof of customer communication. Do not read the unrelated personal Notion Tasks page.
+Do not use Last Activity Date as proof of customer communication. Do not read the unrelated personal Notion Tasks page. Do not supplement this source order with Gmail unless the current user message explicitly requests Gmail access.
 
 ## Communication Delta
 
