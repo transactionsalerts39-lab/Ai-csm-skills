@@ -18,6 +18,7 @@ A Read or Draft workflow may not inspect an unrelated connected application mere
 ## Default Modes
 
 - Docs Assistant, Meeting Prep: Read
+- Account Adoption Strategy: Read / Draft; Conditional Notion-only write for an explicit save, publish, push, or update request; V1 never writes Airtable
 - Cadence Coverage Radar: Read
 - Account Follow-Up Builder: Read / Draft
 - Support Ticket, Meeting Follow-Up Email, Clari, SF Stage Validator, weekly reports: Draft/Read
@@ -29,6 +30,30 @@ A Read or Draft workflow may not inspect an unrelated connected application mere
 - CSM Sentiment Notes: Draft/Preview by default; Conditional write only after a complete preview, exact destination mapping, and fresh explicit apply confirmation
 
 Customer Task Centre never writes Notion. Generic task language does not authorize Notion access or mutation.
+
+## Account Adoption Strategy Notion Writes
+
+Account Adoption Strategy may publish only to the canonical `6 sense → Customer Plans` hierarchy defined in `schema/notion-customer-plans-map.md`.
+
+Before a write:
+
+1. Require explicit current-turn language such as `save`, `publish`, `push to Notion`, `update in Notion`, or `refresh and save`.
+2. Resolve the exact Airtable account.
+3. Resolve the exact Notion Customer Plans hub and exact account parent.
+4. Fetch any existing `Internal Adoption Strategy — Current` and `Customer-Safe Adoption Plan — Current` pages.
+5. Prevent duplicate account parents and duplicate current plan pages.
+6. Preserve the internal/customer-safe content boundary.
+7. Skip normalized no-change updates.
+
+After a write:
+
+1. Fetch the account parent and every changed current plan page.
+2. Report each page as Created, Updated, Unchanged, or Failed.
+3. Return only observed Notion URLs.
+4. State explicitly that Airtable Customer Tasks and account fields were not changed.
+5. Do not claim the plan was shared with the customer.
+
+Publication of a plan does not authorize creation, update, completion, cancellation, or reopening of Airtable Customer Tasks. A later explicit task action must route through Customer Task Centre.
 
 ## Bulk CSM Sentiment Writes
 
@@ -51,7 +76,7 @@ If the CSM Sentiment destination is missing, remain in Draft/Preview mode. A mis
 
 ## Draft Is Not Sent
 
-Creating or editing an email, Slack message, support ticket, calendar response, or customer reply does not prove it was sent, posted, submitted, scheduled, or raised.
+Creating or editing an email, Slack message, support ticket, calendar response, customer reply, or Notion customer plan does not prove it was sent, posted, submitted, scheduled, raised, shared, or delivered.
 
 Drafting email copy in ChatGPT also does not authorize Gmail search, thread retrieval, Gmail draft creation, recipient lookup, or sending. Those operations require separate current-turn authorization under `contracts/tool-access-safety.md`.
 
@@ -68,7 +93,7 @@ Requests such as `write this and update notes` do not prove delivery. Log the un
 
 Reporting and preparation workflows must not silently read from or modify Airtable, Notion, Salesforce, Clari, Slack, Gmail, or other systems outside the source and action boundaries of the routed workflow.
 
-Show recommended changes separately. Apply them only when the user explicitly asks to apply, update, close, reopen, send, post, or submit them.
+Show recommended changes separately. Apply them only when the user explicitly asks to apply, update, close, reopen, send, post, publish, or submit them.
 
 ## Idempotent Ingestion
 
