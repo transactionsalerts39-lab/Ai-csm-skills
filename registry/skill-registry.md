@@ -7,6 +7,7 @@ Exact slash commands win over natural-language matching. Use `routing/skill-rout
 | Docs / RevCity / 6sense.com Assistant | `/docs`, `/support docs`, `/revcity`, `/product updates`, `/6sense articles` | `skills/docs-assistant.md` | Read / Draft |
 | Update Activity Notes | `/update notes`, `/un`, `update notes`, `log this` | `skills/update-activity-notes.md` | Write |
 | Meeting Summarizer | `/meeting summarizer`, `/meeting summa`, `/meeting notes`, `/call summary` | `skills/meeting-summarizer.md` | Write for explicit command; otherwise Preview |
+| Account Adoption Strategy | `/account strategy`, `/adoption plan`, `/customer adoption plan`, `/success plan`, `/use case plan`, `/refresh adoption plan`, `/publish adoption plan` | `skills/customer-adoption-strategy.md` | Read / Draft; conditional Notion write |
 | Weekly Command Centre | `/weekly command centre`, `/weekly command center`, exact `/weekly command center - dashboard`, `/weekly tasks`, `internal tasks`, `manager tasks`, `AI/OKR tasks`, `stale accounts`, `renewal focus` | `skills/weekly-command-centre.md` | Read; conditional write; dashboard is read-only |
 | CSM Sentiment Notes | `/csm sentiment`, `/weekly csm sentiment`, `/sentiment notes`, `prepare CSM sentiment notes`, `update CSM sentiment notes` | `skills/csm-sentiment-notes.md` | Draft; conditional write |
 | PS Adoption Audit | `/ps adoption audit`, `/ps audit`, `/professional services audit`, `/adoption services audit`, `identify PS candidates`, `which accounts need PS` | `skills/ps-adoption-audit.md` | Read / Draft |
