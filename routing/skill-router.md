@@ -1,4 +1,4 @@
-# Skill Router — V7
+# Skill Router — V8
 
 Use GitHub skill files as the live source of truth. Use uploaded project Sources only as fallback snapshots when GitHub access is unavailable.
 
@@ -39,13 +39,17 @@ If the current message explicitly requests Gmail alongside another workflow, lim
 - `/csm sentiment`, `/weekly csm sentiment`, `/sentiment notes`, or explicit CSM Sentiment Notes intent → CSM Sentiment Notes.
 - `update CSM Sentiment Notes for my book/all my accounts` → CSM Sentiment Notes Preview. After the complete preview and exact destination resolution, require a fresh explicit apply confirmation; the initial wording does not pre-authorize the bulk write.
 - `/ps adoption audit`, `/ps audit`, `/professional services audit`, `/adoption services audit`, or explicit full-book PS-candidate intent → PS Adoption Audit. Account risk alone stays in Weekly Command Centre; a technical break/fix issue stays with Support Ticket Creator unless the user explicitly asks for a separate adoption-fit audit.
+- `/account strategy`, `/adoption plan`, `/customer adoption plan`, `/success plan`, `/use case plan`, `/refresh adoption plan`, `/publish adoption plan`, or explicit single-account adoption/success-plan intent → Account Adoption Strategy.
+- Exact `/use case plan [Account]` → Account Adoption Strategy. Plain `/use cases`, use-case examples, or documentation-only use-case research remains Docs / RevCity / 6sense.com Assistant.
+- `/meeting strategy [Account]` remains Customer Meeting Prep. Do not route it to Account Adoption Strategy.
+- `save`, `publish`, `push to Notion`, `update in Notion`, or `refresh and save` inside Account Adoption Strategy authorizes only the canonical Notion Customer Plans write. It does not authorize Airtable task or account-field writes.
 - Single-account raw activity logging remains Update Activity Notes unless the user explicitly names CSM Sentiment Notes.
 - `/cadence coverage`, `/cadence radar`, `/book of business cadence`, `/bob cadence`, or a request for cadence information for every assigned account → Cadence Coverage Radar. This is the literal full-roster view, including fully active accounts; Weekly Command Centre remains the broader weekly triage workflow.
 - `/meeting summa` → Meeting Summarizer.
 - `/meeting follow-up` or `only email` → Meeting Follow-Up Email.
 - `/account follow-up`, `/follow-up builder`, or combined account pending-items + customer-email intent → Account Follow-Up Builder. Plain account task lists remain Customer Task Centre.
 - `/clari weekly forecast` or `/weekly clari forecast` → Clari Weekly Forecast.
-- `/task manager`, `/task centre`, `/task center`, `/task command centre`, `/task command center`, `/task centre compact`, `/task centre detailed`, `/task centre history`, `/task centre sort: renewal`, `/task centre sort: due`, `/task centre sort: priority`, `/task centre priority: P1`, `/task centre: [Account]`, `/customer tasks`, `/open customer tasks`, `/task hygiene`, and natural-language Customer Task completion, cancellation, or reopening → Customer Task Centre.
+- `/task manager`, `/task centre`, `/task center`, `/task command centre`, `/task command center`, `/task centre compact`, `/task centre detailed`, `/task centre history`, `/task centre sort: renewal`, `/task centre sort: due`, `/task centre sort: priority`, `/task centre priority: P1`, `/task centre: [Account]`, `/customer tasks`, `/open customer tasks`, `/task hygiene`, and natural-language Customer Task creation, completion, cancellation, status change, or reopening → Customer Task Centre.
 - Generic `/tasks`, `/open tasks`, or `/high priority tasks` is intentionally unregistered. Route by explicit customer/account versus internal/project context; if that scope is not clear, ask one short clarification before loading Airtable or Notion.
 - `/update notes` or exact standalone `/un` → Update Activity Notes even when the same turn also contains a draft; apply the Draft Is Not Sent rule. Do not treat longer commands beginning with `/un` as this alias.
 
@@ -55,10 +59,16 @@ Airtable Customer Tasks is authoritative for customer/account commitments. Custo
 
 The 6sense Notion `Projects & tasks` page remains authoritative for internal, manager, admin, enablement, AI/OKR, and project work only in workflows that explicitly authorize and load `schema/notion-task-map.md`. Do not infer Notion access from generic task language.
 
+Account Adoption Strategy may use the separate canonical `6 sense → Customer Plans` hierarchy defined in `schema/notion-customer-plans-map.md` for durable strategy and customer-safe planning. It must not use Notion as the authoritative customer-task lifecycle. Proposed customer actions remain preview-only in V1; any explicit task write routes to Airtable through Customer Task Centre.
+
 ## Natural-Language Task Actions
 
 Ranjodh does not need to remember task IDs. Resolve account + action + current context to the underlying Airtable record ID internally. If one strong match exists, act. If multiple plausible matches exist, ask one concise clarification question.
 
+A request to publish an adoption plan is not a request to create its proposed tasks. A later explicit request such as `create the approved adoption-plan tasks` routes to Customer Task Centre and must deduplicate against active Airtable Customer Tasks.
+
 ## Write Boundary
 
-Read and reporting skills do not write by default. A draft is not proof of sending, posting, scheduling, submitting, or raising. Only write when the explicit workflow or user request authorizes the named action.
+Read and reporting skills do not write by default. A draft is not proof of sending, posting, scheduling, submitting, raising, publishing, or sharing. Only write when the explicit workflow or user request authorizes the named action.
+
+Account Adoption Strategy is Read/Draft by default. An explicit current-turn Notion publication request authorizes only creation or update of the exact account parent and current internal/customer-safe plan pages under the canonical Customer Plans hub. After writing, fetch and verify every changed page. Never imply the plan was shared with the customer, and never modify Airtable from Account Adoption Strategy V1.
