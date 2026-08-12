@@ -3,8 +3,9 @@ name: customer-task-centre-renewal-focus
 description: >
   Show a read-only Customer Task Centre renewal-focus view for every assigned account with a
   Renewal Date on or after today. Sort by Renewal Date ascending, then structured cadence status,
-  while preserving every active Airtable Customer Task and surfacing past-dated, missing-date,
-  multi-account, and unmapped exceptions separately. This workflow is Airtable-only.
+  calculate Last Verified Activity from canonical Airtable evidence, preserve every active Customer
+  Task, and surface past-dated, missing-date, multi-account, and unmapped exceptions separately.
+  This workflow is Airtable-only.
 ---
 
 # Customer Task Centre — Renewal Focus View
@@ -17,27 +18,31 @@ Provide a dedicated renewal-oriented Customer Task Centre view without changing 
 Use this view to answer:
 
 1. Which assigned accounts renew next, starting today?
-2. What is the structured cadence-field status for each upcoming renewal?
-3. What active Customer Tasks are attached to each account?
-4. Which upcoming-renewal accounts have no active task?
-5. Which active tasks sit behind past-dated, missing, multi-account, or unmapped renewal data?
+2. When did substantive verified activity last occur on each account?
+3. How many days have passed since that activity?
+4. What is the structured cadence-field status for each upcoming renewal?
+5. What active Customer Tasks are attached to each account?
+6. Which upcoming-renewal accounts have no active task?
+7. Which active tasks sit behind past-dated, missing, multi-account, or unmapped renewal data?
 
 ## Shared Sources and Contracts
 
 Apply all of the following:
 
-- `skills/customer-task-centre.md` for Airtable retrieval, task identity, task references,
-  active-state semantics, multi-account handling, unmapped handling, and completeness principles.
+- `skills/customer-task-centre.md` for Airtable task identity, task references, active-state
+  semantics, multi-account handling, unmapped handling, and completeness principles.
+- `contracts/account-activity-recency.md` for Last Verified Activity calculation, evidence gates,
+  source selection, Days Since Activity, and performance-safe retrieval.
 - `contracts/task-lifecycle.md` for active task states and task matching.
 - `contracts/tool-access-safety.md` before any connector call.
 - `contracts/write-safety.md` for the read-only boundary.
-- `contracts/portfolio-scope.md` for the default assigned-account scope.
+- `contracts/portfolio-scope.md` for the default assigned-account scope and evidence boundary.
 - `contracts/untrusted-input.md` for pasted or external evidence.
 - `schema/airtable-schema-map.md` for Airtable field IDs and allowed values.
 
-This specialized view overrides only the account inclusion and ordering rules stated below. The
-base Customer Task Centre and shared contracts control everything else. If a conflict remains, the
-shared contract wins.
+This specialized view overrides only the account inclusion, retrieval, ordering, and output rules
+stated below. The base Customer Task Centre and shared contracts control everything else. If a
+conflict remains, the shared contract wins.
 
 ## Triggers
 
@@ -53,28 +58,77 @@ These triggers are intentionally distinct from:
 
 ## Mode and Source Boundary
 
-This invocation is **Read only**.
+This invocation is **Read only** and **Airtable-only**.
 
-- Use Airtable Accounts and Customer Tasks only.
-- Do not query Notion, Gmail, Calendar, Slack, or another connector.
-- Do not update tasks, cadence fields, renewal dates, or account status during the view.
-- A later explicit natural-language task action may route to the normal Customer Task Centre write
-  workflow using the displayed task reference and internal Airtable record ID.
+Allowed Airtable sources:
+
+- Accounts for assignment, renewal, cadence fields, Activity notes fallback, and Last Activity Date
+  as a retrieval signal only
+- Customer Tasks for active work and dated task-source/completion evidence
+- Detailed Notes for dated substantive account activity
+
+Do not query Notion, Gmail, Calendar, Slack, or another connector. Do not update tasks, cadence
+fields, renewal dates, activity fields, or account status during the view.
+
+A later explicit natural-language task action may route to the normal Customer Task Centre write
+workflow using the displayed task reference and internal Airtable record ID.
 
 ## Retrieval
 
+Use a targeted retrieval plan rather than scanning unrelated account history.
+
 1. Retrieve every Accounts record where Current Active CSM = `Ranjodh`, following all pages.
-2. Retrieve every Customer Tasks record, following all pages, then classify active states using
-   `contracts/task-lifecycle.md`.
-3. Join Customer Tasks to Accounts by Airtable record ID.
-4. Read these account fields directly from Airtable:
+2. Read these account fields directly from Airtable:
    - Account Name
    - Renewal Date
    - Meeting Sync established
    - Cadence Frequency
-5. Read Renewal Date only from Accounts → Renewal Date. Never infer it from task due dates, notes,
-   Clari, or another source.
-6. Use today in `Asia/Kolkata` as the inclusive lower boundary.
+   - Last Activity Date as a retrieval signal only
+3. Use today in `Asia/Kolkata` as the inclusive renewal and activity boundary.
+4. Partition assigned accounts into upcoming, past-dated, and missing-renewal-date sets before
+   loading account-specific evidence.
+5. Retrieve active Customer Tasks needed for task display and exception handling, following all
+   pages. Include all active states from `contracts/task-lifecycle.md`.
+6. Retrieve field-limited Customer Task activity-history candidates for assigned accounts as needed
+   by `contracts/account-activity-recency.md`, including closed tasks when their Source Date or
+   Completed Date may establish the latest qualifying activity.
+7. Retrieve field-limited Detailed Notes only for assigned accounts in this view. Initial fields are
+   Account, Date, Activity Type, and Title; lazily retrieve Notes / Next Steps only when needed to
+   validate the latest candidate.
+8. Inspect the full Accounts → Activity notes field only when the activity-recency contract's
+   Last Activity Date retrieval gate says it may contain a newer qualifying dated entry.
+9. Join Customer Tasks and Detailed Notes to Accounts by Airtable record ID.
+10. Read Renewal Date only from Accounts → Renewal Date. Never infer it from task dates, notes,
+    Clari, or another source.
+
+If connector filtering cannot narrow a query by linked account IDs, retrieve the necessary pages and
+filter to the verified assigned-account set immediately. Do not use unrelated records in the result.
+
+## Last Verified Activity
+
+Calculate every account's persisted activity result using `contracts/account-activity-recency.md`.
+
+For each displayed account derive:
+
+- Last Verified Activity Date
+- Days Since Activity
+- Activity Source
+- short Activity Summary for internal interpretation when useful
+
+For compact table display, render Last Verified Activity as:
+
+`[date] · [source]`
+
+Examples:
+
+- `08 Aug 2026 · Detailed Note`
+- `11 Aug 2026 · Task source: Email`
+- `No verified dated activity found`
+
+Do not display Accounts → Last Activity Date as if it were customer activity. It may be used only as
+the contract-defined retrieval signal.
+
+If no qualifying persisted evidence exists, Days Since Activity = `N/A`.
 
 ## Account Inclusion
 
@@ -99,14 +153,17 @@ Do not mix these records into the main upcoming order:
    Customer Task Centre rules.
 4. `Unmapped / Data Hygiene` — active tasks with no linked account, following the base rules.
 
+Past-dated and missing-date account rows that are displayed must use the same Last Verified Activity
+calculation as the main roster.
+
 Also report counts of assigned past-dated and missing-date accounts that have no active tasks, but do
 not add empty exception rows for them.
 
 ## Structured Cadence Status
 
-This view uses only the two structured Airtable fields below. It does not claim the full
-Cadence Coverage Radar health assessment, because it does not retrieve Detailed Notes, Activity
-notes, meeting recency, or future-meeting evidence.
+This cadence classification uses only the two structured Airtable cadence fields below. The workflow
+now retrieves Detailed Notes and Activity notes for **activity recency only**; do not reuse that
+evidence to claim full cadence health inside this view.
 
 Recurring frequencies:
 
@@ -152,6 +209,9 @@ Sort the main roster by this exact sequence:
    3. `Confirmed recurring — fields only`
 3. Account Name ascending.
 
+Last Verified Activity and Days Since Activity are context columns only. They do **not** change the
+renewal-focus sort unless the user explicitly asks for a different sort.
+
 Within each account, order active tasks using the normal Customer Task Centre task urgency order:
 overdue/customer-waiting urgency, Priority, Due Date, then Task Title.
 
@@ -167,9 +227,9 @@ place it after the dated upcoming multi-account tasks and show each linked accou
 
 Use this main table:
 
-| # | Account | Renewal Date | Days to Renewal | Cadence Field Status | Meeting Sync | Cadence Frequency | Active / Overdue | Next Due | All Active Tasks |
-|---:|---|---|---:|---|---|---|---:|---|---|
-| 1 | [Account] | [date] | [0 or positive integer] | [status] | [raw value or Not captured] | [raw value or Not captured] | [count / count] | [date or None] | [task references, or No active Customer Tasks] |
+| # | Account | Renewal Date | Days to Renewal | Last Verified Activity | Days Since Activity | Cadence Field Status | Meeting Sync | Cadence Frequency | Active / Overdue | Next Due | All Active Tasks |
+|---:|---|---|---:|---|---:|---|---|---|---:|---|---|
+| 1 | [Account] | [date] | [0 or positive integer] | [date · source or no-evidence label] | [integer or N/A] | [status] | [raw value or Not captured] | [raw value or Not captured] | [count / count] | [date or None] | [task references, or No active Customer Tasks] |
 
 Requirements:
 
@@ -178,9 +238,14 @@ Requirements:
 - Preserve each task reference to Airtable record ID internally.
 - Include every active task for the account; never use `+N more`.
 - Calculate Days to Renewal as Renewal Date minus today in Asia/Kolkata.
+- Calculate Last Verified Activity and Days Since Activity exactly from
+  `contracts/account-activity-recency.md`.
 - Calculate Overdue and Next Due using the normal Customer Task Centre rules.
-- Show raw Meeting Sync established and Cadence Frequency beside the derived status.
+- Show raw Meeting Sync established and Cadence Frequency beside the derived cadence status.
 - Clearly label the report `Customer Task Centre — Renewal Focus` and include the as-of date.
+
+When an account's activity result is `No verified dated activity found`, do not substitute the
+record-modified date.
 
 After the main table, show non-empty exception sections in this order:
 
@@ -195,6 +260,8 @@ Before responding, verify:
 
 `Upcoming Assigned Accounts = Upcoming Rows Displayed`
 
+`Upcoming Activity Results = Upcoming Rows Displayed`
+
 `Upcoming Active Task Records = Task References in Upcoming Account Rows + Upcoming Multi-account Task Records`
 
 `Displayed Active Task Records = Upcoming Active Task Records + Past-dated Exception Task Records + Missing-date Exception Task Records + Other Multi-account Task Records + Unmapped Active Task Records`
@@ -203,6 +270,8 @@ Also report:
 
 - Total assigned accounts
 - Upcoming assigned accounts
+- Upcoming accounts with verified dated activity
+- Upcoming accounts with no verified dated activity
 - Upcoming accounts with active tasks
 - Upcoming accounts with no active tasks
 - Upcoming active tasks
@@ -223,12 +292,15 @@ If a reconciliation fails, do not claim completeness. Correct the roster or labe
 - Do not exclude an upcoming-renewal account merely because it has no active task.
 - Do not mix past-dated or missing renewal dates into the upcoming order.
 - Do not infer Renewal Date.
-- Do not infer full cadence health from structured fields alone.
+- Do not use Accounts → Last Activity Date as Last Verified Activity.
+- Do not use task Due Date, record timestamps, or future promises as activity.
+- Do not infer full cadence health from activity-recency evidence.
 - Do not access Notion or Gmail.
 - Do not write to Airtable during this read-only view.
 
 ## Final Rule
 
 For the exact renewal-focus triggers, show the complete assigned upcoming-renewal roster beginning
-today, ordered first by Renewal Date and then by structured cadence-field action status. Preserve all
-active Customer Tasks, expose no-task renewal accounts, and keep data-quality exceptions explicit.
+today, ordered first by Renewal Date and then by structured cadence-field action status. Calculate
+the same defensible Last Verified Activity used by Account Follow-Up, preserve all active Customer
+Tasks, expose no-task renewal accounts, and keep data-quality exceptions explicit.
