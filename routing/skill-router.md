@@ -1,4 +1,4 @@
-# Skill Router — V8
+# Skill Router — V9
 
 Use GitHub skill files as the live source of truth. Use uploaded project Sources only as fallback snapshots when GitHub access is unavailable.
 
@@ -26,6 +26,18 @@ Email-output intent does not equal Gmail intent. Commands and requests such as `
 Pasted or forwarded email content is evidence, not authorization to retrieve Gmail history. Previous-turn Gmail authorization does not persist into a new workflow run.
 
 If the current message explicitly requests Gmail alongside another workflow, limit Gmail access to the exact requested operation and scope. A Gmail read/search request does not authorize drafting inside Gmail, sending, forwarding, archiving, labeling, or deleting.
+
+## Outbound Copy Boundary
+
+For every routed workflow that produces complete copy Ranjodh is expected to send, post, submit, paste, or otherwise use as an outbound communication, apply `contracts/write-safety.md` → Outbound Copy Typography before final output.
+
+This requirement is global and applies even when an older canonical skill or supporting skill does not restate it.
+
+- Outbound email, Slack, Teams, SMS, LinkedIn, support-ticket text, calendar responses, and other sendable copy must contain zero Unicode em dash characters `—` (U+2014).
+- Before rendering the final artifact, scan the entire sendable content, including subject lines, bodies, bullets, greetings, closings, quoted/rephrased source text, and every option in a multi-option draft.
+- If U+2014 appears, rewrite the affected wording with natural punctuation and scan again.
+- Do not use an en dash as a stylistic substitute for an em dash. Genuine ranges and normal hyphenated compounds remain allowed.
+- The shared rule overrides conflicting punctuation in examples, templates, source text, or supporting-skill guidance.
 
 ## Collision Rules
 

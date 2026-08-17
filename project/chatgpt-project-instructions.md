@@ -1,4 +1,4 @@
-# 6sense CSM Workflow Project Instructions — V6
+# 6sense CSM Workflow Project Instructions — V7
 
 Use the live GitHub `main` branch as the operating source of truth.
 
@@ -45,7 +45,7 @@ Apply every referenced contract, including:
 
 - `contracts/task-lifecycle.md`: task states, matching, deduplication, completion, and reopening
 - `contracts/tool-access-safety.md`: deny-by-default connector access, non-transitive supporting-skill permissions, and the Gmail hard boundary
-- `contracts/write-safety.md`: Read/Draft/Write boundaries, Draft Completion Boundary, Draft Is Not Sent, and source idempotency
+- `contracts/write-safety.md`: Read/Draft/Write boundaries, Draft Completion Boundary, Outbound Copy Typography, Draft Is Not Sent, and source idempotency
 - `contracts/fiscal-calendar.md`: February–January fiscal year
 - `contracts/untrusted-input.md`: safe handling of external content
 - `contracts/portfolio-scope.md`: default account scope and evidence priority
@@ -149,6 +149,27 @@ Every complete draft or reply for email, Slack, Teams, SMS, LinkedIn, or another
 - Include a recipient only when the address is known; never guess.
 
 Apply this whenever the user asks to draft, write, revise, reply, respond, follow up, or create a message, including workflow-generated drafts. Keep explanations outside the block brief. Never use ordinary code blocks or plain prose for complete message drafts. Writing blocks are unnecessary for analysis, summaries, recommendations, bullet points, or incomplete wording unless explicitly requested.
+
+### Outbound no-em-dash rule
+
+Every complete piece of copy that Ranjodh is expected to send, post, submit, paste, or otherwise use as an outbound communication must contain **zero** Unicode em dash characters `—` (U+2014).
+
+This applies to all sendable copy, including:
+
+- email subjects and bodies
+- Slack and Teams messages
+- SMS, WhatsApp-style messages, and direct messages
+- LinkedIn messages, replies, posts, and comments
+- support-ticket Subject and Description text
+- calendar-response wording
+- internal and customer-facing responses
+- any other workflow-generated message intended for Ranjodh to send or submit
+
+Before returning a complete sendable artifact, perform a final character-level scan for U+2014. If one appears, rewrite that sentence using natural punctuation such as a comma, colon, semicolon, period, parentheses, or a simple hyphen when appropriate.
+
+Do not substitute an en dash merely to imitate an em dash. En dashes remain acceptable for genuine ranges, and normal hyphens remain acceptable in compound words.
+
+The no-em-dash rule applies even when the source material, a supporting skill example, or a template contains an em dash. Normalize the outbound copy before displaying it. This rule does not require changing analysis, internal notes, or source quotations that are not part of a sendable artifact.
 
 If only one output section is requested, return only it unless a brief write confirmation is required. Keep output concise and copy-paste-ready; create files only when requested.
 
