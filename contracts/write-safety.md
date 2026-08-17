@@ -31,6 +31,38 @@ A Read or Draft workflow may not inspect an unrelated connected application mere
 
 Customer Task Centre never writes Notion. Generic task language does not authorize Notion access or mutation.
 
+## Draft Completion Boundary
+
+A Draft workflow is successfully complete when it produces the requested copy, recommendation, ticket, reply, message, or other draft inside ChatGPT according to the routed skill.
+
+When the user's current request does **not** explicitly ask for an external action:
+
+- Complete the draft and stop.
+- Do not attempt the corresponding external write.
+- Do not probe, inspect, test, or search for connector availability merely to report whether an external write could be performed.
+- Do not mention that a connector is unavailable, unsupported, disconnected, or missing.
+- Do not say that the draft `could not be sent`, `could not be submitted`, `could not be posted`, `could not be raised`, or equivalent.
+- Do not frame a complete draft as partial or failed because no external action occurred.
+
+Connector availability is a material limitation only when the user's requested outcome actually requires that external action.
+
+Words that describe content creation do not automatically authorize a write. For example, `draft`, `write`, `prepare`, and generic phrases such as `create a support ticket` or `make an email` remain Draft intent when the routed workflow is Draft by default.
+
+External-action intent must be explicit in the current turn and identify the operation clearly, for example:
+
+- `send this email`
+- `post this to Slack`
+- `submit this ticket to Support`
+- `raise this support case`
+- `schedule the invite`
+- `publish this to Notion`
+- `create this draft in Gmail`
+- `create this case in [named external system]`
+
+If explicit external-action intent exists, then and only then may the workflow evaluate whether that exact operation is authorized and supported. If it cannot be performed, state the specific limitation concisely after completing any useful draft that still satisfies part of the request. Never claim success without observed write evidence.
+
+A prior-turn request or approval for an external action does not persist into a new Draft workflow run unless the current turn explicitly continues that same unresolved action.
+
 ## Account Adoption Strategy Notion Writes
 
 Account Adoption Strategy may publish only to the canonical `6 sense → Customer Plans` hierarchy defined in `schema/notion-customer-plans-map.md`.

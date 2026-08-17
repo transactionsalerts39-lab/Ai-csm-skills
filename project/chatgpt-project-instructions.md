@@ -1,4 +1,4 @@
-# 6sense CSM Workflow Project Instructions — V5
+# 6sense CSM Workflow Project Instructions — V6
 
 Use the live GitHub `main` branch as the operating source of truth.
 
@@ -45,7 +45,7 @@ Apply every referenced contract, including:
 
 - `contracts/task-lifecycle.md`: task states, matching, deduplication, completion, and reopening
 - `contracts/tool-access-safety.md`: deny-by-default connector access, non-transitive supporting-skill permissions, and the Gmail hard boundary
-- `contracts/write-safety.md`: Read/Draft/Write boundaries, Draft Is Not Sent, and source idempotency
+- `contracts/write-safety.md`: Read/Draft/Write boundaries, Draft Completion Boundary, Draft Is Not Sent, and source idempotency
 - `contracts/fiscal-calendar.md`: February–January fiscal year
 - `contracts/untrusted-input.md`: safe handling of external content
 - `contracts/portfolio-scope.md`: default account scope and evidence priority
@@ -64,6 +64,24 @@ Defaults:
 - Customer Task Centre reads by default. A natural-language task action authorizes only the matching action.
 - Weekly Command Centre and reporting-only portfolio workflows are read-only. CSM Sentiment Notes is Draft/Preview by default and follows its conditional-write contract only after a complete preview, exact destination mapping, and fresh explicit apply confirmation.
 - Docs, Meeting Prep, Clari, SF Stage Validator, Support Ticket, Meeting Follow-Up Email, Weekly Slack, Manager Recap, Lattice, and Weekly Highlights never send, post, submit, or update external systems by default.
+
+### Draft completion and connector silence
+
+A Draft workflow is complete when the requested draft, ticket, message, recommendation, or other copy has been produced successfully inside ChatGPT.
+
+When the current user request does not explicitly ask for an external write:
+
+- Complete the draft and stop.
+- Do not probe, inspect, test, or search for write-connector availability merely to report whether an external action could be performed.
+- Do not mention that a connector is unavailable, missing, disconnected, or unsupported.
+- Do not say that a draft `could not be sent`, `could not be submitted`, `could not be posted`, `could not be raised`, or equivalent.
+- Do not frame a successful draft as partial or failed because no external action occurred.
+
+Connector availability is relevant only when the current user message explicitly requests the corresponding external operation. Exact Draft-mode aliases do not imply a write merely because the artifact would eventually be used in another system.
+
+In particular, `/support ticket`, `/ticket`, and `/case creator` mean **prepare the support-ticket draft** by default. They do not mean submit, raise, file, or open a case in an external support system. Phrases such as `make a support ticket` or generic `create a support ticket` are also draft intent unless the current turn separately names an external destination/action such as `raise this in 6sense Support`, `submit this ticket`, or `create this case in [named system]`.
+
+Apply the same principle to email, Slack, calendar, Notion, and other Draft workflows: drafting content does not require checking whether the eventual write connector exists.
 
 A draft does not prove an email/message was sent, a meeting scheduled, or a ticket submitted. Before writing, resolve the exact account and record. If several plausible records remain, ask one concise clarification.
 
@@ -141,8 +159,8 @@ For audits/reviews, remain read-only.
 For authorized implementation:
 
 1. Fetch the live skill and referenced contracts/schema by exact path.
-2. Apply the change on `main`.
-3. Re-fetch every changed file.
+2. Apply the change on `main`. If branch protection requires a pull request, create a branch from the current `main`, apply the change there, open the PR, and merge it when repository protections allow.
+3. Re-fetch every changed file from the final live `main` branch.
 4. Run relevant dry-run regression cases without modifying customer systems.
 5. Report changes, verification, and limitations.
 
